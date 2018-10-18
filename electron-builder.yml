@@ -1,0 +1,52 @@
+appId: com.phicomm.app
+copyright: "Phicomm (SiChuan) Co., Ltd."
+productName: PhiNAS
+
+asar: true
+compression: normal
+
+directories:
+  buildResources: /
+  output: dist/
+
+files:
+  - "**/*"
+
+dmg:
+  contents:
+    - type: link
+      path: /Applications
+      x: 410
+      y: 150
+    - type: file
+      x: 130
+      y: 150
+  background:
+    logo/background.png
+
+mac:
+  target:
+    - dmg
+    - zip
+  category: public.app-category.tools
+  icon: logo/icon.icns
+
+win:
+  target: nsis
+  icon: logo/icon.ico
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  menuCategory: true
+  license: logo/License.rtf
+  language: "1033"
+  runAfterFinish: false
+  deleteAppDataOnUninstall: true
+  artifactName: ${productName}-Setup-${version}-${env.arch}.${ext}
+
+linux:
+  target:
+    - deb
+    - AppImage
+  icon: logo/icon.png

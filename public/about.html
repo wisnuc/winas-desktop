@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+    <meta name="application-name" content="null"/>
+    <meta name="keywords" content="null" />
+    <meta name="description" content="null" />
+  </head>
+  <body style="background: url('assets/images/about-bg.png')">
+    <div style="position: relative; height: 100%; width: 100%; padding: 0px 20px; box-sizing: border-box; -webkit-app-region: drag">
+      <div style="position: absolute; height: 24px; width: 24px; right: 13px; top: 13px; -webkit-app-region: no-drag">
+        <button style="background-color: transparent; cursor: pointer" onclick="window.close()">
+          <svg viewBox="0 0 24 24" style="fill: #FFFFFF; opacity: 0.7; height: 24px; width: 24px">
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
+          </svg>
+        </button>
+      </div>
+      <div style="position: absolute; left: 20px; top: 20px; -webkit-app-region: drag">
+        <img src="assets/images/about-logo.png" alt="about-logo" width="90" height="12" />
+      </div>
+      <div style="height: 85px"></div>
+      <div style="display: flex; align-items: center">
+        <img src="assets/images/about-app.png" width="70" height="70" alt="about-app" />
+        <div style="margin-left: 20px">
+          <div id="name" style="height: 30px; font-size: 24px; color: #505259; display: flex; align-items: center" >
+          </div>
+          <div id="model" style="height: 20px; font-size: 14px; color: rgba(133,134,140,.8); display: flex; align-items: center" >
+          </div>
+          <div id="version" style="height: 20px; font-size: 14px; color: rgba(80,82,89,.8); display: flex; align-items: center">
+          </div>
+        </div>
+      </div>
+      <div style="height: 45px"></div>
+      <div id="copyrightCn" style="height: 20px; font-size: 12px; color: rgba(80,82,89,.6); display: flex; align-items: center" >
+      </div>
+      <div id="copyrightEn" style="height: 20px; font-size: 12px; color: rgba(80,82,89,.6); display: flex; align-items: center" >
+      </div>
+      <div style="height: 20px; font-size: 12px; display: flex; align-items: center">
+        <div id="telephone" style="color: #505259; line-height: 20px">
+        </div>
+        <div style="flex-grow: 1"></div>
+        <div
+          id="homepage"
+          onclick="openHomepage()"
+          style="line-height: 20px; text-decoration: underline; cursor: pointer; color: rgba(49,160,245,.8); -webkit-app-region: no-drag"
+        >
+        </div>
+        <div style="flex-grow: 1"></div>
+        <div
+          id="agreement"
+          onclick="openAgreement()"
+          style="line-height: 20px; text-decoration: underline; cursor: pointer; color: rgba(49,160,245,.8); -webkit-app-region: no-drag"
+        >
+        </div>
+      </div>
+    </div>
+    <link rel="stylesheet" href="assets/app.css" type='text/css'>
+    <script>
+      const { ipcRenderer } = require('electron')
+      const openHomepage = () => ipcRenderer.send('OPEN_HOMEPAGE')
+      const openAgreement = () => ipcRenderer.send('OPEN_AGREEMENT')
+      ipcRenderer.on('ABOUT_DATA', (event, data) => {
+        const { text } = data
+        text.forEach(t => {
+          const id = t[0]
+          const value = t[1]
+          const ele = document.getElementById(id)
+          console.log(id, value)
+          if (!value) ele.style.opacity = 0
+          ele.innerHTML = value
+        })
+      })
+      ipcRenderer.send('REQ_ABOUT_DATA')
+    </script>
+  </body>
+</html>

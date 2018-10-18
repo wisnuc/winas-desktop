@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+    <meta name="application-name" content="null"/>
+    <meta name="keywords" content="null" />
+    <meta name="description" content="null" />
+  </head>
+  <body style="overflow: hidden; background-color: #000000">
+    <div style="height: 100%; display: flex; align-items: center; justify-content: center">
+      <video style="height: 100%; opacity: 0" controls controlsList="nodownload" autoplay="true" src="" id="video" />
+    </div>
+    <div style="position: fixed; height: 24px; width: 24px; right: 108px; top: 16px; display: flex">
+      <button style="background-color: rgba(0,0,0,0)" onclick="Minimize()">
+        <svg viewBox="0 0 24 24" style="fill: #FFFFFF; height: 24px; width: 24px; padding: 8px">
+          <path d="M19 13H5v-2h14v2z"></path>
+        </svg>
+      </button>
+      <button style="background-color: rgba(0,0,0,0)" onclick="Maximize()">
+        <svg viewBox="0 0 24 24" style="fill: #FFFFFF; height: 24px; width: 24px; padding: 8px">
+          <path d="M19 5H5c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 12H5V7h14v10z"></path>
+        </svg>
+      </button>
+      <button style="background-color: rgba(0,0,0,0)" onclick="window.close()">
+        <svg viewBox="0 0 24 24" style="fill: #FFFFFF; height: 24px; width: 24px; padding: 8px">
+          <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
+        </svg>
+      </button>
+    </div>
+    <link rel="stylesheet" href="assets/app.css" type='text/css'>
+    <script>
+      const { ipcRenderer } = require('electron')
+      ipcRenderer.on('VIDEO_SRC', (event, src) => {
+        const ele = document.getElementById('video')
+        ele.src = src
+        ele.addEventListener('canplay', () => {
+          ele.style.opacity = 1
+        })
+      })
+      const Minimize = () => {
+        ipcRenderer.send('MINI_VIDEO')
+      }
+      const Maximize = () => {
+        ipcRenderer.send('TOGGLEMAX_VIDEO')
+      } 
+    </script>
+  </body>
+</html>
