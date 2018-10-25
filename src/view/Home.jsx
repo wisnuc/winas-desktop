@@ -1221,11 +1221,12 @@ class Home extends Base {
     )
   }
 
-  renderContent ({ openSnackBar, navTo }) {
+  renderContent ({ openSnackBar, navTo, pin }) {
     return (
       <div style={{ position: 'relative', width: '100%', height: '100%' }}>
         <FileContent
           {...this.state}
+          pin={pin}
           apis={this.ctx.props.apis}
           showUsers={this.ctx.props.showUsers}
           clearFakeOpen={this.clearFakeOpen}

@@ -334,7 +334,8 @@ class NavViews extends React.Component {
     return this.views[this.state.nav].render({
       navTo: this.navTo,
       navToDrive: this.navToDrive,
-      openSnackBar: this.props.openSnackBar
+      openSnackBar: this.props.openSnackBar,
+      pin: this.state.pin
     })
   }
 
@@ -551,7 +552,7 @@ class NavViews extends React.Component {
           backgroundColor: '#FFFFFF',
           display: 'flex',
           flexDirection: 'column',
-          zIndex: 10002,
+          zIndex: 102,
           WebkitAppRegion: 'no-drag',
           overflow: 'hidden',
           transition

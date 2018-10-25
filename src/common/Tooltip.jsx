@@ -48,12 +48,13 @@ class Tooltip extends React.PureComponent {
       top: (status === 'opening' || status === 'closing') ? -this.distance : 0,
       zIndex: 100,
       fontSize: 12,
-      color: '#292936',
+      color: '#FFF',
       marginTop: 50,
       marginLeft: this.marginLeft,
-      backgroundColor: '#FFF',
+      backgroundColor: '#000000',
+      borderRadius: 4,
       border: 'solid 1px #d9d9d9',
-      padding: 5,
+      padding: '4px 10px',
       opacity: (['opening', 'closing', 'closed'].includes(status)) ? 0 : 1,
       transition: status === 'opening'
         ? `top ${this.dur}ms cubic-bezier(0.0, 0.0, 0.2, 1), opacity ${this.dur}ms cubic-bezier(0.0, 0.0, 0.2, 1)`

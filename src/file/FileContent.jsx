@@ -9,8 +9,9 @@ import GridView from './GridView'
 import CircularLoading from '../common/CircularLoading'
 
 /* Draw Select Box */
-const TOP = 230
-const LEFT = 220
+const TOP = 206
+const LEFT = 72
+const LEFTPIN = 224
 
 class FileContent extends React.Component {
   constructor (props) {
@@ -143,7 +144,7 @@ class FileContent extends React.Component {
         const s = this.refSelectBox.style
         s.display = ''
         s.top = `${event.clientY - TOP}px`
-        s.left = `${event.clientX - LEFT}px`
+        s.left = `${event.clientX - (this.props.pin ? LEFTPIN : LEFT)}px`
         this.selectBox = { x: event.clientX, y: event.clientY, session: (new Date()).getTime() }
         this.preScrollTop = scrollTop || this.preScrollTop
         document.addEventListener('mousemove', this.exSelect)
@@ -176,26 +177,27 @@ class FileContent extends React.Component {
       if (dy < 0) this.up = true
       else this.up = false
 
+      const L = this.props.pin ? LEFTPIN : LEFT
       if (dx > 0) {
         s.width = `${dx}px`
-        s.left = `${this.selectBox.x - LEFT}px`
-      } else if (event.clientX - LEFT > 0) {
+        s.left = `${this.selectBox.x - L}px`
+      } else if (event.clientX - L > 0) {
         s.width = `${-dx}px`
-        s.left = `${event.clientX - LEFT}px`
+        s.left = `${event.clientX - L}px`
       } else {
-        s.width = `${this.selectBox.x - LEFT}px`
+        s.width = `${this.selectBox.x - L}px`
         s.left = '0px'
       }
 
       if (dy > 0) {
         s.height = `${dy}px`
         s.top = `${this.selectBox.y - TOP}px`
-      } else if (event.clientY - TOP > 40) {
+      } else if (event.clientY - TOP > 48) {
         s.height = `${-dy}px`
         s.top = `${event.clientY - TOP}px`
       } else {
-        s.height = `${this.selectBox.y - TOP - 40}px`
-        s.top = '40px'
+        s.height = `${this.selectBox.y - TOP - 48}px`
+        s.top = '48px'
       }
     }
 
@@ -223,7 +225,7 @@ class FileContent extends React.Component {
     /* calc rows should be selected */
     this.calcRow = (scrollTop) => {
       const s = this.refSelectBox.style
-      const lineHeight = 40
+      const lineHeight = 48
       const length = this.props.entries.length
 
       const array = Array
