@@ -195,6 +195,47 @@ export class RRButton extends Button {
   }
 }
 
+/* New Action Button */
+export class ActButton extends Button {
+  render () {
+    const { label, shrinked } = this.props
+    const Icon = this.props.icon
+    const height = 48
+    const width = shrinked ? 48 : 192
+    const cursor = 'pointer'
+    const borderRadius = height / 2
+    const backgroundColor = '#FFFFFF'
+    const margin = shrinked ? '20px' : '20px 16px'
+
+    const boxShadow = this.state.hover ? '0px 5px 6.6px 0.4px rgba(96, 125, 139, 0.24), 0px 2px 9.8px 0.2px rgba(55, 71, 79, 0.16)'
+      : '0px 1px 0.9px 0.1px rgba(69, 90, 100, 0.24), 0 0 1px 0px rgba(69, 90, 100, 0.16)'
+
+    const buttonStyle = {
+      width,
+      height,
+      cursor,
+      margin,
+      borderRadius,
+      backgroundColor,
+      boxShadow,
+      position: 'relative',
+      overflow: 'hidden',
+      display: 'flex',
+      alignItems: 'center'
+    }
+
+    const iconStyle = { color: '#00695c', marginLeft: shrinked ? 16 : 20, width: 18, height: 18, transition: 'all 0ms' }
+    const textStyle = { marginLeft: 32, fontSize: 16 }
+
+    return (
+      <div {...this.funcs} style={buttonStyle}>
+        <Icon style={iconStyle} />
+        { !shrinked && <div style={textStyle}> { label } </div> }
+      </div>
+    )
+  }
+}
+
 /* Flat Button */
 export class FLButton extends Button {
   render () {
@@ -302,9 +343,11 @@ export class MenuButton extends Button {
     const { text, selected } = this.props
     const Icon = this.props.icon
     const backgroundColor = this.state.hover ? '#F5F5F5' : '#FFF'
-    const textColor = selected ? '#009688' : 'var(--dark-text)'
-    const iconColor = selected ? '#00695c' : 'var(--dark-text)'
+    const textColor = selected ? '#009688' : 'var(--black-87)'
+    const iconColor = selected ? '#00695c' : 'var(--black-54)'
     const zIndex = selected ? 100 : 1
+    const opacity = selected ? 1 : 0.87
+    const fontWeight = selected ? 'bold' : 'normal'
     const borderRadius = 0
 
     return (
@@ -317,13 +360,14 @@ export class MenuButton extends Button {
           alignItems: 'center',
           cursor: 'pointer',
           zIndex,
+          opacity,
           borderRadius,
           backgroundColor
         }}
         {...this.funcs}
       >
         <Icon style={{ margin: '0 32px', width: 24, height: 24, color: iconColor }} />
-        <div style={{ color: textColor }}> { text } </div>
+        <div style={{ color: textColor, fontWeight }}> { text } </div>
       </div>
     )
   }
@@ -358,24 +402,24 @@ export class TFButton extends Button {
 
 const styles = {
   largeIcon: {
-    width: 30,
-    height: 30
+    width: 24,
+    height: 24
   },
   largeButton: {
-    width: 50,
-    height: 50,
-    padding: 10,
+    width: 48,
+    height: 48,
+    padding: 8,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center'
   },
   smallIcon: {
-    width: 30,
-    height: 30
+    width: 24,
+    height: 24
   },
   smallButton: {
-    width: 30,
-    height: 30,
+    width: 24,
+    height: 24,
     padding: 0,
     display: 'flex',
     alignItems: 'center',
@@ -404,7 +448,7 @@ export class SIButton extends React.PureComponent {
   render () {
     const { disabled } = this.props
     const style = Object.assign({}, styles.smallButton, this.props.style)
-    const iconStyle = Object.assign({ color: '#7d868f', opacity: disabled ? 0.5 : 1 }, styles.smallIcon, this.props.iconStyle)
+    const iconStyle = Object.assign({ color: 'rgba(0,0,0,.54)', opacity: disabled ? 0.5 : 1 }, styles.smallIcon, this.props.iconStyle)
     const props = Object.assign({}, this.props)
     delete props.tooltip
     return (

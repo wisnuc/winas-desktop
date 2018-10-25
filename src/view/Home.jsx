@@ -17,7 +17,7 @@ import FlatButton from '../common/FlatButton'
 import MenuItem from '../common/MenuItem'
 import sortByType from '../common/sort'
 import { BreadCrumbItem, BreadCrumbSeparator } from '../common/BreadCrumb'
-import { BackwardIcon, ForwardIcon, RefreshAltIcon, DownloadIcon, DeleteFileIcon, NewFolderIcon, ListIcon, GridIcon, HelpIcon, ArrowIcon, FolderIcon, FolderSelectedIcon } from '../common/Svg'
+import { BackwardIcon, ForwardIcon, RefreshAltIcon, DownloadIcon, DeleteFileIcon, NewFolderIcon, ListIcon, GridIcon, HelpIcon, ArrowIcon, FolderIcon, FolderOutlineIcon } from '../common/Svg'
 import renderFileIcon from '../common/renderFileIcon'
 import { xcopyMsg } from '../common/msg'
 import Search from '../common/Search'
@@ -734,11 +734,11 @@ class Home extends Base {
   }
 
   menuIcon () {
-    return FolderIcon
+    return FolderOutlineIcon
   }
 
   menuSelectedIcon () {
-    return FolderSelectedIcon
+    return FolderIcon
   }
 
   /* renderers */
@@ -915,19 +915,24 @@ class Home extends Base {
     const noForward = curr > queue.length - 2
     const { select } = this.state
     const itemSelected = select && select.selected && select.selected.length
-    const color = '#7d868f'
+    const color = 'rgba(0,0,0,.54)'
 
-    const iconStyle = disabled => ({ color: disabled ? 'rgba(125, 134, 143, 0.5)' : color, width: 30, height: 30 })
+    const iconStyle = disabled => ({ color: disabled ? 'rgba(0,0,0,.54)' : color, width: 24, height: 24 })
     const inRoot = this.state.inRoot || (this.hasRoot && !this.phyDrive)
     return (
       <div style={style}>
-        <div style={{ width: 15 }} />
+        <div style={{ width: 16 }} />
         <LIButton onClick={this.back} tooltip={i18n.__('Backward')} disabled={noBack}>
           <BackwardIcon color={color} />
         </LIButton>
         <div style={{ width: 5 }} />
-        <LIButton onClick={this.forward} tooltip={i18n.__('Forward')} disabled={noForward}>
-          <ForwardIcon color={color} />
+        <LIButton
+          onClick={this.forward}
+          tooltip={i18n.__('Forward')}
+          disabled={noForward}
+          iconStyle={{ transform: 'rotate(180deg)' }}
+        >
+          <BackwardIcon color={color} />
         </LIButton>
         <div style={{ width: 5 }} />
         <LIButton onClick={() => this.refresh()} tooltip={i18n.__('Refresh')} >

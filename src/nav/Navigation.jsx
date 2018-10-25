@@ -45,7 +45,7 @@ import Search from '../common/Search'
 import Fruitmix from '../common/fruitmix'
 import WindowAction from '../common/WindowAction'
 import DialogOverlay from '../common/PureDialog'
-import { LIButton } from '../common/Buttons'
+import { LIButton, ActButton } from '../common/Buttons'
 import { TopLogo, FileManage, DeviceChangeIcon, FuncIcon, BackIcon, HelpIcon, WisnucLogo, MenuIcon, SearchIcon, FolderIcon, TransIcon, ShareIcon, BackupIcon, DeviceIcon, AddIcon, ArrowDownIcon, AccountIcon } from '../common/Svg'
 
 const HEADER_HEIGHT = 110
@@ -567,31 +567,54 @@ class NavViews extends React.Component {
   }
 
   renderNavs () {
+    const shrinked = !(this.state.pin || this.state.hoverNav)
+    const transition = 'width 225ms'
     return (
       <div
         style={{
-          position: 'relatvie',
+          position: 'absolute',
+          left: 0,
+          top: 0,
           height: '100%',
-          width: this.state.pin ? 88 : 224,
-          backgroundColor: '#FFFFFF'
+          width: shrinked ? 88 : 224,
+          backgroundColor: '#FFFFFF',
+          display: 'flex',
+          flexDirection: 'column',
+          zIndex: 10002,
+          WebkitAppRegion: 'no-drag',
+          overflow: 'hidden',
+          transition
         }}
+        onMouseMove={() => this.setState({ hoverNav: true })}
+        onMouseLeave={() => this.setState({ hoverNav: false })}
+        onMouseEnter={() => this.setState({ hoverNav: true })}
       >
         <div style={{ height: 34, width: '100%', display: 'flex', alignItems: 'center' }}>
           <div style={{ height: 34, width: 34, margin: 4 }} className="flexCenter">
-            <MenuIcon style={{ height: 18, width: 18 }} />
+            <MenuIcon style={{ height: 18, width: 18, cursor: 'pointer' }} onClick={() => this.setState({ pin: !this.state.pin })} />
           </div>
-          <div style={{ height: 34, width: 'calc(100% - 34px)', WebkitAppRegion: 'drag' }} />
+          <div style={{ height: 34, width: this.state.pin ? 180 : 0, WebkitAppRegion: 'drag', transition }} />
         </div>
-        <div style={{ height: 72, width: '100%', display: 'flex', alignItems: 'center' }}>
+        <div style={{ height: 72, width: 224, display: 'flex', alignItems: 'center' }}>
           <div style={{ height: 72, width: 88 }} className="flexCenter">
             <WisnucLogo style={{ width: 48, height: 48 }} />
           </div>
-          <div style={{ height: 72, fontSize: 24, fontWeight: 500, color: 'rgba(0,0,0,0.87)', display: 'flex', alignItems: 'center' }}>
+          <div
+            style={{
+              height: 72,
+              fontSize: 24,
+              fontWeight: 500,
+              color: 'rgba(0,0,0,0.87)',
+              alignItems: 'center',
+              opacity: 0.87,
+              display: 'flex'
+            }}
+          >
             WISNUC
           </div>
         </div>
         <div style={{ height: 72, width: '100%', padding: 16, boxSizing: 'border-box' }}>
-          <Search fire={this.search} hint={i18n.__('Search')} clear={this.clearSearch} />
+          <Search fire={this.search} hint={i18n.__('Search')} clear={this.clearSearch} shrinked={shrinked} />
         </div>
         <div style={{ width: 224 }}>
           <FileMenu
@@ -602,19 +625,30 @@ class NavViews extends React.Component {
             device={this.props.selectedDevice.mdev}
           />
         </div>
-        <div
-          style={{
-            height: 48,
-            margin: '20px 16px',
-            width: 'calc(100% - 32px)',
-            display: 'flex',
-            alignItems: 'center',
-            borderRadius: 24,
-            boxShadow: '0px 1px 0.9px 0.1px rgba(69, 90, 100, 0.24), 0 0 1px 0px rgba(69, 90, 100, 0.16)'
-          }}
-        >
-          <AddIcon style={{ margin: '0 32px 0 16px', color: '#00695c' }} />
-          <div style={{ color: 'var(--dark-text)' }}> { i18n.__('New') } </div>
+        <ActButton label={i18n.__('New')} icon={AddIcon} shrinked={shrinked} />
+        <div style={{ flexGrow: 1 }} />
+        <div style={{ height: 72, width: 224, display: 'flex', alignItems: 'center', position: 'relative' }}>
+          <div style={{ height: 72, width: 88 }} className="flexCenter">
+            <DeviceIcon style={{ width: 24, height: 24 }} />
+          </div>
+          <div style={{ height: 72, marginTop: 16 }}>
+            <div style={{ opacity: 0.87, fontWeight: 500 }}> winsun office </div>
+            <div style={{ height: 4, width: 92, backgroundColor: 'rgba(0,0,0,.08)', position: 'relative', margin: '8px 0px' }} >
+              <div
+                style={{
+                  position: 'absolute',
+                  height: 4,
+                  width: 31,
+                  backgroundImage: 'linear-gradient(to right, #006e7b, #009688)',
+                  borderRadius: 2
+                }}
+              />
+            </div>
+            <div style={{ opacity: 0.54, color: 'rgba(0,0,0,.54)', fontSize: 12, fontWeight: 500 }}> 125.45GB / 4TB </div>
+          </div>
+          <div style={{ position: 'absolute', right: 12, top: 24, opacity: 0.38, height: 18, width: 18 }}>
+            <ArrowDownIcon />
+          </div>
         </div>
       </div>
     )
@@ -638,26 +672,18 @@ class NavViews extends React.Component {
     }
     if (this.state.changeDevice) view = this.renderChangeDevice()
     return (
-      <div style={{ width: '100%', height: '100%', display: 'flex', overflow: 'hidden' }} >
-        {/* Header */}
-        {/*
-        <div
-          style={{
-            height: 34,
-            width: '100%',
-            position: 'relative',
-            WebkitAppRegion: 'drag',
-            backgroundColor: '#f5f5f5'
-          }}
-        />
-        */}
-
+      <div style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }} >
         {/* Navs */}
         { this.renderNavs() }
-        {/* this.renderHeader() */}
 
         {/* Views */}
-        <div style={{ height: '100%', width: 'calc(100% - 224px)', position: 'relative' }}>
+        <div
+          style={{
+            height: '100%',
+            width: `calc(100% - ${this.state.pin ? 224 : 72}px)`,
+            marginLeft: this.state.pin ? 224 : 72
+          }}
+        >
           <div
             style={{
               height: 72,
@@ -666,7 +692,7 @@ class NavViews extends React.Component {
               backgroundColor: '#f5f5f5',
               display: 'flex',
               alignItems: 'center',
-              WebkitAppRegion: 'drag'
+              WebkitAppRegion: this.state.hoverNav ? 'no-drag' : 'drag'
             }}
           >
             <div style={{ fontSize: 21, fontWeight: 50, marginLeft: 16 }}> { i18n.__('My Space') } </div>

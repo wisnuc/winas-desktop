@@ -35,7 +35,7 @@ class Row extends React.PureComponent {
     const onDropping = entry.type === 'directory' && select.rowDrop(index)
 
     /* backgroud color */
-    const backgroundColor = onDropping ? '#FFF' : select.rowColor(index)
+    const backgroundColor = onDropping ? '#f8f9fa' : select.rowColor(index)
 
     const isSelected = select.selected.includes(index)
 
@@ -270,7 +270,16 @@ class RenderListByRow extends React.Component {
       : this.props.select.addByArray(Array.from({ length: this.props.entries.length }, (v, i) => i)))
 
     return (
-      <div style={{ width: '100%', height: '100%', boxSizing: 'border-box', position: 'relative' }} onDrop={this.props.drop}>
+      <div
+        style={{
+          marginLeft: 32,
+          width: 'calc(100% - 32px)',
+          height: '100%',
+          boxSizing: 'border-box',
+          position: 'relative'
+        }}
+        onDrop={this.props.drop}
+      >
         {/* header */}
         <div
           style={{
@@ -281,9 +290,8 @@ class RenderListByRow extends React.Component {
             zIndex: 100,
             display: 'flex',
             alignItems: 'center',
-            backgroundColor: '#f8f8f8'
+            backgroundColor: '#f8f9fa'
           }}
-          role="presentation"
         >
           <div style={{ width: 28, marginLeft: 2, marginRight: 12, display: 'flex', alignItems: 'center' }}>
             {

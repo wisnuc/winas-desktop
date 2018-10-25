@@ -208,15 +208,15 @@ class ListSelect extends EventEmitter {
   }
 
   rowColor (index) {
-    if (this.state.selected.includes(index)) return '#f4fafe'
-    else if (this.shiftInRange(index) || (index === this.state.hover && !this.dragging.length)) return '#f9fcfe'
-    return '#FFF'
+    if (this.state.selected.includes(index)) return 'rgba(224, 247, 250, 0.26)'
+    else if (this.shiftInRange(index) || (index === this.state.hover && !this.dragging.length)) return 'rgba(224, 247, 250, 0.26)'
+    return '#f8f9fa'
   }
 
   rowBorder (index) {
-    let borderColor = '#31a0f5'
-    let borderTopColor = '#31a0f5'
-    let borderBottomColor = '#31a0f5'
+    let borderColor = '#009688'
+    let borderTopColor = '#009688'
+    let borderBottomColor = '#009688'
 
     /* not selected, not specified, not hover */
     if (!this.state.selected.includes(index) && this.state.specified !== index && this.state.hover !== index) return ({})

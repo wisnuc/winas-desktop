@@ -77,25 +77,15 @@ export const UploadFile = f('icon_fileupload')
 
 export const UploadFold = f('icon_folderupload')
 
-export const RefreshAltIcon = f('icon_refresh')
-
 export const ForwardIcon = f('icon_back')
-
-export const BackwardIcon = f('icon_forward')
 
 export const DownloadIcon = f('icon_download')
 
 export const UploadIcon = f('icon_upload')
 
-export const DeleteIcon = f('icon_del_list')
-
 export const DeleteFileIcon = f('icon_delete_file')
 
 export const NewFolderIcon = f('icon_folder_add')
-
-export const ListIcon = f('icon_thumbnail_list')
-
-export const GridIcon = f('icon_thumbnail')
 
 export const BackIcon = f('icon_arrow_back')
 
@@ -159,8 +149,6 @@ export const EyeOpenIcon = f('icon_eye_list')
 
 export const EyeOffIcon = f('icon_password_invisi')
 
-export const RefreshIcon = f('icon_refresh1')
-
 export const AddDeviceIcon = f('icon_add')
 
 export const SmallHelpIcon = f('icon_help_list')
@@ -216,7 +204,7 @@ export const GIFFont = props => (
 export const MenuIcon = f('menu')
 export const SearchIcon = f('search')
 export const FolderIcon = f('folder')
-export const FolderSelectedIcon = f('folder-selected')
+export const FolderOutlineIcon = f('folder-outline')
 export const TransIcon = f('transfer')
 export const AlbumIcon = f('album')
 export const AlbumSelectedIcon = f('album-selected')
@@ -233,3 +221,12 @@ export const WinNormalIcon = f('window-normal')
 export const WinCloseIcon = f('window-close')
 export const CloseIcon = f('window-close')
 export const AccountIcon = f('account')
+export const GridIcon = f('grid')
+export const ListIcon = f('list')
+export const RefreshIcon = f('refresh')
+export const RefreshAltIcon = f('refresh')
+export const InfoIcon = f('info')
+export const BackwardIcon = f('backspace')
+export const SettingsIcon = f('settings')
+export const MoreIcon = f('more')
+export const DeleteIcon = f('delete')
