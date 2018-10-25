@@ -24,15 +24,15 @@ export class BreadCrumbItem extends React.PureComponent {
       <div
         style={{
           cursor: 'pointer',
-          borderRadius: 2, // mimic a flat button
-          height: 24,
+          borderRadius: 4, // mimic a flat button
+          height: 28,
           paddingLeft: 2,
           paddingRight: 2,
           fontSize: 12,
-          color: this.state.hover ? '#31a0f5' : last ? '#505259' : '#85868c',
+          color: this.state.hover ? '#000000' : last ? '#505259' : '#85868c',
           display: 'flex',
           alignItems: 'center',
-          backgroundColor: 'transparent'
+          backgroundColor: this.state.hover ? '#cfd8dc' : 'transparent'
         }}
         onClick={onClick}
         onMouseMove={this.onMouseMove}

@@ -388,8 +388,8 @@ class NavViews extends React.Component {
   }
 
   renderFileGroup () {
-    const toolBarStyle = { height: 50, width: '100%', display: 'flex', alignItems: 'center', backgroundColor: '#f8f8f8' }
-    const titleStyle = { height: 70, width: '100%', display: 'flex', alignItems: 'center' }
+    const toolBarStyle = { height: 40, width: '100%', display: 'flex', alignItems: 'center' }
+    const titleStyle = { height: 52, display: 'flex', alignItems: 'center' }
 
     return (
       <div
@@ -399,43 +399,14 @@ class NavViews extends React.Component {
           height: '100%',
           width: '100%',
           position: 'relative',
-          backgroundColor: '#FFF'
+          backgroundColor: '#f8f8f8'
         }}
       >
-        {/* shadow of FileMenu */}
-        {/*
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 220,
-            width: 20,
-            height: '100%',
-            backgroundImage: 'linear-gradient(to right, rgba(23,99,207,.03), transparent)'
-          }}
-        />
-        */}
-
-        {/*
-        */}
-
-        {/* shadow of FileMenu toolbar part */}
-        {/*
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 220,
-            width: 20,
-            height: 50,
-            backgroundImage: 'linear-gradient(to right, rgba(23,99,207,.03), transparent)'
-          }}
-        />
-        */}
-
         <div style={{ height: '100%', width: '100%', position: 'relative' }}>
           {/* Toolbar */}
+          <div style={{ height: 4 }} />
           { this.views[this.state.nav].renderToolBar({ style: toolBarStyle, openHelp: this.openHelp }) }
+          <div style={{ height: 4 }} />
 
           {/* Title and BreadCrumbItem */}
           { this.views[this.state.nav].renderTitle({ style: titleStyle }) }
@@ -689,13 +660,13 @@ class NavViews extends React.Component {
               height: 72,
               padding: '34px 0 0 32px',
               width: 'calc(100% - 32px)',
-              backgroundColor: '#f5f5f5',
+              backgroundColor: '#f8f8f8',
               display: 'flex',
               alignItems: 'center',
               WebkitAppRegion: this.state.hoverNav ? 'no-drag' : 'drag'
             }}
           >
-            <div style={{ fontSize: 21, fontWeight: 50, marginLeft: 16 }}> { i18n.__('My Space') } </div>
+            <div style={{ fontSize: 21, fontWeight: 50, marginLeft: 24 }}> { i18n.__('My Space') } </div>
             <div style={{ flexGrow: 1 }} />
             <AccountIcon style={{ width: 32, height: 32, marginRight: 24 }} />
           </div>

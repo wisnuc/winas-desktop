@@ -10,14 +10,12 @@ import FileDetail from '../file/FileDetail'
 import ListSelect from '../file/ListSelect'
 import FileContent from '../file/FileContent'
 import NewFolderDialog from '../file/NewFolderDialog'
-import FileUploadButton from '../file/FileUploadButton'
 import ContextMenu from '../common/ContextMenu'
 import DialogOverlay from '../common/PureDialog'
-import FlatButton from '../common/FlatButton'
 import MenuItem from '../common/MenuItem'
 import sortByType from '../common/sort'
 import { BreadCrumbItem, BreadCrumbSeparator } from '../common/BreadCrumb'
-import { BackwardIcon, ForwardIcon, RefreshAltIcon, DownloadIcon, DeleteFileIcon, NewFolderIcon, ListIcon, GridIcon, HelpIcon, ArrowIcon, FolderIcon, FolderOutlineIcon } from '../common/Svg'
+import { BackwardIcon, RefreshAltIcon, DeleteIcon, MoreIcon, ListIcon, GridIcon, InfoIcon, ArrowIcon, FolderIcon, FolderOutlineIcon } from '../common/Svg'
 import renderFileIcon from '../common/renderFileIcon'
 import { xcopyMsg } from '../common/msg'
 import Search from '../common/Search'
@@ -884,27 +882,20 @@ class Home extends Base {
   }
 
   renderTitle ({ style }) {
-    const breadCrumbStyle = { color: 'var(--grey-text)', width: '100%', display: 'flex', alignItems: 'center', flexWrap: 'wrap' }
+    const breadCrumbStyle = { height: 28, fontSize: 12, color: 'rgba(0,0,0,.54)', display: 'flex', alignItems: 'center', flexWrap: 'wrap' }
     return (
       <div style={style}>
         {
           !this.state.showSearch ? (
-            <div style={{ height: 70 }}>
-              <div style={{ fontSize: 20, color: 'var(--dark-text)', marginTop: 12, marginLeft: 24 }}>
-                { this.menuName() }
-              </div>
+            <div style={{ height: 40, marginLeft: 32 }}>
               { this.renderBreadCrumbItem({ style: breadCrumbStyle }) }
             </div>
           ) : (
-            <div style={{ fontSize: 20, color: 'var(--dark-text)', height: 70, marginLeft: 30, display: 'flex', alignItems: 'center' }}>
+            <div style={{ fontSize: 20, height: 40, marginLeft: 30, display: 'flex', alignItems: 'center' }}>
               { i18n.__('Search Result of %s', this.state.showSearch) }
             </div>
           )
         }
-        <div style={{ flexGrow: 1 }} />
-        <div style={{ marginRight: 15, height: 51, paddingTop: 19, display: (this.hasRoot && !this.phyDrive) ? 'none' : '' }}>
-          <Search fire={this.search} hint={i18n.__('Search') + this.title()} key={this.menuName()} clear={this.clearSearch} />
-        </div>
       </div>
     )
   }
@@ -913,15 +904,15 @@ class Home extends Base {
     const { curr, queue } = this.history.get()
     const noBack = curr < 1
     const noForward = curr > queue.length - 2
+    const color = 'rgba(0,0,0,.54)'
     const { select } = this.state
     const itemSelected = select && select.selected && select.selected.length
-    const color = 'rgba(0,0,0,.54)'
 
     const iconStyle = disabled => ({ color: disabled ? 'rgba(0,0,0,.54)' : color, width: 24, height: 24 })
     const inRoot = this.state.inRoot || (this.hasRoot && !this.phyDrive)
     return (
       <div style={style}>
-        <div style={{ width: 16 }} />
+        <div style={{ width: 44 }} />
         <LIButton onClick={this.back} tooltip={i18n.__('Backward')} disabled={noBack}>
           <BackwardIcon color={color} />
         </LIButton>
@@ -941,50 +932,33 @@ class Home extends Base {
 
         <div style={{ flexGrow: 1 }} />
 
-        <FlatButton
-          onClick={this.download}
-          label={i18n.__('Download')}
-          labelStyle={{ fontSize: 14, marginLeft: 4 }}
-          disabled={!itemSelected || inRoot}
-          icon={<DownloadIcon style={iconStyle(!itemSelected || inRoot)} />}
-        />
+        {
+          !!itemSelected &&
+            <LIButton onClick={() => this.toggleDialog('delete')} tooltip={i18n.__('Delete')} >
+              <DeleteIcon />
+            </LIButton>
+        }
 
-        <FileUploadButton upload={this.upload} disabled={inRoot || this.isMedia} />
+        <LIButton onClick={() => {}} tooltip={i18n.__('More')} >
+          <MoreIcon />
+        </LIButton>
 
-        <FlatButton
-          onClick={() => this.toggleDialog('delete')}
-          label={i18n.__('Delete')}
-          labelStyle={{ fontSize: 14, marginLeft: 4 }}
-          disabled={!itemSelected || inRoot}
-          icon={<DeleteFileIcon style={iconStyle(!itemSelected || inRoot)} />}
-        />
-
-        <FlatButton
-          label={i18n.__('Create New Folder')}
-          labelStyle={{ fontSize: 14, marginLeft: 4 }}
-          onClick={() => this.toggleDialog('createNewFolder')}
-          disabled={inRoot || this.isMedia}
-          icon={<NewFolderIcon style={iconStyle(inRoot || this.isMedia)} />}
-        />
-
-        <FlatButton
+        <LIButton
           onClick={() => this.toggleDialog('gridView')}
-          label={this.state.gridView ? i18n.__('List View') : i18n.__('Grid View')}
-          labelStyle={{ fontSize: 14, marginLeft: 4 }}
+          tooltip={this.state.gridView ? i18n.__('List View') : i18n.__('Grid View')}
           disabled={inRoot}
-          icon={this.state.gridView
-            ? <ListIcon style={iconStyle(inRoot)} />
-            : <GridIcon style={iconStyle(inRoot)} />
+        >
+          {
+            this.state.gridView
+              ? <ListIcon style={iconStyle(inRoot)} />
+              : <GridIcon style={iconStyle(inRoot)} />
           }
-        />
+        </LIButton>
 
-        <FlatButton
-          label={i18n.__('Help')}
-          labelStyle={{ fontSize: 14, marginLeft: 4 }}
-          onClick={openHelp}
-          icon={<HelpIcon style={iconStyle()} />}
-        />
-        <div style={{ width: 10 }} />
+        <LIButton onClick={openHelp} tooltip={i18n.__('Info')} >
+          <InfoIcon />
+        </LIButton>
+        <div style={{ width: 8 }} />
       </div>
     )
   }

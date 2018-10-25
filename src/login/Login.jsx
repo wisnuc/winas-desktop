@@ -345,11 +345,10 @@ class Login extends React.Component {
           <img
             width={168}
             height={18}
-            src="./assets/images/logo.png"
             alt=""
           />
           <div style={{ fontSize: 14, color: '#888a8c', marginTop: 8, letterSpacing: 1.4 }}>
-            { i18n.__('Welcome Text') }
+            { i18n.__('Welcome') }
           </div>
         </div>
 
@@ -410,7 +409,7 @@ class Login extends React.Component {
             { i18n.__('Client Version %s', global.config && global.config.appVersion) }
           </div>
           <div style={{ marginRight: 20 }}>
-            { i18n.__('Phone Number %s', '4007-567-567') }
+            { i18n.__('Phone Number %s', '4000-123-456') }
           </div>
         </div>
         { view }

@@ -119,5 +119,5 @@ export function formatMtime (mtime) {
   if (!mtime) return null
   const time = new Date()
   time.setTime(parseInt(mtime, 10))
-  return `${time.getFullYear()}-${time.getMonth() + 1}-${time.getDate()}`
+  return time.toJSON().slice(0, 10)
 }

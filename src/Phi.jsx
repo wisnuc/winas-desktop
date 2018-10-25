@@ -155,19 +155,20 @@ class Fruitmix extends React.Component {
           { view }
 
           {/* Account */}
-          {
+          {/*
             this.state.account &&
               <div style={{ position: 'fixed', top: 12, right: 147, height: 36, WebkitAppRegion: 'no-drag' }}>
                 <Account
+
                   user={this.state.account}
                   logout={() => this.logout()}
                   device={this.state.selectedDevice}
                   showUsers={() => this.setState({ showUsers: true })}
                 />
               </div>
-          }
+          */}
 
-          {
+          {/*
             !!this.state.showUsers &&
               <Users
                 phi={this.state.phi}
@@ -176,7 +177,7 @@ class Fruitmix extends React.Component {
                 onCancel={this.onCloseUsers}
                 openSnackBar={msg => this.openSnackBar(msg)}
               />
-          }
+          */}
 
           {/* snackBar */}
           { this.renderSnackBar() }
