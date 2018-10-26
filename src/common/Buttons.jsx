@@ -513,8 +513,8 @@ export class TextField extends React.PureComponent {
         fullWidth
         ref={input => input && this.props.autoFoucus && input.focus()}
         style={{ marginTop: 32, marginBottom: -10 }}
-        hintStyle={{ color: '#c4c5cc', fontSize: 14, marginBottom: 5 }}
-        inputStyle={{ color: '#505259', fontSize: 14, marginTop: -5 }}
+        hintStyle={{ color: '#c4c5cc', fontSize: 14, marginBottom: 5, marginLeft: 16 }}
+        inputStyle={{ fontWeight: 500, fontSize: 18, marginTop: -5, marginLeft: 16 }}
         errorStyle={{ position: 'absolute', left: -9, bottom: 45 }}
         underlineStyle={{ backgroundColor: '#eaeaea' }}
         underlineDisabledStyle={{ borderBottom: '1px solid #eaeaea' }}

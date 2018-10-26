@@ -56,10 +56,6 @@ export const DeviceChangeIcon = f('icon_changedev')
 export const FuncIcon = f('icon_func')
 
 /* Toolbar in home */
-export const UploadFile = f('icon_fileupload')
-
-export const UploadFold = f('icon_folderupload')
-
 export const ForwardIcon = f('icon_back')
 
 export const DownloadIcon = f('icon_download')
@@ -67,8 +63,6 @@ export const DownloadIcon = f('icon_download')
 export const UploadIcon = f('icon_upload')
 
 export const DeleteFileIcon = f('icon_delete_file')
-
-export const NewFolderIcon = f('icon_folder_add')
 
 export const BackIcon = f('icon_arrow_back')
 
@@ -158,12 +152,6 @@ export const TransErrorIcon = f('icon_trans_error')
 
 export const TopLogo = f('icon_topbarlogo')
 
-export const CheckedIcon = props => (
-  <SvgIcon viewBox="0 0 9.5 7.5" {...props}>
-    <path fill="none" stroke="#FFF" d="M1.499 2.5l2.001 2 4-4" />
-  </SvgIcon>
-)
-
 export const CircleIcon = () => (
   <svg width="24px" height="24px" viewBox="0 0 24 24" fill="rgba(255,255,255,0.54)">
     <path
@@ -221,3 +209,13 @@ export const TypeUnknownIcon = f('file')
 export const AudioIcon = f('audio')
 export const VideoIcon = f('video')
 export const AllFileIcon = f('folder')
+export const UploadFile = f('upload-file')
+export const UploadFold = f('upload-folder')
+export const PCIcon = f('pc')
+export const MobileIcon = f('mobile')
+export const NewPhotoIcon = f('new-photo')
+export const NewFolderIcon = f('new-folder')
+export const CheckedIcon = f('check')
+export const ShareToIcon = f('share')
+export const ExitIcon = f('exit')
+export const WarningIcon = f('warning')

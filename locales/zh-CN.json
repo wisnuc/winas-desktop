@@ -563,8 +563,8 @@
   "Error in Base Text": "加载页面失败",
 
   "==== view/Home.jsx ====": "",
-  "Home Menu Name": "私有盘",
-  "Home Title": "私有盘",
+  "Home Menu Name": "我的空间",
+  "Home Title": "我的空间",
   "Offline Text": "网络连接已断开，请检查网络设置",
   "Copy(noun)": "副本",
   "Dup File Success": "制作副本成功",
@@ -630,8 +630,8 @@
   "Built-in Drive": "默认共享盘",
 
   "==== view/Photo.jsx ====": "",
-  "Photo Menu Name": "我的图片",
-  "Photo Quick Name": "图片",
+  "Photo Menu Name": "相簿",
+  "Photo Quick Name": "相簿",
   "Photo Title and Count %s": {
     "zero": "我的图片",
     "other": "我的图片（%s）"
@@ -1130,7 +1130,11 @@
   "Confirm Format Disk 1 Text": "磁盘1将被格式化,磁盘2数据及用户系统将被导入,请确认操作",
 
   "==== nav/Navigation.jsx ====": "",
+  "New": "新建",
   "Detail": "详情",
+  "Backup": "备份",
+  "Transfer": "传输任务",
+  "Specific Type": "指定类型",
   "Change Device": "切换设备",
   "Files Menu Name": "文件管理",
   "Transmission Menu Name": "传输列表",
