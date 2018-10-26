@@ -49,14 +49,50 @@ const renderFileIcon = (name, metadata, setSize) => {
     OTHER: TypeUnknownIcon
   }
 
+  const colorArray = {
+    PDF: '#db4437',
+    DOCX: '#4285f4',
+    DOC: '#4285f4',
+    XLS: '#0f9d58',
+    XLSX: '#0f9d58',
+    PPT: '#db4437',
+    PPTX: '#db4437',
+    RA: '#00bcd4',
+    OGG: '#00bcd4',
+    MKA: '#00bcd4',
+    WAV: '#00bcd4',
+    MP3: '#00bcd4',
+    APE: '#00bcd4',
+    WMA: '#00bcd4',
+    FLAC: '#00bcd4',
+    RM: '#f44336',
+    RMVB: '#f44336',
+    WMV: '#f44336',
+    AVI: '#f44336',
+    MP4: '#f44336',
+    '3GP': '#f44336',
+    MKV: '#f44336',
+    MOV: '#f44336',
+    FLV: '#f44336',
+    MPEG: '#f44336',
+    PNG: '#ea4335',
+    JPG: '#ea4335',
+    JPEG: '#ea4335',
+    GIF: '#ea4335',
+    BMP: '#ea4335',
+    TIFF: '#ea4335',
+    RAW: '#ea4335'
+  }
+
   let type = (metadata && metadata.type) || extension.toUpperCase()
   // debug('renderFileIcon', name, metadata, extension, iconArray, type)
   if (!iconArray[type]) type = 'OTHER'
 
   const Icon = iconArray[type]
+  const color = colorArray[type] || 'rgba(0,0,0,.54)'
   const size = setSize || 24
 
-  return (<Icon style={{ width: size, height: size }} />)
+  return (<Icon style={{ width: size, height: size, color }} />)
 }
 
 export default renderFileIcon

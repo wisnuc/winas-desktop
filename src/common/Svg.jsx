@@ -14,23 +14,6 @@ const f = id => props => (
 )
 
 /* File type icon */
-export const TXTIcon = f('icon_text_thumb')
-
-export const PDFIcon = f('icon_pdf_thumb')
-
-export const WORDIcon = f('icon_word_thumb')
-
-export const EXCELIcon = f('icon_excel_thumb')
-
-export const PPTIcon = f('icon_ppt_thumb')
-
-export const PhotoIcon = f('icon_image_thumb')
-
-export const TypeUnknownIcon = f('icon_unknow_thumb')
-
-export const AudioIcon = f('icon_music_thumb')
-
-export const VideoIcon = f('icon_mov_thumb')
 
 export const RARIcon = f('icon_package_thumb')
 
@@ -90,8 +73,6 @@ export const NewFolderIcon = f('icon_folder_add')
 export const BackIcon = f('icon_arrow_back')
 
 export const HelpIcon = f('icon_help')
-
-export const AllFileIcon = f('icon_folder_thumb')
 
 export const MyDocIcon = f('icon_doc')
 
@@ -230,3 +211,13 @@ export const BackwardIcon = f('backspace')
 export const SettingsIcon = f('settings')
 export const MoreIcon = f('more')
 export const DeleteIcon = f('delete')
+export const TXTIcon = f('txt')
+export const PDFIcon = f('pdf')
+export const WORDIcon = f('word')
+export const EXCELIcon = f('excel')
+export const PPTIcon = f('ppt')
+export const PhotoIcon = f('photo')
+export const TypeUnknownIcon = f('file')
+export const AudioIcon = f('audio')
+export const VideoIcon = f('video')
+export const AllFileIcon = f('folder')
