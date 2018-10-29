@@ -13,10 +13,10 @@ import Clipboard from './control/clipboard'
 import Navigation from './nav/Navigation'
 
 const defaultTheme = getMuiTheme({
-  fontFamily: 'Microsoft YaHei, PingFang SC, sans-serif',
-  color: '#50529',
+  fontFamily: 'Roboto, Noto Sans SC, Microsoft YaHei, PingFang SC, sans-serif',
+  color: 'rgba(0,0,0,.87)',
   fontSize: 14,
-  palette: { primary1Color: '#31a0f5', accent1Color: '#fa5353' }
+  palette: { primaryColor: '#009688', accentColor: '#ff4081' }
 })
 
 class Fruitmix extends React.Component {
@@ -34,6 +34,7 @@ class Fruitmix extends React.Component {
       forceUpdate: false,
       clipboard: new Clipboard(),
       phiLogin: this.phiLogin.bind(this),
+      setPalette: this.setPalette.bind(this),
       deviceLogin: this.deviceLogin.bind(this),
       deviceLogout: this.deviceLogout.bind(this),
       openSnackBar: this.openSnackBar.bind(this),
@@ -46,6 +47,17 @@ class Fruitmix extends React.Component {
     this.onCloseUsers = () => {
       this.setState({ showUsers: false, forceUpdate: true })
     }
+  }
+
+  setPalette (primaryColor, accentColor) {
+    this.setState({
+      theme: getMuiTheme({
+        fontFamily: 'Roboto, Noto Sans SC, Microsoft YaHei, PingFang SC, sans-serif',
+        color: 'rgba(0,0,0,.87)',
+        fontSize: 14,
+        palette: { primaryColor, accentColor }
+      })
+    })
   }
 
   clearForceUpdate () {

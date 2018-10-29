@@ -1252,7 +1252,6 @@ class Home extends Base {
         { this.renderMenu(this.state.contextMenuOpen) }
 
         { this.renderDialogs(openSnackBar, navTo) }
-
       </div>
     )
   }

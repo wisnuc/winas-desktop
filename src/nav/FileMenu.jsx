@@ -41,7 +41,7 @@ class NavDrawer extends React.Component {
   }
 
   render () {
-    const { views } = this.props
+    const { views, primaryColor } = this.props
     const { nav } = this.state
 
     return (
@@ -49,6 +49,7 @@ class NavDrawer extends React.Component {
         {
           ['home', 'photo', 'public', 'backup'].map(v => (
             <MenuButton
+              primaryColor={primaryColor}
               key={v}
               icon={nav === v ? views[v].menuSelectedIcon() : views[v].menuIcon()}
               text={views[v].menuName()}
@@ -63,6 +64,7 @@ class NavDrawer extends React.Component {
         {
           ['transfer'].map(v => (
             <MenuButton
+              primaryColor={primaryColor}
               key={v}
               icon={views[v].menuIcon()}
               text={views[v].menuName()}

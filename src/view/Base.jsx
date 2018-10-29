@@ -1,6 +1,6 @@
 import React from 'react'
 import i18n from 'i18n'
-import { pinkA200 } from 'material-ui/styles/colors'
+import { teal500, pinkA200 } from 'material-ui/styles/colors'
 import NavigationMenu from 'material-ui/svg-icons/navigation/menu'
 import { IconButton } from 'material-ui'
 import EventEmitter from 'eventemitter3'
@@ -56,7 +56,7 @@ class Base extends EventEmitter {
   }
 
   groupPrimaryColor () {
-    return '#31a0f5'
+    return teal500
   }
 
   groupAccentColor () {

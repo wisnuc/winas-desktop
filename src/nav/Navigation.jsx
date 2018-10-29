@@ -93,7 +93,8 @@ class NavViews extends React.Component {
 
     this.navTo = (nav, target) => {
       if ((nav !== this.state.nav) || (target && target.dirUUID)) {
-        this.setState({ nav })
+        this.props.setPalette(this.views[nav].primaryColor(), this.views[nav].accentColor())
+        this.setState({ nav, primaryColor: this.views[nav].primaryColor() })
         if (this.state.nav) this.views[this.state.nav].navLeave()
         this.views[nav].navEnter(target)
       } else if (nav === this.state.nav) {
@@ -429,7 +430,7 @@ class NavViews extends React.Component {
           {
             this.state.conflicts &&
               <Policy
-                primaryColor="#31a0f5"
+                primaryColor={this.state.primaryColor}
                 data={this.state.conflicts}
                 ipcRenderer={ipcRenderer}
                 handleTask={this.handleTask}
@@ -589,7 +590,7 @@ class NavViews extends React.Component {
         </div>
         <div style={{ height: 72, width: 224, display: 'flex', alignItems: 'center' }}>
           <div style={{ height: 72, width: 88 }} className="flexCenter">
-            <WisnucLogo style={{ width: 48, height: 48 }} />
+            <WisnucLogo style={{ width: 48, height: 48, color: this.state.primaryColor }} />
           </div>
           <div
             style={{
@@ -607,7 +608,13 @@ class NavViews extends React.Component {
         </div>
         {
           !this.state.searchMode ? (
-            <div>
+            <div
+              style={{
+                height: 'calc(100% - 106px)',
+                display: 'flex',
+                flexDirection: 'column'
+              }}
+            >
               <div
                 style={{ height: 72, width: '100%', padding: 16, boxSizing: 'border-box' }}
                 onClick={() => this.setState({ searchMode: true })}
@@ -626,9 +633,10 @@ class NavViews extends React.Component {
                   navTo={this.navTo}
                   hasUSB={!!this.hasUSB}
                   device={this.props.selectedDevice.mdev}
+                  primaryColor={this.state.primaryColor}
                 />
               </div>
-              <ActButton label={i18n.__('New')} icon={AddIcon} shrinked={shrinked} />
+              <ActButton label={i18n.__('New')} icon={AddIcon} shrinked={shrinked} primaryColor={this.state.primaryColor} />
               <div style={{ flexGrow: 1 }} />
               <div style={{ height: 72, width: 224, display: 'flex', alignItems: 'center', position: 'relative' }}>
                 <div style={{ height: 72, width: 88 }} className="flexCenter">
@@ -642,7 +650,7 @@ class NavViews extends React.Component {
                         position: 'absolute',
                         height: 4,
                         width: 31,
-                        backgroundImage: 'linear-gradient(to right, #006e7b, #009688)',
+                        backgroundColor: this.state.primaryColor,
                         borderRadius: 2
                       }}
                     />
@@ -655,9 +663,14 @@ class NavViews extends React.Component {
               </div>
             </div>
           ) : (
-            <div style={{ position: 'relative', height: '100%' }}>
+            <div
+              style={{
+                position: 'relative',
+                height: 'calc(100% - 106px)'
+              }}
+            >
               <div style={{ width: 192, marginLeft: 16, position: 'relative' }}>
-                <div style={{ marginTop: 0 }}>
+                <div style={{ marginTop: -16, height: 72 }}>
                   <TextField
                     type="text"
                     hintText={i18n.__('Search')}

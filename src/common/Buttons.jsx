@@ -1,8 +1,9 @@
+import i18n from 'i18n'
 import React from 'react'
-import { IconButton, Toggle as MToggle, Checkbox as MCheckbox, TextField as MTF } from 'material-ui'
+import { IconButton, Toggle as MToggle, Checkbox as MCheckbox, TextField as MTF, Popover, Menu, MenuItem } from 'material-ui'
 
 import Tooltip from '../common/Tooltip'
-import { CheckedIcon, SmallErrorIcon } from '../common/Svg'
+import { CheckedIcon, SmallErrorIcon, UploadFile, UploadFold, NewPhotoIcon, NewFolderIcon } from '../common/Svg'
 
 class LoadingLabel extends React.PureComponent {
   constructor (props) {
@@ -197,8 +198,36 @@ export class RRButton extends Button {
 
 /* New Action Button */
 export class ActButton extends Button {
+  constructor (props) {
+    super(props)
+    this.state = {
+      open: false,
+      mouse: {},
+      hover: false,
+      pressed: false
+    }
+
+    this.upload = (type) => {
+      this.props.upload(type)
+      this.setState({ open: false })
+    }
+
+    this.onClick = (e) => {
+      console.log('this.onClick', e)
+      e.preventDefault()
+      this.setState({ open: true, anchorEl: e.currentTarget })
+    }
+
+    this.funcs = {
+      onMouseUp: this.onMouseUp,
+      onMouseDown: this.onMouseDown,
+      onMouseMove: this.onMouseMove,
+      onMouseLeave: this.onMouseLeave,
+      onClick: this.onClick
+    }
+  }
   render () {
-    const { label, shrinked } = this.props
+    const { label, shrinked, primaryColor } = this.props
     const Icon = this.props.icon
     const height = 48
     const width = shrinked ? 48 : 192
@@ -224,13 +253,59 @@ export class ActButton extends Button {
       alignItems: 'center'
     }
 
-    const iconStyle = { color: '#00695c', marginLeft: shrinked ? 16 : 20, width: 18, height: 18, transition: 'all 0ms' }
+    const iconStyle = { color: primaryColor, marginLeft: shrinked ? 16 : 20, width: 18, height: 18, transition: 'all 0ms' }
+    const iStyle = { color: 'rgba(0,0,0,.54)' }
     const textStyle = { marginLeft: 32, fontSize: 16 }
+    const items = [
+      { primaryText: i18n.__('New Folder'), leftIcon: <NewFolderIcon style={iStyle} />, onClick: () => this.upload('file') },
+      { primaryText: i18n.__('New Album'), leftIcon: <NewPhotoIcon style={iStyle} />, onClick: () => this.upload('directory') },
+      { type: 'br' },
+      { primaryText: i18n.__('Upload File'), leftIcon: <UploadFile style={iStyle} />, onClick: () => this.upload('file') },
+      { primaryText: i18n.__('Upload Folder'), leftIcon: <UploadFold style={iStyle} />, onClick: () => this.upload('directory') }
+    ]
 
     return (
-      <div {...this.funcs} style={buttonStyle}>
-        <Icon style={iconStyle} />
-        { !shrinked && <div style={textStyle}> { label } </div> }
+      <div>
+        <div {...this.funcs} style={buttonStyle}>
+          <Icon style={iconStyle} />
+          { !shrinked && <div style={textStyle}> { label } </div> }
+        </div>
+        <Popover
+          open={this.state.open}
+          animated
+          anchorEl={this.state.anchorEl}
+          anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
+          targetOrigin={{ horizontal: 'left', vertical: 'top' }}
+          onRequestClose={() => this.setState({ open: false })}
+          style={{ boxShadow: '0px 5px 6.6px 0.4px rgba(96, 125, 139, 0.24), 0px 2px 9.8px 0.2px rgba(96, 125, 139, 0.16)' }}
+        >
+          <Menu style={{ width: 224, maxWidth: 224, height: 224, overflow: 'hidden' }} >
+            {
+              items.map((props, index) => (
+                props.type === 'br' ? (
+                  <div
+                    key={index.toString()}
+                    style={{ height: 1, width: 224, borderRadius: 0.5, backgroundColor: '#e8eaed', margin: '8px 0' }}
+                  />
+                ) : (
+                  <MenuItem
+                    {...props}
+                    key={index.toString()}
+                    style={{
+                      paddingLeft: 8,
+                      fontSize: 14,
+                      color: '#292936',
+                      height: 48,
+                      minHeight: 48,
+                      lineHeight: '48px'
+                    }}
+                  />
+                )
+              ))
+            }
+            <div style={{ height: 5, width: '100%' }} />
+          </Menu>
+        </Popover>
       </div>
     )
   }
@@ -340,11 +415,11 @@ export class OLButton extends Button {
 /* Menu Button in Home */
 export class MenuButton extends Button {
   render () {
-    const { text, selected } = this.props
+    const { text, selected, primaryColor } = this.props
     const Icon = this.props.icon
     const backgroundColor = this.state.hover ? '#F5F5F5' : '#FFF'
-    const textColor = selected ? '#009688' : 'var(--black-87)'
-    const iconColor = selected ? '#00695c' : 'var(--black-54)'
+    const textColor = selected ? primaryColor : 'var(--black-87)'
+    const iconColor = selected ? primaryColor : 'var(--black-54)'
     const zIndex = selected ? 100 : 1
     const opacity = selected ? 1 : 0.87
     const fontWeight = selected ? 'bold' : 'normal'

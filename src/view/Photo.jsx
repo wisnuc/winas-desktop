@@ -1,7 +1,7 @@
 import i18n from 'i18n'
 import React from 'react'
 import { ipcRenderer } from 'electron'
-
+import { deepPurple800, pinkA200 } from 'material-ui/styles/colors'
 import Home from './Home'
 import Search from '../common/Search'
 import sortByType from '../common/sort'
@@ -93,6 +93,14 @@ class Photo extends Home {
     this.refresh()
   }
 
+  groupPrimaryColor () {
+    return deepPurple800
+  }
+
+  groupAccentColor () {
+    return pinkA200
+  }
+
   menuName () {
     return this.title()
   }
@@ -108,13 +116,16 @@ class Photo extends Home {
   renderTitle ({ style }) {
     return (
       <div style={style}>
-        <div style={{ fontSize: 20, color: 'var(--dark-text)', height: 70, marginLeft: 30, display: 'flex', alignItems: 'center' }}>
+        <div style={{ fontSize: 12, color: 'var(--black-54)', height: 28, marginLeft: 48, display: 'flex', alignItems: 'center' }}>
           { this.menuName() }
         </div>
-        <div style={{ flexGrow: 1 }} />
-        <div style={{ marginRight: 15, height: 51, paddingTop: 19 }}>
-          <Search fire={this.search} hint={i18n.__('Search') + this.title()} key={this.menuName()} clear={this.clearSearch} />
-        </div>
+      </div>
+    )
+  }
+
+  renderContent ({ openSnackBar, navTo, pin }) {
+    return (
+      <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       </div>
     )
   }
