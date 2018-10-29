@@ -911,7 +911,7 @@ class Home extends Base {
     const inRoot = this.state.inRoot || (this.hasRoot && !this.phyDrive)
     return (
       <div style={style}>
-        <LIButton onClick={this.back} tooltip={i18n.__('Backward')} disabled={noBack}>
+        <LIButton onClick={this.back} tooltip={i18n.__('Backward')} disabled={noBack} style={{ marginLeft: -8 }}>
           <BackwardIcon color={color} />
         </LIButton>
         <div style={{ width: 5 }} />
