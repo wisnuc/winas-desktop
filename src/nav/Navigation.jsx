@@ -336,7 +336,8 @@ class NavViews extends React.Component {
       navTo: this.navTo,
       navToDrive: this.navToDrive,
       openSnackBar: this.props.openSnackBar,
-      pin: this.state.pin
+      pin: this.state.pin,
+      primaryColor: this.state.primaryColor
     })
   }
 
@@ -785,7 +786,7 @@ class NavViews extends React.Component {
               backgroundColor: '#f8f8f8',
               display: 'flex',
               alignItems: 'center',
-              WebkitAppRegion: this.state.hoverNav ? 'no-drag' : 'drag'
+              WebkitAppRegion: this.state.hoverNav && !this.state.pin ? 'no-drag' : 'drag'
             }}
           >
             <div style={{ fontSize: 21, fontWeight: 50, marginLeft: 24 }}> { this.views[this.state.nav].menuName() } </div>
