@@ -267,7 +267,7 @@ class PhotoList extends React.Component {
         style={{
           position: 'relative',
           width: 'calc(100% - 72px)',
-          height: '100%',
+          height: `calc(100% - ${this.headerHeight}px)`,
           paddingLeft: 72,
           backgroundColor: '#FFFFFF',
           display: 'flex',
@@ -295,6 +295,7 @@ class PhotoList extends React.Component {
             const rowHeight = ({ index }) => PhotoInfo.allHeight[index]
 
             /* get previousIndex */
+            /*
             let previousScrollTop = 0
             if (this.props.memoize().currentScrollTop) {
               previousScrollTop = this.props.memoize().currentScrollTop
@@ -306,6 +307,7 @@ class PhotoList extends React.Component {
                 }
               })
             }
+            */
             // console.log('get previousIndex', this.props.memoize(), previousScrollTop)
 
             /* function to render each row */
@@ -342,7 +344,6 @@ class PhotoList extends React.Component {
                     rowRenderer={rowRenderer}
                     rowCount={PhotoInfo.photoDates.length}
                     onScroll={this.onScroll}
-                    scrollTop={previousScrollTop}
                     overscanRowCount={2}
                   />
                 </div>

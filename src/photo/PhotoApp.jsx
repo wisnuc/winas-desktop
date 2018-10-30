@@ -36,6 +36,7 @@ class PhotoApp extends React.Component {
     this.toggleDialog = op => this.setState({ [op]: !this.state[op] })
 
     this.setAnimation2 = (component, status) => {
+      return
       if (component === 'ClearSelected') {
         /* add animation to ClearSelected */
         const transformItem = this.refClearSelected
@@ -112,7 +113,6 @@ class PhotoApp extends React.Component {
               <div
                 style={{
                   position: 'relative',
-                  marginTop: -7,
                   width: '100%',
                   height: '100%',
                   display: 'flex',

@@ -97,6 +97,11 @@ const getPhotoInfo = (height, w, media, dateUnknownText) => {
       indexHeightSum.push(rowHeightSum)
     })
 
+    /* last row add 24px */
+    allHeight[allHeight.length - 1] += 24
+    rowHeightSum += 24
+    indexHeightSum[indexHeightSum.length - 1] += 24
+
     maxScrollTop = rowHeightSum - height
     if (rowHeightSum > 1500000) {
       const r = rowHeightSum / 1500000

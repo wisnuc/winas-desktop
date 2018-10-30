@@ -1,6 +1,5 @@
 import React from 'react'
 import i18n from 'i18n'
-import Debug from 'debug'
 import prettysize from 'prettysize'
 import { IconButton } from 'material-ui'
 import CheckIcon from 'material-ui/svg-icons/action/check-circle'
@@ -23,8 +22,6 @@ import FlatButton from '../common/FlatButton'
 import Map from '../common/map'
 import PhotoDetail from './PhotoDetail'
 import VideoDetail from './VideoDetail'
-
-const debug = Debug('component:photoApp:DetailContainer')
 
 const mousePosition = (ev) => {
   if (ev.pageX || ev.pageY) {
@@ -471,11 +468,12 @@ class DetailContainerInline extends React.Component {
   }
 
   renderDetail (item, parent) {
-    const { m } = item
+    console.log('renderDetail', item, parent)
+    const { type } = item
     const photoMagic = ['JPEG', 'GIF', 'PNG']
     const videoMagic = ['3GP', 'MP4', 'MOV']
-    const isPhoto = photoMagic.includes(m)
-    const isVideo = videoMagic.includes(m)
+    const isPhoto = photoMagic.includes(type)
+    const isVideo = videoMagic.includes(type)
     const props = {
       item,
       parent,
@@ -490,7 +488,7 @@ class DetailContainerInline extends React.Component {
   }
 
   render () {
-    debug('renderContainer', this.leftItem, this.centerItem, this.rightItem, this.state, this.props)
+    console.log('renderContainer', this.leftItem, this.centerItem, this.rightItem, this.state, this.props)
     this.changeContainer()
 
     /* show hidden media or just normal view */

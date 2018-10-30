@@ -2,7 +2,7 @@ import i18n from 'i18n'
 import React from 'react'
 import { ipcRenderer } from 'electron'
 import { TweenMax } from 'gsap'
-import { TextField } from 'material-ui'
+import { TextField, CircularProgress } from 'material-ui'
 import { deepPurple800, pinkA200 } from 'material-ui/styles/colors'
 import Home from './Home'
 import sortByType from '../common/sort'
@@ -33,7 +33,8 @@ class Photo extends Home {
       selectedItems: [],
       shiftHoverItems: [],
       uploadMedia: false,
-      shift: false
+      shift: false,
+      sortType: 'takenDown'
     }
 
     this.preMedia = null
@@ -81,6 +82,7 @@ class Photo extends Home {
     this.firstSelect = true
 
     this.setAnimation = (component, status) => {
+      return
       if (component === 'NavigationMenu') {
         /* add animation to NavigationMenu */
         const transformItem = this.refNavigationMenu
@@ -240,7 +242,7 @@ class Photo extends Home {
       }
 
       const pdrives = (this.places && this.places.split('.')) || []
-      const entries = this.state[type].filter(e => e.hash).map(e => Object.assign({ type: 'file', pdrv: pdrives[e.place] }, e))
+      const entries = this.state[type].filter(e => e.hash && e.metadata).map(e => Object.assign({ type: 'file', pdrv: pdrives[e.place] }, e, e.metadata)).sort((a, b) => sortByType(a, b, this.state.sortType))
 
       const path = [{ name: this.title(), uuid: null, type: 'mediaRoot' }]
 
@@ -248,7 +250,7 @@ class Photo extends Home {
 
       /* sort entries, reset select, stop loading */
       this.setState({
-        path, loading: false, media: [...entries].sort((a, b) => sortByType(a, b, this.state.sortType))
+        path, loading: false, media: entries
       })
     }
 
@@ -278,7 +280,16 @@ class Photo extends Home {
     }
 
     this.showAllPhoto = () => {
+      this.type = 'photos'
+      this.types = 'JPEG.PNG.JPG.GIF.BMP.RAW'
       this.setState({ albumName: i18n.__('All Photos') })
+      this.refresh()
+    }
+
+    this.showAllVideos = () => {
+      this.type = 'videos'
+      this.types = 'RM.RMVB.WMV.AVI.MP4.3GP.MKV.MOV.FLV'
+      this.setState({ albumName: i18n.__('All Videos') })
       this.refresh()
     }
   }
@@ -382,7 +393,7 @@ class Photo extends Home {
             { i18n.__('All Photos') }
           </div>
           <div style={{ height: 24, display: 'flex', alignItems: 'center' }}>
-            { i18n.__('%s Items', 124) }
+            { i18n.__('%s Items', 11297) }
           </div>
         </div>
       </div>
@@ -390,6 +401,39 @@ class Photo extends Home {
   }
 
   renderVideos () {
+    const src = 'file:///home/lxw/.config/phicomm/imagecache/0204c3b20b7761e986f5aa5f12aa07ca153290d680bf06dc02860138856cf193'
+    return (
+      <div style={{ width: 196, height: 244, float: 'left', marginLeft: 20, cursor: 'pointer' }}>
+        <div
+          style={{
+            width: 196,
+            height: 196,
+            borderRadius: 6,
+            position: 'relative',
+            backgroundColor: '#f5f5f5',
+            border: 'solid 1px #e8eaed'
+          }}
+          className="flexCenter"
+          onClick={() => this.showAllVideos()}
+        >
+          <img src={src} alt="cover" style={{ height: 196, width: 196, objectFit: 'cover' }} />
+          <div style={{ position: 'absolute', top: 0, right: 0, height: 36, width: 36 }} className="flexCenter">
+            <MoreIcon onClick={e => this.setState({ openMenu: true, anchorEl: e.currentTarget })} />
+          </div>
+        </div>
+        <div style={{ height: 48 }}>
+          <div style={{ height: 24, display: 'flex', alignItems: 'center' }}>
+            { i18n.__('All Videos') }
+          </div>
+          <div style={{ height: 24, display: 'flex', alignItems: 'center' }}>
+            { i18n.__('%s Items', 124) }
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  renderAlbum ({ primaryColor }) {
     return (
       <div style={{ width: 196, height: 244, float: 'left', marginLeft: 20, cursor: 'pointer' }}>
         <div
@@ -405,42 +449,10 @@ class Photo extends Home {
         />
         <div style={{ height: 48 }}>
           <div style={{ height: 24, display: 'flex', alignItems: 'center' }}>
-            { i18n.__('All Videos') }
-          </div>
-          <div style={{ height: 24, display: 'flex', alignItems: 'center' }}>
-            { i18n.__('No Content') }
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  renderAlbum ({ primaryColor }) {
-    const src = 'file:///home/lxw/.config/phicomm/imagecache/0204c3b20b7761e986f5aa5f12aa07ca153290d680bf06dc02860138856cf193'
-    return (
-      <div style={{ width: 196, height: 244, float: 'left', marginLeft: 20, cursor: 'pointer' }}>
-        <div
-          style={{
-            width: 196,
-            height: 196,
-            borderRadius: 6,
-            position: 'relative',
-            backgroundColor: '#f5f5f5',
-            border: 'solid 1px #e8eaed'
-          }}
-          className="flexCenter"
-        >
-          <img src={src} alt="cover" style={{ height: 196, width: 196, objectFit: 'cover' }} />
-          <div style={{ position: 'absolute', top: 0, right: 0, height: 36, width: 36 }} className="flexCenter">
-            <MoreIcon onClick={e => this.setState({ openMenu: true, anchorEl: e.currentTarget })} />
-          </div>
-        </div>
-        <div style={{ height: 48 }}>
-          <div style={{ height: 24, display: 'flex', alignItems: 'center' }}>
             { i18n.__('Album 001') }
           </div>
           <div style={{ height: 24, display: 'flex', alignItems: 'center' }}>
-            { i18n.__('%s Items', 72) }
+            { i18n.__('No Content') }
           </div>
         </div>
       </div>
@@ -494,7 +506,26 @@ class Photo extends Home {
     )
   }
 
+  renderLoading () {
+    return (
+      <div
+        style={{
+          position: 'relative',
+          marginTop: -7,
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        <CircularProgress color={this.groupPrimaryColor()} size={64} />
+      </div>
+    )
+  }
+
   renderContent ({ primaryColor }) {
+    if (this.state.loading) return this.renderLoading()
     if (this.state.newAlbum) return this.renderNewAlbum({ primaryColor })
     else if (!this.state.media) return this.renderAlbumList({ primaryColor })
     return (

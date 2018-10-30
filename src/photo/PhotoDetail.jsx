@@ -258,7 +258,7 @@ class PhotoDetail extends React.Component {
   }
 
   render () {
-    // debug('render!!!', this.props, this.state)
+    console.log('render!!!', this.props, this.state)
     if (!this.props.item || !this.props.item.hash) return (<div />)
     return (
       <div
