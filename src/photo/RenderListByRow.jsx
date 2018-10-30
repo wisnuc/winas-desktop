@@ -62,7 +62,7 @@ class RenderListByRow extends React.Component {
                 opacity: selected ? 1 : 0,
                 transition: selected ? 'all .1s .1s cubic-bezier(0.0, 0.0, 0.2, 1)' : 'all .1s cubic-bezier(0.0, 0.0, 0.2, 1)'
               }}
-              onTouchTap={(e) => { this.onSelectIconButton(); e.stopPropagation() }}
+              onClick={(e) => { this.onSelectIconButton(); e.stopPropagation() }}
             >
               <CheckIcon
                 style={{ margin: 8 }}
@@ -82,17 +82,17 @@ class RenderListByRow extends React.Component {
         }
         <div style={{ display: 'flex', flexFlow: 'row wrap', justifyContent: 'flex-start' }}>
           { isScrolling && rowSum > 500
-            ? photos.map(photo => (
+            ? photos.map((photo, index) => (
               <div
                 style={{ width: this.props.size, height: this.props.size, marginRight: 8, marginBottom: 8, backgroundColor: '#eeeeee' }}
-                key={photo.hash}
+                key={index.toString()}
               />))
-            : photos.map(photo => (
+            : photos.map((photo, index) => (
               <PhotoItem
                 style={{ width: this.props.size, height: this.props.size, marginRight: 8, marginBottom: 8 }}
                 lookPhotoDetail={lookPhotoDetail}
                 digest={photo.hash}
-                key={photo.hash}
+                key={index.toString()}
                 item={photo}
                 ipcRenderer={this.props.ipcRenderer}
                 addListToSelection={this.props.addListToSelection}

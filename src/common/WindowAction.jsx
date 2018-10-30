@@ -34,7 +34,17 @@ class WindowAction extends React.PureComponent {
   render () {
     const isMaximized = remote.getCurrentWindow().isMaximized()
     return (
-      <div style={{ position: 'fixed', top: 8, right: 8, display: 'flex', alignItems: 'center', WebkitAppRegion: 'no-drag' }}>
+      <div
+        style={{
+          position: 'fixed',
+          top: 8,
+          right: 8,
+          display: 'flex',
+          alignItems: 'center',
+          WebkitAppRegion: 'no-drag',
+          zIndex: 1000
+        }}
+      >
         <EventListener target="window" onResize={this.handleResize} />
         <IconButton style={styles.small} iconStyle={styles.smallIcon} onClick={this.minimize} hoveredStyle={{ opacity: 1 }}>
           <WinMiniIcon />

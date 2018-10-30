@@ -56,7 +56,7 @@ class PhotoDetail extends React.Component {
       return (
         <div
           style={{ height: '80%', width: '80%', backgroundColor: 'rgba(0,0,0,0)' }}
-          onTouchTap={(e) => { e.preventDefault(); e.stopPropagation() }}
+          onClick={(e) => { e.preventDefault(); e.stopPropagation() }}
         >
           <video
             width="100%"

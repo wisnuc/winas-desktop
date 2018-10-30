@@ -522,7 +522,7 @@ class DetailContainerInline extends React.Component {
             left: 0,
             backgroundColor: 'rgb(0, 0, 0)'
           }}
-          onTouchTap={this.close}
+          onClick={this.close}
         />
 
         {/* detail image content */}
@@ -540,7 +540,7 @@ class DetailContainerInline extends React.Component {
             transition: 'all 225ms cubic-bezier(0.0, 0.0, 0.2, 1)'
           }}
           onMouseMove={this.calcPositon}
-          onTouchTap={() => this.changeIndex(this.state.direction)}
+          onClick={() => this.changeIndex(this.state.direction)}
         >
           <div
             ref={ref => (this.refContainer = ref)}
@@ -593,7 +593,7 @@ class DetailContainerInline extends React.Component {
             >
               {/* return Button */}
               <IconButton
-                onTouchTap={this.close}
+                onClick={this.close}
                 style={{ margin: 12 }}
               >
                 <div ref={ref => (this.refReturn = ref)} >
@@ -617,19 +617,19 @@ class DetailContainerInline extends React.Component {
                       <div style={{ color: '#FFF', fontSize: 14, fontWeight: 500 }} >
                         { this.state.selected ? i18n.__('Selected') : i18n.__('Select') }
                       </div>
-                      <IconButton onTouchTap={this.selectPhoto}>
+                      <IconButton onClick={this.selectPhoto}>
                         <CheckIcon color={this.state.selected ? '#1E88E5' : '#FFF'} />
                       </IconButton>
                     </div>
                   )
                   : (
                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                      <IconButton onTouchTap={() => this.props.startDownload()} tooltip={i18n.__('Download')}>
+                      <IconButton onClick={() => this.props.startDownload()} tooltip={i18n.__('Download')}>
                         <DownloadIcon color="#FFF" />
                       </IconButton>
 
                       {/*
-                    <IconButton onTouchTap={() => this.toggleDialog('deleteDialog')} tooltip={i18n.__('Delete')}>
+                    <IconButton onClick={() => this.toggleDialog('deleteDialog')} tooltip={i18n.__('Delete')}>
                       <DeleteIcon color="#FFF" />
                     </IconButton>
                     */}
@@ -637,14 +637,14 @@ class DetailContainerInline extends React.Component {
                       { // not show hide or Retrieve button when in box view
                         !this.props.station &&
                         <IconButton
-                          onTouchTap={() => this.toggleDialog('hideDialog')}
+                          onClick={() => this.toggleDialog('hideDialog')}
                           tooltip={h ? i18n.__('Retrieve') : i18n.__('Hide')}
                         >
                           { h ? <Visibility color="#FFF" /> : <VisibilityOff color="#FFF" /> }
                         </IconButton>
                       }
 
-                      <IconButton onTouchTap={() => this.toggleDialog('detailInfo')} tooltip={i18n.__('Info')}>
+                      <IconButton onClick={() => this.toggleDialog('detailInfo')} tooltip={i18n.__('Info')}>
                         <InfoIcon color="#FFF" />
                       </IconButton>
                     </div>
@@ -711,7 +711,7 @@ class DetailContainerInline extends React.Component {
           <div style={{ height: 48, display: 'flex', alignItems: 'center', padding: '8px 16px 8px 32px' }}>
             <div style={{ fontSize: 20, width: 360 }}> {i18n.__('Info')} </div>
             <div style={{ flexGrow: 1 }} />
-            <IconButton onTouchTap={() => this.toggleDialog('detailInfo')}>
+            <IconButton onClick={() => this.toggleDialog('detailInfo')}>
               <CloseIcon color="rgba(0,0,0,0.54)" />
             </IconButton>
           </div>
@@ -733,11 +733,11 @@ class DetailContainerInline extends React.Component {
                   </div>
                   <div style={{ height: 24 }} />
                   <div style={{ height: 52, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginRight: -24 }}>
-                    <FlatButton label={i18n.__('Cancel')} primary onTouchTap={() => this.toggleDialog('deleteDialog')} keyboardFocused />
+                    <FlatButton label={i18n.__('Cancel')} primary onClick={() => this.toggleDialog('deleteDialog')} keyboardFocused />
                     <FlatButton
                       label={i18n.__('Remove')}
                       primary
-                      onTouchTap={() => {
+                      onClick={() => {
                         this.toggleDialog('deleteDialog')
                         this.props.removeMedia()
                       }}
@@ -763,11 +763,11 @@ class DetailContainerInline extends React.Component {
                   </div>
                   <div style={{ height: 24 }} />
                   <div style={{ height: 52, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginRight: -24 }}>
-                    <FlatButton label={i18n.__('Cancel')} primary onTouchTap={() => this.toggleDialog('hideDialog')} keyboardFocused />
+                    <FlatButton label={i18n.__('Cancel')} primary onClick={() => this.toggleDialog('hideDialog')} keyboardFocused />
                     <FlatButton
                       label={h ? i18n.__('Retrieve') : i18n.__('Hide')}
                       primary
-                      onTouchTap={() => {
+                      onClick={() => {
                         this.props.hideMedia(h)
                         this.toggleDialog('hideDialog')
                         this.forceChange = true
@@ -798,7 +798,7 @@ class DetailContainer extends React.Component {
 
   render () {
     return (
-      <RenderToLayer render={this.renderLayer} open useLayerForClickAway={false} />
+      <RenderToLayer render={() => this.renderLayer()} open useLayerForClickAway={false} />
     )
   }
 }

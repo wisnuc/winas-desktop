@@ -11,6 +11,7 @@ import FlatButton from '../common/FlatButton'
 
 import DetailContainer from './DetailContainer'
 import PhotoList from './PhotoList'
+import { BackwardIcon } from '../common/Svg'
 
 class PhotoApp extends React.Component {
   constructor (props) {
@@ -88,9 +89,21 @@ class PhotoApp extends React.Component {
   }
 
   render () {
+    const { primaryColor } = this.props
     return (
-      <div style={{ position: 'relative', width: '100%', height: '100%', marginTop: 2 }}>
+      <div style={{ position: 'fixed', width: '100%', height: '100%', top: 0, left: 0, zIndex: 200 }}>
         <EventListener target="window" onResize={this.handleResize} />
+        <div style={{ height: 34, width: '100%', backgroundColor: primaryColor }} />
+        <div style={{ height: 72, width: '100%', backgroundColor: primaryColor, display: 'flex', alignItems: 'center' }} >
+          <div style={{ width: 20 }} />
+          <IconButton onClick={this.props.backToAlbum} iconStyle={{ color: '#FFF' }}>
+            <BackwardIcon />
+          </IconButton>
+          <div style={{ width: 12 }} />
+          <div style={{ color: '#FFF', fontSize: 21, fontWeight: 500 }} >
+            { this.props.albumName }
+          </div>
+        </div>
 
         {/* PhotoList */}
         {
@@ -121,7 +134,7 @@ class PhotoApp extends React.Component {
                 selectedItems={this.props.selectedItems}
                 getHoverPhoto={this.props.getHoverPhoto}
                 shiftStatus={this.props.shiftStatus}
-                headerHeight={66}
+                headerHeight={106}
               />
               )
               : this.renderNoMedia()
@@ -153,19 +166,19 @@ class PhotoApp extends React.Component {
             <div
               style={{
                 position: 'fixed',
-                top: 0,
+                top: 34,
                 left: 0,
                 width: '100%',
-                height: 64,
+                height: 72,
                 backgroundColor: this.props.primaryColor,
                 display: 'flex',
                 alignItems: 'center',
                 zIndex: 200
               }}
             >
-              <div style={{ width: 12 }} />
+              <div style={{ width: 20 }} />
               <div ref={ref => (this.refClearSelected = ref)}>
-                <IconButton onTouchTap={this.props.clearSelect}>
+                <IconButton onClick={this.props.clearSelect}>
                   <CloseIcon color="#FFF" />
                 </IconButton>
               </div>
@@ -175,17 +188,17 @@ class PhotoApp extends React.Component {
               </div>
               <div style={{ flexGrow: 1 }} />
 
-              <IconButton onTouchTap={this.props.startDownload} tooltip={i18n.__('Download')}>
+              <IconButton onClick={this.props.startDownload} tooltip={i18n.__('Download')}>
                 <DownloadIcon color="#FFF" />
               </IconButton>
 
               {/*
-              <IconButton onTouchTap={() => this.toggleDialog('deleteDialog')}>
+              <IconButton onClick={() => this.toggleDialog('deleteDialog')}>
                 <DeleteIcon color="#FFF" />
               </IconButton>
               */}
 
-              <IconButton onTouchTap={() => this.toggleDialog('hideDialog')} tooltip={i18n.__('Hide')}>
+              <IconButton onClick={() => this.toggleDialog('hideDialog')} tooltip={i18n.__('Hide')}>
                 <VisibilityOff color="#FFF" />
               </IconButton>
               <div style={{ width: 24 }} />
@@ -208,11 +221,11 @@ class PhotoApp extends React.Component {
                   </div>
                   <div style={{ height: 24 }} />
                   <div style={{ height: 52, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginRight: -24 }}>
-                    <FlatButton label={i18n.__('Cancel')} primary onTouchTap={() => this.toggleDialog('deleteDialog')} keyboardFocused />
+                    <FlatButton label={i18n.__('Cancel')} primary onClick={() => this.toggleDialog('deleteDialog')} keyboardFocused />
                     <FlatButton
                       label={i18n.__('Remove')}
                       primary
-                      onTouchTap={() => {
+                      onClick={() => {
                         this.toggleDialog('deleteDialog')
                         this.props.removeMedia()
                       }}
@@ -238,11 +251,11 @@ class PhotoApp extends React.Component {
                   </div>
                   <div style={{ height: 24 }} />
                   <div style={{ height: 52, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginRight: -24 }}>
-                    <FlatButton label={i18n.__('Cancel')} primary onTouchTap={() => this.toggleDialog('hideDialog')} keyboardFocused />
+                    <FlatButton label={i18n.__('Cancel')} primary onClick={() => this.toggleDialog('hideDialog')} keyboardFocused />
                     <FlatButton
                       label={i18n.__('Hide')}
                       primary
-                      onTouchTap={() => {
+                      onClick={() => {
                         this.toggleDialog('hideDialog')
                         this.props.hideMedia()
                       }}

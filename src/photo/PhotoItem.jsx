@@ -135,7 +135,7 @@ class PhotoItem extends React.Component {
                   margin: 8,
                   alignItems: 'center'
                 }}
-                onTouchTap={(e) => { this.onSelectIconButton(); e.stopPropagation() }}
+                onClick={(e) => { this.onSelectIconButton(); e.stopPropagation() }}
                 onMouseEnter={this.mouseEnter}
                 onMouseLeave={this.mouseLeave}
               >
@@ -171,7 +171,7 @@ class PhotoItem extends React.Component {
                   alignItems: 'center',
                   background: selectMode ? '' : 'linear-gradient(0deg, rgba(0,0,0,0), rgba(0,0,0,0.26))'
                 }}
-                onTouchTap={this.touchImage}
+                onClick={this.touchImage}
                 onMouseEnter={this.mouseEnter}
                 onMouseLeave={this.mouseLeave}
               >
@@ -179,7 +179,7 @@ class PhotoItem extends React.Component {
                   style={{ margin: 8 }}
                   hoverColor={this.state.selected ? '#1E88E5' : '#FFF'}
                   color={this.state.selected ? '#1E88E5' : 'rgba(255,255,255,0.54)'}
-                  onTouchTap={(e) => { this.onSelectIconButton(); e.stopPropagation() }}
+                  onClick={(e) => { this.onSelectIconButton(); e.stopPropagation() }}
                 />
               </div>
           }
@@ -202,10 +202,10 @@ class PhotoItem extends React.Component {
                 }}
                 onMouseEnter={this.mouseEnter}
                 onMouseLeave={this.mouseLeave}
-                onTouchTap={(e) => { this.onSelectIconButton(); e.stopPropagation() }}
+                onClick={(e) => { this.onSelectIconButton(); e.stopPropagation() }}
               >
                 <ZoomIn
-                  onTouchTap={(e) => { this.props.lookPhotoDetail(this.props.digest); e.stopPropagation() }}
+                  onClick={(e) => { this.props.lookPhotoDetail(this.props.digest); e.stopPropagation() }}
                   style={{ margin: 8 }}
                   hoverColor="#FFF"
                   color="rgba(255,255,255,0.54)"
@@ -225,7 +225,7 @@ class PhotoItem extends React.Component {
               justifyContent: 'center',
               backgroundColor: '#eeeeee'
             }}
-            onTouchTap={this.touchImage}
+            onClick={this.touchImage}
             onMouseMove={this.mouseEnter}
             onMouseLeave={this.mouseLeave}
           >
@@ -296,7 +296,7 @@ class PhotoItem extends React.Component {
                   left: this.state.selected ? (size - 180) / 2 : 0,
                   backgroundColor: 'rgba(30, 136, 229, 0.26)'
                 }}
-                onTouchTap={this.touchImage}
+                onClick={this.touchImage}
                 onMouseMove={this.mouseEnter}
                 onMouseLeave={this.mouseLeave}
               />

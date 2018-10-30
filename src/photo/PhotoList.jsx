@@ -167,7 +167,7 @@ class PhotoList extends React.Component {
         onMouseLeave={() => !this.onMouseDown && this.showDateBar(false)}
         onMouseEnter={() => this.showDateBar(true)}
         onMouseDown={() => (this.onMouseDown = true)}
-        onTouchTap={this.scrollToPosition}
+        onClick={this.scrollToPosition}
       >
         <div
           ref={ref => (this.refTimeline = ref)}
@@ -182,14 +182,14 @@ class PhotoList extends React.Component {
                   return (
                     <div
                       key={index.toString()}
-                      onTouchTap={this.scrollToPosition}
+                      onClick={this.scrollToPosition}
                       style={{ position: 'absolute', top, height: 2, width: 8, backgroundColor: 'rgba(0, 0, 0, 0.27)', right: 20 }}
                     />
                   )
                 }
                 return (
                   <div
-                    onTouchTap={this.scrollToPosition}
+                    onClick={this.scrollToPosition}
                     key={index.toString()}
                     style={{
                       position: 'absolute',
@@ -266,11 +266,12 @@ class PhotoList extends React.Component {
       <div
         style={{
           position: 'relative',
-          marginTop: -7,
-          width: '100%',
+          width: 'calc(100% - 72px)',
           height: '100%',
+          paddingLeft: 72,
           backgroundColor: '#FFFFFF',
-          display: 'flex'
+          display: 'flex',
+          zIndex: 200
         }}
       >
         {/* Photo List */}
@@ -330,7 +331,7 @@ class PhotoList extends React.Component {
 
             return (
               <div style={{ position: 'relative', width: '100%', height: '100%' }} >
-                <div key={this.size} onTouchTap={e => this.onRowTouchTap(e)} >
+                <div key={this.size} onClick={e => this.onRowTouchTap(e)} >
                   <ScrollBar
                     ref={ref => (this.refList = ref)}
                     height={height}

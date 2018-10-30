@@ -2,13 +2,16 @@ import i18n from 'i18n'
 import React from 'react'
 import { ipcRenderer } from 'electron'
 import { TweenMax } from 'gsap'
+import { TextField } from 'material-ui'
 import { deepPurple800, pinkA200 } from 'material-ui/styles/colors'
 import Home from './Home'
 import sortByType from '../common/sort'
-import { AlbumIcon, AlbumSelectedIcon, AddIcon, MoreIcon } from '../common/Svg'
+import { AlbumIcon, AlbumSelectedIcon, AddIcon, MoreIcon, BackwardIcon } from '../common/Svg'
 
 import PhotoApp from '../photo/PhotoApp'
 import { combineElement, removeElement } from '../common/array'
+import { LIButton } from '../common/Buttons'
+import FlatButton from '../common/FlatButton'
 
 const getName = (photo) => {
   if (!photo.date && !photo.datetime) {
@@ -101,7 +104,7 @@ class Photo extends Home {
 
     this.addListToSelection = (digests) => {
       if (this.firstSelect) {
-        this.ctx.openSnackBar(i18n.__('Shift Tips'))
+        this.ctx.props.openSnackBar(i18n.__('Shift Tips'))
         this.firstSelect = false
       }
       this.setState({ selectedItems: combineElement(digests, this.state.selectedItems).sort() })
@@ -153,10 +156,10 @@ class Photo extends Home {
 
     this.removeMedia = () => {
       if (this.state.selectedItems.length > 0) {
-        this.ctx.openSnackBar(i18n.__('Remove Media Success %s', this.state.selectedItems.length))
+        this.ctx.props.openSnackBar(i18n.__('Remove Media Success %s', this.state.selectedItems.length))
         this.setState({ selectedItems: [] })
       } else {
-        this.ctx.openSnackBar(i18n.__('Remove Media Failed'))
+        this.ctx.props.openSnackBar(i18n.__('Remove Media Failed'))
       }
     }
 
@@ -167,9 +170,9 @@ class Photo extends Home {
 
       this.ctx.props.apis.request(show ? 'subtractBlacklist' : 'addBlacklist', list, (error) => {
         if (error) {
-          this.ctx.openSnackBar(show ? i18n.__('Retrieve Media Failed') : i18n.__('Hide Media Failed'))
+          this.ctx.props.openSnackBar(show ? i18n.__('Retrieve Media Failed') : i18n.__('Hide Media Failed'))
         } else {
-          this.ctx.openSnackBar(show ? i18n.__('Retrieve Media Success %s', list.length)
+          this.ctx.props.openSnackBar(show ? i18n.__('Retrieve Media Success %s', list.length)
             : i18n.__('Hide Media Success %s', list.length))
           this.navEnter()
           this.setState({ selectedItems: [] })
@@ -192,14 +195,14 @@ class Photo extends Home {
     }
 
     this.uploadMedia = () => {
-      if (!window.navigator.onLine) this.ctx.openSnackBar(i18n.__('Offline Text'))
+      if (!window.navigator.onLine) this.ctx.props.openSnackBar(i18n.__('Offline Text'))
       else {
         this.uploadMediaAsync().catch((e) => {
           console.log('uploadMedia failed', e)
           if (e && e.response && e.response.body && e.response.body.code === 'EEXIST') {
-            this.ctx.openSnackBar(i18n.__('Upload Media Folder EEXIST Text'))
+            this.ctx.props.openSnackBar(i18n.__('Upload Media Folder EEXIST Text'))
           } else {
-            this.ctx.openSnackBar(i18n.__('Upload Media Failed'))
+            this.ctx.props.openSnackBar(i18n.__('Upload Media Failed'))
           }
         })
       }
@@ -245,7 +248,7 @@ class Photo extends Home {
 
       /* sort entries, reset select, stop loading */
       this.setState({
-        path, loading: false, entries: [...entries].sort((a, b) => sortByType(a, b, this.state.sortType))
+        path, loading: false, media: [...entries].sort((a, b) => sortByType(a, b, this.state.sortType))
       })
     }
 
@@ -273,17 +276,22 @@ class Photo extends Home {
       })
       this.setState({ onDownload: null })
     }
+
+    this.showAllPhoto = () => {
+      this.setState({ albumName: i18n.__('All Photos') })
+      this.refresh()
+    }
   }
 
   willReceiveProps (nextProps) {
-    // this.handleMediaProps(nextProps, this.type)
+    this.handleMediaProps(nextProps, this.type)
   }
 
   navEnter (target) {
     this.isNavEnter = true
-    const apis = this.ctx.props.apis
-    if (!apis || !apis.drives || !apis.drives.data) return
-    this.refresh()
+    // const apis = this.ctx.props.apis
+    // if (!apis || !apis.drives || !apis.drives.data) return
+    // this.refresh()
   }
 
   groupPrimaryColor () {
@@ -335,6 +343,7 @@ class Photo extends Home {
             border: 'solid 1px #e8eaed'
           }}
           className="flexCenter"
+          onClick={() => this.setState({ newAlbum: true })}
         >
           <AddIcon style={{ color: primaryColor, height: 28, width: 28 }} />
         </div>
@@ -361,6 +370,7 @@ class Photo extends Home {
             border: 'solid 1px #e8eaed'
           }}
           className="flexCenter"
+          onClick={() => this.showAllPhoto()}
         >
           <img src={src} alt="cover" style={{ height: 196, width: 196, objectFit: 'cover' }} />
           <div style={{ position: 'absolute', top: 0, right: 0, height: 36, width: 36 }} className="flexCenter">
@@ -372,7 +382,7 @@ class Photo extends Home {
             { i18n.__('All Photos') }
           </div>
           <div style={{ height: 24, display: 'flex', alignItems: 'center' }}>
-            { i18n.__('%s Itesms', 124) }
+            { i18n.__('%s Items', 124) }
           </div>
         </div>
       </div>
@@ -430,14 +440,50 @@ class Photo extends Home {
             { i18n.__('Album 001') }
           </div>
           <div style={{ height: 24, display: 'flex', alignItems: 'center' }}>
-            { i18n.__('%s Itesms', 72) }
+            { i18n.__('%s Items', 72) }
           </div>
         </div>
       </div>
     )
   }
 
-  renderContent ({ primaryColor }) {
+  renderNewAlbum ({ primaryColor }) {
+    return (
+      <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: '#FFF', zIndex: 200 }}>
+        <div style={{ height: 72, width: '100%', marginTop: 34, display: 'flex', alignItems: 'center' }}>
+          <div style={{ width: 36 }} />
+          <LIButton onClick={() => this.setState({ newAlbum: false })} tooltip={i18n.__('Return')}>
+            <BackwardIcon style={{ color: 'rgba(0,0,0,.54)' }} />
+          </LIButton>
+        </div>
+        <div style={{ marginLeft: 80, marginTop: 48, width: 'calc(100% - 160px)' }}>
+          <TextField
+            name="newAlbum"
+            fullWidth
+            ref={input => input && input.focus()}
+            style={{ height: 48 }}
+            hintText={i18n.__('Add Title')}
+            hintStyle={{ fontSize: 48, bottom: 24 }}
+            inputStyle={{ fontSize: 48, marginTop: -12 }}
+            underlineFocusStyle={{ borderColor: primaryColor }}
+          />
+        </div>
+        <div style={{ marginTop: 88, height: 20, fontSize: 18 }} className="flexCenter">
+          { i18n.__('No Content In This Album') }
+        </div>
+        <div style={{ height: 72 }} className="flexCenter">
+          <FlatButton
+            backgroundColor="#4527a0"
+            label={i18n.__('Add Photo')}
+            labelStyle={{ color: '#FFF' }}
+            hoverColor="#673ab7"
+          />
+        </div>
+      </div>
+    )
+  }
+
+  renderAlbumList ({ primaryColor }) {
     return (
       <div style={{ width: '100%', boxSizing: 'border-box', paddingLeft: 28, paddingTop: 24 }}>
         { this.renderAddAlbum({ primaryColor }) }
@@ -448,26 +494,32 @@ class Photo extends Home {
     )
   }
 
-  renderContent2 () {
-    return (<PhotoApp
-      media={this.media || []}
-      ipcRenderer={ipcRenderer}
-      apis={this.ctx.props.apis}
-      requestData={this.requestData}
-      setAnimation={this.setAnimation}
-      memoize={this.memoize}
-      removeListToSelection={this.removeListToSelection}
-      addListToSelection={this.addListToSelection}
-      selectedItems={this.state.selectedItems}
-      clearSelect={this.clearSelect}
-      primaryColor={this.groupPrimaryColor()}
-      startDownload={this.startDownload}
-      removeMedia={this.removeMedia}
-      hideMedia={this.hideMedia}
-      getHoverPhoto={this.getHoverPhoto}
-      getShiftStatus={this.getShiftStatus}
-      shiftStatus={{ shift: this.state.shift, items: this.state.shiftHoverItems }}
-    />)
+  renderContent ({ primaryColor }) {
+    if (this.state.newAlbum) return this.renderNewAlbum({ primaryColor })
+    else if (!this.state.media) return this.renderAlbumList({ primaryColor })
+    return (
+      <PhotoApp
+        albumName={this.state.albumName}
+        backToAlbum={() => this.setState({ media: null })}
+        media={this.state.media}
+        ipcRenderer={ipcRenderer}
+        apis={this.ctx.props.apis}
+        requestData={this.requestData}
+        setAnimation={this.setAnimation}
+        memoize={this.memoize}
+        removeListToSelection={this.removeListToSelection}
+        addListToSelection={this.addListToSelection}
+        selectedItems={this.state.selectedItems}
+        clearSelect={this.clearSelect}
+        primaryColor={this.groupPrimaryColor()}
+        startDownload={this.startDownload}
+        removeMedia={this.removeMedia}
+        hideMedia={this.hideMedia}
+        getHoverPhoto={this.getHoverPhoto}
+        getShiftStatus={this.getShiftStatus}
+        shiftStatus={{ shift: this.state.shift, items: this.state.shiftHoverItems }}
+      />
+    )
   }
 }
 
