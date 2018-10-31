@@ -554,7 +554,7 @@ export class Toggle extends React.PureComponent {
 
 export class Checkbox extends React.PureComponent {
   render () {
-    const { label, disabled, checked, onCheck, style, alt } = this.props
+    const { label, disabled, checked, onCheck, style, alt, primaryColor } = this.props
     return (
       <MCheckbox
         label={label}
@@ -563,7 +563,7 @@ export class Checkbox extends React.PureComponent {
         onCheck={onCheck}
         disabled={disabled}
         disableTouchRipple
-        iconStyle={{ height: 18, width: 18, marginTop: 2, fill: checked ? '#31a0f5' : 'rgba(0,0,0,.25)' }}
+        iconStyle={{ height: 24, width: 24, marginTop: 2, fill: checked ? primaryColor : 'rgba(0,0,0,.25)' }}
         labelStyle={{ fontSize: 14, color: alt ? '#525a60' : '#85868c', marginLeft: -9 }}
       />
     )

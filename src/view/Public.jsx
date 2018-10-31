@@ -94,7 +94,7 @@ class Public extends Home {
       entries.forEach(item => Object.assign(item, { name: item.label || i18n.__('Built-in Drive') }))
       const isAdmin = nextProps.apis && nextProps.apis.account &&
         nextProps.apis.account.data && nextProps.apis.account.data.isFirstUser
-      if (isAdmin && entries.length < 3) entries.push({ name: i18n.__('Add Public Drive'), type: 'addDrive', uuid: 'addDrive' })
+      // if (isAdmin && entries.length < 3) entries.push({ name: i18n.__('Add Public Drive'), type: 'addDrive', uuid: 'addDrive' })
       const select = this.select.reset(entries.length)
 
       this.force = false

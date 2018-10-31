@@ -6,9 +6,7 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
 import Login from './login/Login'
-import Users from './control/Users'
 import PhiAPI from './common/PhiAPI'
-import Account from './common/Account'
 import Clipboard from './control/clipboard'
 import Navigation from './nav/Navigation'
 
@@ -16,7 +14,7 @@ const defaultTheme = getMuiTheme({
   fontFamily: 'Roboto, Noto Sans SC, Microsoft YaHei, PingFang SC, sans-serif',
   color: 'rgba(0,0,0,.87)',
   fontSize: 14,
-  palette: { primaryColor: '#009688', accentColor: '#ff4081' }
+  palette: { primary1Color: '#009688', accent1Color: '#ff4081' }
 })
 
 class Fruitmix extends React.Component {
@@ -26,6 +24,7 @@ class Fruitmix extends React.Component {
     this.state = {
       ipcRenderer,
       snackBar: '',
+      theme: defaultTheme,
       view: 'login',
       jump: null,
       account: null,
@@ -49,13 +48,13 @@ class Fruitmix extends React.Component {
     }
   }
 
-  setPalette (primaryColor, accentColor) {
+  setPalette (primary1Color, accent1Color) {
     this.setState({
       theme: getMuiTheme({
         fontFamily: 'Roboto, Noto Sans SC, Microsoft YaHei, PingFang SC, sans-serif',
         color: 'rgba(0,0,0,.87)',
         fontSize: 14,
-        palette: { primaryColor, accentColor }
+        palette: { primary1Color, accent1Color }
       })
     })
   }
@@ -161,7 +160,7 @@ class Fruitmix extends React.Component {
 
     const nodrag = { position: 'fixed', top: 0, WebkitAppRegion: 'no-drag' }
     return (
-      <MuiThemeProvider muiTheme={defaultTheme}>
+      <MuiThemeProvider muiTheme={this.state.theme}>
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: '#FFF' }}>
           {/* login or device */}
           { view }

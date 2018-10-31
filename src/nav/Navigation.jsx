@@ -2,7 +2,7 @@ import i18n from 'i18n'
 import React from 'react'
 import Promise from 'bluebird'
 import { ipcRenderer } from 'electron'
-import { FlatButton, Checkbox, DropDownMenu, MenuItem } from 'material-ui'
+import { FlatButton, DropDownMenu, MenuItem } from 'material-ui'
 
 import Tasks from './Tasks'
 import Policy from './Policy'
@@ -45,7 +45,7 @@ import Search from '../common/Search'
 import Fruitmix from '../common/fruitmix'
 import WindowAction from '../common/WindowAction'
 import DialogOverlay from '../common/PureDialog'
-import { LIButton, ActButton, TextField } from '../common/Buttons'
+import { LIButton, ActButton, TextField, Checkbox } from '../common/Buttons'
 import { TopLogo, FileManage, DeviceChangeIcon, FuncIcon, BackIcon, HelpIcon, WisnucLogo, MenuIcon, SearchIcon, FolderIcon, TransIcon, ShareIcon, BackupIcon, DeviceIcon, AddIcon, ArrowDownIcon, AccountIcon, CloseIcon, PDFIcon, WORDIcon, EXCELIcon, PPTIcon, PhotoIcon, VideoIcon, AudioIcon, ExitIcon } from '../common/Svg'
 
 const HEADER_HEIGHT = 110
@@ -56,6 +56,7 @@ class NavViews extends React.Component {
 
     this.state = {
       nav: null,
+      types: [],
       snackBar: ''
     }
 
@@ -196,6 +197,14 @@ class NavViews extends React.Component {
 
     this.openHelp = () => {
       this.setState({ onHelp: true })
+    }
+
+    this.handleCheck = (type) => {
+      const t = this.state.types
+      const index = t.indexOf(type)
+      if (t === '*') this.setState({ types: [type] })
+      else if (index === -1) this.setState({ types: [...t, type] })
+      else this.setState({ types: [...t.slice(0, index), ...t.slice(index + 1)] })
     }
   }
 
@@ -551,7 +560,12 @@ class NavViews extends React.Component {
               </div>
               <div style={{ flexGrow: 1 }} />
               <div style={{ width: 24 }}>
-                <Checkbox />
+                <Checkbox
+                  alt
+                  primaryColor={this.state.primaryColor}
+                  checked={this.state.types === '*' || this.state.types.includes(type)}
+                  onCheck={() => this.handleCheck(type)}
+                />
               </div>
             </div>
           ))

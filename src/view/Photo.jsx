@@ -305,6 +305,10 @@ class Photo extends Home {
     // this.refresh()
   }
 
+  navLeave () {
+    this.isNavEnter = false
+  }
+
   groupPrimaryColor () {
     return deepPurple800
   }
