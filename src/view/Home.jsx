@@ -15,11 +15,11 @@ import DialogOverlay from '../common/PureDialog'
 import MenuItem from '../common/MenuItem'
 import sortByType from '../common/sort'
 import { BreadCrumbItem, BreadCrumbSeparator } from '../common/BreadCrumb'
-import { BackwardIcon, RefreshAltIcon, DeleteIcon, MoreIcon, ListIcon, GridIcon, InfoIcon, ArrowIcon, FolderIcon, FolderOutlineIcon } from '../common/Svg'
+import { BackwardIcon, RefreshAltIcon, DeleteIcon, MoreIcon, ListIcon, GridIcon, InfoIcon, ArrowIcon, FolderIcon, FolderOutlineIcon, AddIcon } from '../common/Svg'
 import renderFileIcon from '../common/renderFileIcon'
 import { xcopyMsg } from '../common/msg'
 import History from '../common/history'
-import { LIButton } from '../common/Buttons'
+import { LIButton, ActButton } from '../common/Buttons'
 import ConfirmDialog from '../common/ConfirmDialog'
 
 /* increase limit of listeners of EventEmitter */
@@ -959,6 +959,18 @@ class Home extends Base {
         </LIButton>
         <div style={{ width: 8 }} />
       </div>
+    )
+  }
+
+  renderCreateNewButton (props) {
+    return (
+      <ActButton
+        {...props}
+        label={i18n.__('New')}
+        icon={AddIcon}
+        newFolder={() => this.setState({ createNewFolder: true })}
+        upload={this.upload}
+      />
     )
   }
 

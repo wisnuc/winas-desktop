@@ -1,9 +1,10 @@
 import i18n from 'i18n'
 import React from 'react'
-import { IconButton, Toggle as MToggle, Checkbox as MCheckbox, TextField as MTF, Popover, Menu, MenuItem } from 'material-ui'
+import { IconButton, Toggle as MToggle, Checkbox as MCheckbox, TextField as MTF, Menu, MenuItem } from 'material-ui'
+import Popover, { PopoverAnimationVertical } from 'material-ui/Popover'
 
 import Tooltip from '../common/Tooltip'
-import { CheckedIcon, SmallErrorIcon, UploadFile, UploadFold, NewPhotoIcon, NewFolderIcon } from '../common/Svg'
+import { CheckedIcon, SmallErrorIcon, UploadFile, UploadFold, NewFolderIcon } from '../common/Svg'
 
 class LoadingLabel extends React.PureComponent {
   constructor (props) {
@@ -208,12 +209,18 @@ export class ActButton extends Button {
     }
 
     this.upload = (type) => {
+      this.props.offHover()
       this.props.upload(type)
       this.setState({ open: false })
     }
 
+    this.newFolder = () => {
+      this.props.offHover()
+      this.props.newFolder()
+      this.setState({ open: false })
+    }
+
     this.onClick = (e) => {
-      console.log('this.onClick', e)
       e.preventDefault()
       this.setState({ open: true, anchorEl: e.currentTarget })
     }
@@ -224,6 +231,11 @@ export class ActButton extends Button {
       onMouseMove: this.onMouseMove,
       onMouseLeave: this.onMouseLeave,
       onClick: this.onClick
+    }
+
+    this.exit = () => {
+      this.props.offHover()
+      this.setState({ open: false })
     }
   }
   render () {
@@ -257,8 +269,7 @@ export class ActButton extends Button {
     const iStyle = { color: 'rgba(0,0,0,.54)' }
     const textStyle = { marginLeft: 32, fontSize: 16 }
     const items = [
-      { primaryText: i18n.__('New Folder'), leftIcon: <NewFolderIcon style={iStyle} />, onClick: () => this.upload('file') },
-      { primaryText: i18n.__('New Album'), leftIcon: <NewPhotoIcon style={iStyle} />, onClick: () => this.upload('directory') },
+      { primaryText: i18n.__('New Folder'), leftIcon: <NewFolderIcon style={iStyle} />, onClick: () => this.newFolder() },
       { type: 'br' },
       { primaryText: i18n.__('Upload File'), leftIcon: <UploadFile style={iStyle} />, onClick: () => this.upload('file') },
       { primaryText: i18n.__('Upload Folder'), leftIcon: <UploadFold style={iStyle} />, onClick: () => this.upload('directory') }
@@ -272,14 +283,17 @@ export class ActButton extends Button {
         </div>
         <Popover
           open={this.state.open}
-          animated
+          animation={PopoverAnimationVertical}
           anchorEl={this.state.anchorEl}
           anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
           targetOrigin={{ horizontal: 'left', vertical: 'top' }}
-          onRequestClose={() => this.setState({ open: false })}
+          onRequestClose={this.exit}
           style={{ boxShadow: '0px 5px 6.6px 0.4px rgba(96, 125, 139, 0.24), 0px 2px 9.8px 0.2px rgba(96, 125, 139, 0.16)' }}
         >
-          <Menu style={{ width: 224, maxWidth: 224, height: 224, overflow: 'hidden' }} >
+          <Menu
+            style={{ width: 224, maxWidth: 224, height: 176, overflow: 'hidden' }}
+            onMouseMove={() => this.props.onHover()}
+          >
             {
               items.map((props, index) => (
                 props.type === 'br' ? (

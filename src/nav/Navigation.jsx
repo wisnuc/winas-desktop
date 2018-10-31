@@ -45,8 +45,8 @@ import Search from '../common/Search'
 import Fruitmix from '../common/fruitmix'
 import WindowAction from '../common/WindowAction'
 import DialogOverlay from '../common/PureDialog'
-import { LIButton, ActButton, TextField, Checkbox } from '../common/Buttons'
-import { TopLogo, FileManage, DeviceChangeIcon, FuncIcon, BackIcon, HelpIcon, WisnucLogo, MenuIcon, SearchIcon, FolderIcon, TransIcon, ShareIcon, BackupIcon, DeviceIcon, AddIcon, ArrowDownIcon, AccountIcon, CloseIcon, PDFIcon, WORDIcon, EXCELIcon, PPTIcon, PhotoIcon, VideoIcon, AudioIcon, ExitIcon } from '../common/Svg'
+import { LIButton, TextField, Checkbox } from '../common/Buttons'
+import { TopLogo, FileManage, DeviceChangeIcon, FuncIcon, BackIcon, HelpIcon, WisnucLogo, MenuIcon, SearchIcon, FolderIcon, TransIcon, ShareIcon, BackupIcon, DeviceIcon, ArrowDownIcon, AccountIcon, CloseIcon, PDFIcon, WORDIcon, EXCELIcon, PPTIcon, PhotoIcon, VideoIcon, AudioIcon, ExitIcon } from '../common/Svg'
 
 const HEADER_HEIGHT = 110
 
@@ -205,6 +205,14 @@ class NavViews extends React.Component {
       if (t === '*') this.setState({ types: [type] })
       else if (index === -1) this.setState({ types: [...t, type] })
       else this.setState({ types: [...t.slice(0, index), ...t.slice(index + 1)] })
+    }
+
+    this.onHover = () => {
+      this.setState({ hoverNav: true })
+    }
+
+    this.offHover = () => {
+      this.setState({ hoverNav: false })
     }
   }
 
@@ -651,7 +659,12 @@ class NavViews extends React.Component {
                   primaryColor={this.state.primaryColor}
                 />
               </div>
-              <ActButton label={i18n.__('New')} icon={AddIcon} shrinked={shrinked} primaryColor={this.state.primaryColor} />
+              {
+                ['home', 'public'].includes(this.state.nav) &&
+                  this.views[this.state.nav].renderCreateNewButton({
+                    shrinked, primaryColor: this.state.primaryColor, onHover: this.onHover, offHover: this.offHover
+                  })
+              }
               <div style={{ flexGrow: 1 }} />
               <div style={{ height: 72, width: 224, display: 'flex', alignItems: 'center', position: 'relative' }}>
                 <div style={{ height: 72, width: 88 }} className="flexCenter">
