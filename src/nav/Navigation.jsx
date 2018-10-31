@@ -64,12 +64,12 @@ class NavViews extends React.Component {
 
     this.install([
       { name: 'home', View: Home },
-      { name: 'photo', View: Photo },
       { name: 'music', View: Music },
       { name: 'docs', View: Docs },
       { name: 'video', View: Video },
       { name: 'public', View: Public },
       { name: 'usb', View: USB },
+      { name: 'photo', View: Photo },
       { name: 'backup', View: Backup },
 
       { name: 'downloading', View: Downloading },

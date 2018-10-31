@@ -390,8 +390,9 @@ class Home extends Base {
       const dUUID = this.state.path[0] && this.state.path[this.state.path.length - 1].uuid
       if (!rUUID || !dUUID) {
         this.setState({ loading: true, showSearch: false })
-        this.ctx.props.apis.request('drives') // drive root
-        this.ctx.props.apis.request('users') // drive root
+        const drives = this.ctx.props.apis && this.ctx.props.apis.drives && this.ctx.props.apis.drives.data
+        const drive = drives.find(d => d.tag === 'built-in')
+        this.ctx.props.apis.request('listNavDir', { driveUUID: drive.uuid, dirUUID: drive.uuid })
       } else {
         this.ctx.props.apis.request('listNavDir', { driveUUID: rUUID, dirUUID: dUUID })
       }
@@ -716,7 +717,7 @@ class Home extends Base {
     }
     const places = types ? drives.map(d => d.uuid).join('.') // media
       : this.isPublic ? drives.filter(d => d.type === 'public').map(d => d.uuid).join('.') // public
-      : drives.find(d => d.type === 'private').uuid // home
+        : drives.find(d => d.type === 'private').uuid // home
     const order = types ? 'newest' : 'find'
 
     this.ctx.props.apis.pureRequest('search', { name, places, types, order }, (err, res) => {
