@@ -3,7 +3,7 @@ import ReactDom from 'react-dom'
 import { ipcRenderer, remote } from 'electron'
 import i18n from 'i18n'
 
-import Phi from './Phi'
+import Winas from './Winas'
 
 /* i18n config */
 // const lang = navigator.language
@@ -17,7 +17,7 @@ i18n.configure({
 
 /* render method */
 const render = () => {
-  ReactDom.render(React.createElement(Phi), document.getElementById('app'))
+  ReactDom.render(React.createElement(Winas), document.getElementById('app'))
 }
 
 /* set useCapture true to prevent possible losting event */

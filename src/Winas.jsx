@@ -17,7 +17,7 @@ const defaultTheme = getMuiTheme({
   palette: { primary1Color: '#009688', accent1Color: '#ff4081' }
 })
 
-class Fruitmix extends React.Component {
+class Winas extends React.Component {
   constructor () {
     super()
 
@@ -203,4 +203,4 @@ class Fruitmix extends React.Component {
   }
 }
 
-export default Fruitmix
+export default Winas
