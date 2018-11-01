@@ -13,7 +13,6 @@ import SettingsMenu from './SettingMenu'
 import ChangeDevice from './ChangeDevice'
 
 import Home from '../view/Home'
-import Photo from '../view/Photo'
 import Music from '../view/Music'
 import Docs from '../view/Docs'
 import Video from '../view/Video'
@@ -69,7 +68,6 @@ class NavViews extends React.Component {
       { name: 'video', View: Video },
       { name: 'public', View: Public },
       { name: 'usb', View: USB },
-      { name: 'photo', View: Photo },
       { name: 'backup', View: Backup },
 
       { name: 'downloading', View: Downloading },
