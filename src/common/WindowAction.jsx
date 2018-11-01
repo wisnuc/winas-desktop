@@ -36,7 +36,7 @@ class WindowAction extends React.PureComponent {
     return (
       <div
         style={{
-          position: 'fixed',
+          position: 'absolute',
           top: 8,
           right: 8,
           display: 'flex',
@@ -50,10 +50,13 @@ class WindowAction extends React.PureComponent {
           <WinMiniIcon />
         </IconButton>
         <div style={{ width: 12 }} />
-        <IconButton style={styles.small} iconStyle={styles.smallIcon} onClick={this.toggleMax} hoveredStyle={{ opacity: 1 }}>
-          { !isMaximized ? <WinFullIcon /> : <WinNormalIcon /> }
-        </IconButton>
-        <div style={{ width: 12 }} />
+        {
+          !this.props.noResize &&
+            <IconButton style={styles.small} iconStyle={styles.smallIcon} onClick={this.toggleMax} hoveredStyle={{ opacity: 1 }}>
+              { !isMaximized ? <WinFullIcon /> : <WinNormalIcon /> }
+            </IconButton>
+        }
+        { !this.props.noResize && <div style={{ width: 12 }} /> }
         <IconButton style={styles.small} iconStyle={styles.smallIcon} onClick={this.hide} hoveredStyle={{ opacity: 1 }}>
           <CloseIcon />
         </IconButton>

@@ -120,10 +120,6 @@ export const DelPwdIcon = f('icon_del_password')
 
 export const SmallErrorIcon = f('icon_information')
 
-export const EyeOpenIcon = f('icon_eye_list')
-
-export const EyeOffIcon = f('icon_password_invisi')
-
 export const AddDeviceIcon = f('icon_add')
 
 export const SmallHelpIcon = f('icon_help_list')
@@ -219,3 +215,10 @@ export const CheckedIcon = f('check')
 export const ShareToIcon = f('share')
 export const ExitIcon = f('exit')
 export const WarningIcon = f('warning')
+export const LockIcon = f('lock')
+export const EyeOpenIcon = f('visibility')
+export const EyeOffIcon = f('visibility-off')
+export const CheckOutlineIcon = f('check-outline')
+export const FailedIcon = f('failed')
+export const CheckBoxOutlineIcon = f('check-box-outline')
+

@@ -6,6 +6,7 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
 import Login from './login/Login'
+import Account from './common/Account'
 import PhiAPI from './common/PhiAPI'
 import Clipboard from './control/clipboard'
 import Navigation from './nav/Navigation'
@@ -158,26 +159,45 @@ class Winas extends React.Component {
     const view = this.state.view === 'login' ? <Login {...this.state} />
       : this.state.view === 'device' ? <Navigation {...this.state} /> : <div />
 
-    const nodrag = { position: 'fixed', top: 0, WebkitAppRegion: 'no-drag' }
+    const nodrag = { position: 'absolute', top: 0, WebkitAppRegion: 'no-drag' }
+    const isSmall = this.state.view === 'login'
     return (
       <MuiThemeProvider muiTheme={this.state.theme}>
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: '#FFF' }}>
+        <div
+          className="flexCenter"
+          style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'transparent' }}
+        >
           {/* login or device */}
-          { view }
+          <div
+            style={{
+              position: 'relative',
+              width: isSmall ? 680 : '100%',
+              height: isSmall ? 510 : '100%',
+              overflow: 'hidden',
+              backgroundColor: '#FFF',
+              transition: 'all 225ms',
+              boxShadow: '0px 9px 13.2px 0.8px rgba(0, 105, 92, 0.24), 0px 4px 18.6px 0.4px rgba(0, 105, 92, 0.16)'
+            }}
+          >
+            { view }
+            {/* No WebkitAppRegion */}
+            <div style={Object.assign({ left: 0, height: 5, width: '100%' }, nodrag)} />
+            <div style={Object.assign({ left: 0, height: 110, width: 5 }, nodrag)} />
+            <div style={Object.assign({ right: 0, height: 110, width: 5 }, nodrag)} />
+            {/* Account */}
+            {
+              this.state.account &&
+                <div style={{ position: 'absolute', top: 12, right: 147, height: 36, WebkitAppRegion: 'no-drag' }}>
+                  <Account
+                    user={this.state.account}
+                    logout={() => this.logout()}
+                    device={this.state.selectedDevice}
+                    showUsers={() => this.setState({ showUsers: true })}
+                  />
+                </div>
+            }
 
-          {/* Account */}
-          {/*
-            this.state.account &&
-              <div style={{ position: 'fixed', top: 12, right: 147, height: 36, WebkitAppRegion: 'no-drag' }}>
-                <Account
-
-                  user={this.state.account}
-                  logout={() => this.logout()}
-                  device={this.state.selectedDevice}
-                  showUsers={() => this.setState({ showUsers: true })}
-                />
-              </div>
-          */}
+          </div>
 
           {/*
             !!this.state.showUsers &&
@@ -193,10 +213,6 @@ class Winas extends React.Component {
           {/* snackBar */}
           { this.renderSnackBar() }
 
-          {/* No WebkitAppRegion */}
-          <div style={Object.assign({ left: 0, height: 5, width: '100%' }, nodrag)} />
-          <div style={Object.assign({ left: 0, height: 110, width: 5 }, nodrag)} />
-          <div style={Object.assign({ right: 0, height: 110, width: 5 }, nodrag)} />
         </div>
       </MuiThemeProvider>
     )

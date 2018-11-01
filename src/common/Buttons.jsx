@@ -156,13 +156,14 @@ export class RRButton extends Button {
   render () {
     const { label, style, labelStyle, disabled, alt, loading, tooltip } = this.props
     const height = 40
-    const width = 240
+    const width = 328
     const cursor = disabled ? 'default' : 'pointer'
     const borderRadius = height / 2
-    const backgroundColor = (disabled && !loading) ? '#c4c5cc' : alt ? '#44c468' : '#31a0f5'
+    const backgroundColor = (disabled && !loading) ? '#FFF' : alt ? '#44c468' : '#00695c'
+    const border = (disabled && !loading) ? 'solid 1px rgba(0,0,0,.06)' : ''
 
     const boxShadow = (disabled && !loading)
-      ? '0px 5px 10px 0 rgba(122, 125, 128, 0.25)'
+      ? ''
       : this.state.hover
         ? `0px 10px 15px 0 ${alt ? 'rgba(47, 162, 79, 0.2)' : 'rgba(33, 110, 209, 0.2)'}`
         : `0px 5px 10px 0 ${alt ? 'rgba(47, 162, 79, 0.25)' : 'rgba(33, 110, 209, 0.25)'}`
@@ -171,6 +172,7 @@ export class RRButton extends Button {
       width,
       height,
       cursor,
+      border,
       borderRadius,
       backgroundColor,
       boxShadow,
@@ -178,7 +180,7 @@ export class RRButton extends Button {
       overflow: 'hidden'
     }, style)
 
-    const textStyle = Object.assign({ color: '#FFF', fontSize: 14 }, labelStyle)
+    const textStyle = Object.assign({ color: (disabled && !loading) ? 'rgba(0,0,0,.26)' : '#FFF', fontSize: 16 }, labelStyle)
 
     const overlayBgColor = loading ? 'rgba(0,0,0,.1)'
       : disabled ? 'transparent'
@@ -467,14 +469,14 @@ export class TFButton extends Button {
   render () {
     const { disabled } = this.props
     const Icon = this.props.icon
-    const iconColor = this.state.hover && !disabled ? '#31a0f5' : '#7d868f'
+    const iconColor = this.state.hover && !disabled ? '#009688' : 'rgba(0,0,0,.54)'
     const opacity = disabled ? 0.5 : 1
 
     return (
       <div
         style={{
-          width: 30,
-          height: 30,
+          width: 24,
+          height: 24,
           position: 'relative',
           display: 'flex',
           alignItems: 'center',
@@ -483,7 +485,7 @@ export class TFButton extends Button {
         }}
         {...this.funcs}
       >
-        <Icon style={{ width: 30, height: 30, color: iconColor, opacity }} />
+        <Icon style={{ width: 24, height: 24, color: iconColor, opacity }} />
       </div>
     )
   }
@@ -605,6 +607,29 @@ export class TextField extends React.PureComponent {
         hintStyle={{ color: '#c4c5cc', fontSize: 14, marginBottom: 5, marginLeft: 16 }}
         inputStyle={{ fontWeight: 500, fontSize: 18, marginTop: -5, marginLeft: 16 }}
         errorStyle={{ position: 'absolute', left: -9, bottom: 45 }}
+        underlineStyle={{ backgroundColor: '#eaeaea' }}
+        underlineDisabledStyle={{ borderBottom: '1px solid #eaeaea' }}
+        {...props}
+      />
+    )
+  }
+}
+
+export class LoginTF extends React.PureComponent {
+  render () {
+    const props = Object.assign({}, this.props)
+
+    delete props.autoFoucus
+    return (
+      <MTF
+        fullWidth
+        ref={input => input && this.props.autoFoucus && input.focus()}
+        style={{ marginTop: 32, marginBottom: -10 }}
+        floatingLabelFocusStyle={{ marginLeft: 0, marginTop: -8, fontSize: 19 }}
+        floatingLabelShrinkStyle={{ marginLeft: 0, marginTop: -8, fontSize: 19 }}
+        floatingLabelStyle={{ marginTop: -2, fontSize: 14, marginLeft: 32, color: 'rgba(0,0,0,.54)' }}
+        inputStyle={{ fontWeight: 500, fontSize: 16, marginLeft: 32, marginTop: 8, color: 'rgba(0,0,0,.76)' }}
+        errorStyle={{ position: 'absolute', left: 48, bottom: 49, fontSize: 14 }}
         underlineStyle={{ backgroundColor: '#eaeaea' }}
         underlineDisabledStyle={{ borderBottom: '1px solid #eaeaea' }}
         {...props}

@@ -2,7 +2,8 @@ import i18n from 'i18n'
 import React from 'react'
 import prettysize from 'prettysize'
 import { Divider } from 'material-ui'
-import { TypeSmallIcon, LocationSmallIcon, SizeSmallIcon, ContentSmallIcon, MTimeSmallIcon, AllFileIcon, PublicIcon } from '../common/Svg'
+import { LIButton } from '../common/Buttons'
+import { TypeSmallIcon, LocationSmallIcon, SizeSmallIcon, ContentSmallIcon, MTimeSmallIcon, AllFileIcon, PublicIcon, CloseIcon } from '../common/Svg'
 import renderFileIcon from '../common/renderFileIcon'
 
 const phaseDate = (time) => {
@@ -139,7 +140,6 @@ class FileDetail extends React.PureComponent {
 
   render () {
     const { selected, entries, path, isSearch, isUSB } = this.props
-    console.log('render detail', this.props)
     const entry = entries[selected[0]]
     if (!entry) return <div />
 
@@ -195,6 +195,11 @@ class FileDetail extends React.PureComponent {
             <div>
               { selected.length > 1 && i18n.__('And Other %s Items', selected.length)}
             </div>
+          </div>
+          <div style={{ marginRight: 8 }}>
+            <LIButton onClick={this.props.onRequestClose} >
+              <CloseIcon />
+            </LIButton>
           </div>
         </div>
         <Divider style={{ width: 280 }} className="divider" />

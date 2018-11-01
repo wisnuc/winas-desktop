@@ -2,7 +2,7 @@ import i18n from 'i18n'
 import React from 'react'
 import { Divider } from 'material-ui'
 
-import PhiLogin from './PhiLogin'
+import WisnucLogin from './WisnucLogin'
 import LANLogin from './LANLogin'
 import SetLANPwd from './SetLANPwd'
 import ConfirmPT from './ConfirmPT'
@@ -13,8 +13,6 @@ import reqMdns from '../common/mdns'
 import { BackIcon } from '../common/Svg'
 import WindowAction from '../common/WindowAction'
 import { RRButton, LIButton } from '../common/Buttons'
-
-const duration = 300
 
 class Login extends React.Component {
   constructor (props) {
@@ -273,7 +271,7 @@ class Login extends React.Component {
 
     switch (this.state.status) {
       case 'phiLogin':
-        view = (<PhiLogin {...props} onSuccess={this.phiLoginSuccess} enterLANLoginList={this.enterLANLoginList} />)
+        view = (<WisnucLogin {...props} onSuccess={this.phiLoginSuccess} enterLANLoginList={this.enterLANLoginList} phiLogin={this.props.phiLogin} />)
         break
 
       case 'phiNoBound':
@@ -320,37 +318,24 @@ class Login extends React.Component {
           height: '100%',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center'
+          justifyContent: 'center',
+          backgroundColor: '#FFF',
+          overflow: 'hidden'
         }}
       >
-        {/* background */}
-        <div
-          style={{
-            position: 'absolute',
-            width: '100%',
-            height: '100%',
-            opacity: this.state.hello ? 0 : 1,
-            transition: `opacity ${duration}ms`
-          }}
-        >
-          <img
-            style={{ position: 'absolute', width: '100%', height: '100%', zIndex: -1000 }}
-            src="./assets/images/index.png"
-            alt=""
-          />
-        </div>
-
         {/* Icon */}
-        <div style={{ position: 'absolute', top: 26, left: 44 }}>
-          <img
-            width={168}
-            height={18}
-            alt=""
-          />
-          <div style={{ fontSize: 14, color: '#888a8c', marginTop: 8, letterSpacing: 1.4 }}>
-            { i18n.__('Welcome') }
+        {/*
+          <div style={{ position: 'absolute', top: 26, left: 44 }}>
+            <img
+              width={168}
+              height={18}
+              alt=""
+            />
+            <div style={{ fontSize: 14, color: '#888a8c', marginTop: 8, letterSpacing: 1.4 }}>
+              { i18n.__('Welcome') }
+            </div>
           </div>
-        </div>
+          */}
 
         {/* WebkitAppRegion */}
         <div
@@ -365,27 +350,29 @@ class Login extends React.Component {
         />
 
         {/* QR Code */}
-        <div
-          style={{
-            position: 'absolute',
-            bottom: 72,
-            right: 48,
-            textAlign: 'center',
-            width: 120,
-            height: 135,
-            backgroundColor: '#FFF'
-          }}
-        >
+        {/*
           <div
             style={{
-              border: '1px solid #BDBDBD',
-              height: 106,
-              width: 106,
-              margin: '7px auto 0px auto'
+              position: 'absolute',
+              bottom: 72,
+              right: 48,
+              textAlign: 'center',
+              width: 120,
+              height: 135,
+              backgroundColor: '#FFF'
             }}
-          />
-          <div style={{ fontSize: 11, color: '#85868c' }}> { i18n.__('Download Phi App Text') } </div>
-        </div>
+          >
+            <div
+              style={{
+                border: '1px solid #BDBDBD',
+                height: 106,
+                width: 106,
+                margin: '7px auto 0px auto'
+              }}
+            />
+            <div style={{ fontSize: 11, color: '#85868c' }}> { i18n.__('Download Phi App Text') } </div>
+          </div>
+          */}
 
         {/* footer */}
         <div
@@ -393,27 +380,21 @@ class Login extends React.Component {
             position: 'absolute',
             bottom: 0,
             boxSizing: 'border-box',
-            fontSize: 14,
-            display: 'flex',
-            alignItems: 'center',
-            color: '#85868c',
+            fontSize: 12,
             width: '100%',
             height: 40
           }}
+          className="flexCenter"
         >
-          <div style={{ flexGrow: 1 }} />
           <div>
-            { `©${new Date().getFullYear()} ${i18n.__('Copyright Info')}` }
+            { `©${new Date().getFullYear()}${i18n.__('Copyright Info')}` }
           </div>
-          <div style={{ margin: '0px 20px' }}>
+          <div style={{ marginLeft: 20 }}>
             { i18n.__('Client Version %s', global.config && global.config.appVersion) }
-          </div>
-          <div style={{ marginRight: 20 }}>
-            { i18n.__('Phone Number %s', '4000-123-456') }
           </div>
         </div>
         { view }
-        <WindowAction />
+        <WindowAction noResize />
       </div>
     )
   }

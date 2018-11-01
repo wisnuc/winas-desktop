@@ -352,7 +352,8 @@ class NavViews extends React.Component {
       navToDrive: this.navToDrive,
       openSnackBar: this.props.openSnackBar,
       pin: this.state.pin,
-      primaryColor: this.state.primaryColor
+      primaryColor: this.state.primaryColor,
+      openDetail: this.openDetail
     })
   }
 
@@ -596,7 +597,10 @@ class NavViews extends React.Component {
       >
         <div style={{ height: 34, width: '100%', display: 'flex', alignItems: 'center' }}>
           <div style={{ height: 34, width: 34, margin: 4 }} className="flexCenter">
-            <MenuIcon style={{ height: 18, width: 18, cursor: 'pointer' }} onClick={() => this.setState({ pin: !this.state.pin })} />
+            <MenuIcon
+              style={{ height: 18, width: 18, cursor: 'pointer' }}
+              onClick={() => this.setState({ pin: !this.state.pin, hoverNav: false })}
+            />
           </div>
           <div style={{ height: 34, width: this.state.pin ? 180 : 0, WebkitAppRegion: 'drag', transition }} />
         </div>
@@ -791,7 +795,8 @@ class NavViews extends React.Component {
           style={{
             height: '100%',
             width: `calc(100% - ${this.state.pin || this.state.searchMode ? 224 : 88}px)`,
-            marginLeft: this.state.pin || this.state.searchMode ? 224 : 88
+            marginLeft: this.state.pin || this.state.searchMode ? 224 : 88,
+            transition: 'margin 225ms'
           }}
         >
           <div

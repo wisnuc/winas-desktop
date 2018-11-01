@@ -286,17 +286,15 @@ class DeviceSelect extends React.Component {
         </Dialog>
 
         {/* CloudLogin */}
-        <Dialog open={!!this.state.cloudLogin} onRequestClose={() => this.setState({ cloudLogin: null })} modal transparent >
-          {
-            !!this.state.cloudLogin &&
-              <CloudLogin
-                {...this.props}
-                dev={this.state.cloudLogin}
-                selectedDevice={this.state.selectedDevice}
-                onRequestClose={() => this.setState({ cloudLogin: null })}
-              />
-          }
-        </Dialog>
+        {
+          !!this.state.cloudLogin &&
+            <CloudLogin
+              {...this.props}
+              dev={this.state.cloudLogin}
+              selectedDevice={this.state.selectedDevice}
+              onRequestClose={() => this.setState({ cloudLogin: null })}
+            />
+        }
 
         {/* Invitaion */}
         <InvitationConfirm

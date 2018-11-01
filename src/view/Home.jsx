@@ -1044,7 +1044,7 @@ class Home extends Base {
     )
   }
 
-  renderMenu (open) {
+  renderMenu ({ open, openDetail }) {
     const itemSelected = this.state.select && this.state.select.selected && this.state.select.selected.length
     const multiSelected = this.state.select && this.state.select.selected && (this.state.select.selected.length > 1)
 
@@ -1205,7 +1205,7 @@ class Home extends Base {
                   <Divider style={{ marginLeft: 10, marginTop: 2, marginBottom: 2, width: 'calc(100% - 20px)' }} />
                   <MenuItem
                     primaryText={i18n.__('Properties')}
-                    onClick={() => this.setState({ detail: true })}
+                    onClick={openDetail}
                   />
                 </div>
               )
@@ -1228,7 +1228,7 @@ class Home extends Base {
     )
   }
 
-  renderContent ({ openSnackBar, navTo, pin }) {
+  renderContent ({ openSnackBar, navTo, pin, openDetail }) {
     return (
       <div style={{ position: 'relative', width: '100%', height: '100%' }}>
         <FileContent
@@ -1258,7 +1258,7 @@ class Home extends Base {
           inPublicRoot={this.hasRoot && !this.phyDrive}
         />
 
-        { this.renderMenu(this.state.contextMenuOpen) }
+        { this.renderMenu({ open: this.state.contextMenuOpen, openDetail }) }
 
         { this.renderDialogs(openSnackBar, navTo) }
       </div>

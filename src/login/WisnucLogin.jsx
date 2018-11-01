@@ -2,17 +2,17 @@ import md5 from 'md5'
 import React from 'react'
 import i18n from 'i18n'
 import { shell } from 'electron'
-import { Divider } from 'material-ui'
+import { Divider, Checkbox } from 'material-ui'
 import Dialog from '../common/PureDialog'
 import { isPhoneNumber } from '../common/validate'
-import { EyeOpenIcon, EyeOffIcon, DelPwdIcon } from '../common/Svg'
-import { RRButton, FLButton, RSButton, TFButton, Checkbox, TextField } from '../common/Buttons'
+import { EyeOpenIcon, EyeOffIcon, WinCloseIcon, MobileIcon, LockIcon, CheckBoxOutlineIcon, WisnucLogo } from '../common/Svg'
+import { RRButton, FLButton, RSButton, TFButton, LoginTF } from '../common/Buttons'
+import DeviceAPI from '../common/device'
 
-const phiSignupUrl = 'https://mall.phicomm.com/passport-signup.html'
 const phiResetPwdUrl = 'https://mall.phicomm.com/passport-reset_password.html'
 let firstLogin = true
 
-class PhiLogin extends React.Component {
+class WisnucLogin extends React.Component {
   constructor (props) {
     super(props)
 
@@ -25,7 +25,8 @@ class PhiLogin extends React.Component {
       showPwd: false,
       saveToken: false,
       autoLogin: false,
-      showFakePwd: false
+      showFakePwd: false,
+      loginType: 'wisnuc'
     }
 
     this.onPhoneNumber = (pn) => {
@@ -104,9 +105,34 @@ class PhiLogin extends React.Component {
           }
           const list = r.result.list.filter(l => l.type === 'owner' ||
             (l.accountStatus === '1' && ['pending', 'accept'].includes(l.inviteStatus)))
-          this.props.onSuccess({ list, phonenumber: this.state.pn, phicommUserId: this.phi.puid, phi })
+
+          this.onSuccess({ list, phonenumber: this.state.pn, phicommUserId: this.phi.puid, phi })
         }
       })
+    }
+
+    this.onUpdate = (prev, next) => {
+      this.setState({ dev: next }, () => {
+        const status = this.systemStatus()
+        if (status === 'ready') this.getLANToken()
+        else if (status === 'offline') this.remoteLogin()
+      })
+    }
+
+    this.onSuccess = ({ list, phonenumber, token, phicommUserId, phi }) => {
+      console.log('this.onSuccess', list)
+      const cdev = list.find(l => l.onlineStatus === 'online')
+      if (!cdev) this.setState({ failed: true, loading: false })
+      else {
+        const dev = Object.assign(
+          { address: cdev.localIp, domain: 'phiToLoacl', deviceSN: cdev.deviceSN, stationName: cdev.bindingName },
+          cdev
+        )
+        this.device = new DeviceAPI(dev)
+        this.device.on('updated', this.onUpdate)
+        this.device.start()
+        this.props.phiLogin({ phonenumber, token, phicommUserId, phi, name: phonenumber })
+      }
     }
 
     this.reset = () => {
@@ -118,6 +144,76 @@ class PhiLogin extends React.Component {
         if (this.state.showFakePwd) this.fakeLogin()
         else this.login()
       }
+    }
+
+    this.getLANTokenAsync = async () => {
+      const { account } = this.props
+      const { dev } = this.state
+      const args = { deviceSN: dev.mdev.deviceSN }
+      const [tokenRes, users] = await Promise.all([
+        this.props.phi.reqAsync('LANToken', args),
+        this.props.phi.reqAsync('localUsers', args)
+      ])
+      const token = tokenRes.token
+      const user = Array.isArray(users) && users.find(u => u.phicommUserId === account.phicommUserId)
+
+      if (!token || !user) throw Error('get LANToken or user error')
+
+      return ({ dev, user, token })
+    }
+
+    this.getLANToken = () => {
+      this.getLANTokenAsync()
+        .then(({ dev, user, token }) => {
+          Object.assign(dev, { token: { isFulfilled: () => true, ctx: user, data: { token } } })
+          if (!user.password) this.props.jumpToSetLANPwd(this.device)
+          else {
+            this.props.deviceLogin({ dev, user, selectedDevice: this.device, isCloud: false })
+          }
+        })
+        .catch((error) => {
+          console.error('this.getLANToken', error, this.props)
+          this.setState({ status: 'error', error })
+        })
+    }
+
+    this.remoteLoginAsync = async () => {
+      const { account } = this.props
+      const { dev } = this.state
+      const args = { deviceSN: dev.mdev.deviceSN }
+      const token = this.props.phi.token
+      const [boot, users] = await Promise.all([
+        this.props.phi.reqAsync('boot', args),
+        this.props.phi.reqAsync('localUsers', args)
+      ])
+      const user = Array.isArray(users) && users.find(u => u.phicommUserId === account.phicommUserId)
+
+      if (!token || !user || !boot) throw Error('get LANToken or user error')
+      if (boot.state !== 'STARTED') throw Error('station not started')
+      return ({ dev, user, token, boot })
+    }
+
+    this.remoteLogin = () => {
+      this.remoteLoginAsync()
+        .then(({ dev, user, token, boot }) => {
+          /* onSuccess: auto login */
+          Object.assign(dev, {
+            token: {
+              isFulfilled: () => true, ctx: user, data: { token }
+            },
+            boot: {
+              isFulfilled: () => true, ctx: user, data: boot
+            }
+          })
+          if (!user.password) this.props.jumpToSetLANPwd(this.device)
+          else {
+            this.props.deviceLogin({ dev, user, selectedDevice: this.device, isCloud: true })
+          }
+        })
+        .catch((error) => {
+          console.error('this.getLANToken', error)
+          this.setState({ status: 'error', error })
+        })
     }
   }
 
@@ -156,23 +252,16 @@ class PhiLogin extends React.Component {
     )
   }
 
-  render () {
+  systemStatus () {
+    return (this.device && this.device.systemStatus()) || 'probing'
+  }
+
+  renderWisnucLogin () {
     return (
-      <div style={{ width: 320, zIndex: 100 }} className="paper" >
-        <div style={{ height: 59, display: 'flex', alignItems: 'center', paddingLeft: 20 }} className="title">
-          { i18n.__('Login') }
-        </div>
-        <Divider style={{ marginLeft: 20, width: 280 }} className="divider" />
-        <div style={{ height: 150, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <img
-            style={{ width: 280, height: 150 }}
-            src="./assets/images/pic-login.png"
-            alt=""
-          />
-        </div>
-        <div style={{ width: 280, margin: '0 auto', position: 'relative' }}>
-          <TextField
-            hintText={i18n.__('Phone Number Hint')}
+      <div>
+        <div style={{ width: 328, margin: '0 auto', position: 'relative' }}>
+          <LoginTF
+            floatingLabelText={i18n.__('Phone Number')}
             type="text"
             errorText={this.state.pnError}
             value={this.state.pn}
@@ -182,16 +271,17 @@ class PhiLogin extends React.Component {
           {
             this.state.showFakePwd
               ? (
-                <TextField
+                <LoginTF
+                  floatingLabelText={i18n.__('Password')}
                   type="password"
                   value="**********"
                   onClick={() => this.setState({ showFakePwd: false })}
                   errorText={this.state.pwdError}
                 />
               ) : (
-                <TextField
+                <LoginTF
                   type={this.state.showPwd ? 'text' : 'password'}
-                  hintText={i18n.__('Password Hint')}
+                  floatingLabelText={i18n.__('Password')}
                   errorText={this.state.pwdError}
                   value={this.state.pwd}
                   onChange={e => this.onPassword(e.target.value)}
@@ -199,12 +289,20 @@ class PhiLogin extends React.Component {
                 />
               )
           }
+          {/* icon of phone */}
+          <div style={{ position: 'absolute', left: 0, top: 64 }}>
+            <MobileIcon />
+          </div>
+          {/* icon of password */}
+          <div style={{ position: 'absolute', left: 0, top: 160 }}>
+            <LockIcon />
+          </div>
 
           {/* clear password */}
           {
             !!this.state.pn && (
-              <div style={{ position: 'absolute', right: 0, top: 35 }}>
-                <TFButton icon={DelPwdIcon} onClick={this.clearPn} />
+              <div style={{ position: 'absolute', right: 0, top: 64 }}>
+                <TFButton icon={WinCloseIcon} onClick={this.clearPn} />
               </div>
             )
           }
@@ -212,34 +310,44 @@ class PhiLogin extends React.Component {
           {/* password visibility */}
           {
             !this.state.showFakePwd && (
-              <div style={{ position: 'absolute', right: 0, top: 105 }}>
+              <div style={{ position: 'absolute', right: 0, top: 160 }}>
                 <TFButton icon={this.state.showPwd ? EyeOpenIcon : EyeOffIcon} onClick={this.togglePwd} />
               </div>
             )
           }
         </div>
-        <div style={{ display: 'flex', width: 280, height: 40, alignItems: 'center', margin: '0 auto' }}>
+        <div style={{ display: 'flex', height: 48, width: 328, alignItems: 'center', margin: '0 auto' }}>
           <Checkbox
             label={i18n.__('Remember Password')}
+            checkedIcon={<CheckBoxOutlineIcon style={{ color: '#009688' }} />}
             disableTouchRipple
-            style={{ width: 140 }}
-            iconStyle={{ height: 18, width: 18, marginTop: 2, fill: this.state.saveToken ? '#31a0f5' : 'rgba(0,0,0,.25)' }}
-            labelStyle={{ fontSize: 14, color: '#85868c', marginLeft: -9 }}
+            style={{ width: 108, marginTop: 4 }}
+            iconStyle={{ height: 18, width: 18, marginTop: 1, fill: this.state.saveToken ? '#009688' : 'rgba(0,0,0,.25)' }}
+            labelStyle={{ fontSize: 12, color: 'rgba(0,0,0,.76)', marginLeft: -9 }}
             checked={this.state.saveToken}
             onCheck={() => this.handleSaveToken()}
           />
           <Checkbox
             label={i18n.__('Auto Login')}
+            checkedIcon={<CheckBoxOutlineIcon style={{ color: '#009688' }} />}
             disableTouchRipple
-            style={{ width: 140 }}
-            iconStyle={{ height: 18, width: 18, marginTop: 2, fill: this.state.autoLogin ? '#31a0f5' : 'rgba(0,0,0,.25)' }}
-            labelStyle={{ fontSize: 14, color: '#85868c', marginLeft: -9 }}
+            style={{ width: 108, marginLeft: -12, marginTop: 4 }}
+            iconStyle={{ height: 18, width: 18, marginTop: 1, fill: this.state.autoLogin ? '#009688' : 'rgba(0,0,0,.25)' }}
+            labelStyle={{ fontSize: 12, color: 'rgba(0,0,0,.76)', marginLeft: -9 }}
             checked={this.state.autoLogin}
             onCheck={() => this.handleAutologin()}
           />
+          <div style={{ flexGrow: 1 }} />
+          <div style={{ marginRight: -8 }}>
+            <FLButton
+              labelStyle={{ fontSize: 12 }}
+              label={i18n.__('Forget Password')}
+              onClick={() => shell.openExternal(phiResetPwdUrl)}
+            />
+          </div>
         </div>
-        <div style={{ height: 20 }} />
-        <div style={{ width: 240, height: 40, margin: '0 auto' }}>
+        <div style={{ height: 24 }} />
+        <div style={{ width: 328, height: 40, margin: '0 auto' }}>
           <RRButton
             label={this.state.loading ? i18n.__('Logging') : i18n.__('Login')}
             onClick={() => (this.state.showFakePwd ? this.fakeLogin() : this.login())}
@@ -247,7 +355,7 @@ class PhiLogin extends React.Component {
             loading={this.state.loading}
           />
         </div>
-
+        {/*
         <div style={{ display: 'flex', alignItems: 'center', position: 'relative', height: 50, color: '#85868c' }}>
           <div style={{ width: '50%', textAlign: 'right' }}>
             <FLButton
@@ -256,12 +364,48 @@ class PhiLogin extends React.Component {
             />
           </div>
           <div style={{ width: 1, height: 10, backgroundColor: 'rgba(0,0,0,.38)' }} />
-          <div style={{ width: '50%', textAlign: 'left' }}>
-            <FLButton
-              label={i18n.__('Forget Password')}
-              onClick={() => shell.openExternal(phiResetPwdUrl)}
-            />
+        </div>
+        */}
+      </div>
+    )
+  }
+
+  renderWeChatLogin () {
+    return (
+      <div className="flexCenter"> WeChat Login </div>
+    )
+  }
+
+  render () {
+    const { loginType } = this.state
+    return (
+      <div style={{ width: 680, zIndex: 100, height: 510, position: 'relative' }} >
+        <div
+          style={{
+            height: 32,
+            fontSize: 28,
+            display: 'flex',
+            alignItems: 'center',
+            marginTop: 72,
+            paddingLeft: 176
+          }}
+        >
+          <div
+            style={{ opacity: loginType === 'wisnuc' ? 0.87 : 0.12, cursor: 'pointer' }}
+            onClick={() => this.setState({ loginType: 'wisnuc' })}
+          >
+            { i18n.__('Account Login') }
           </div>
+          <div
+            style={{ marginLeft: 32, opacity: this.state.loginType === 'wechat' ? 0.87 : 0.12, cursor: 'pointer' }}
+            onClick={() => this.setState({ loginType: 'wechat' })}
+          >
+            { i18n.__('Wechat Login') }
+          </div>
+        </div>
+        { loginType === 'wisnuc' ? this.renderWisnucLogin() : this.renderWeChatLogin() }
+        <div style={{ position: 'absolute', left: 48, top: 64 }}>
+          <WisnucLogo style={{ width: 55, height: 55, color: '#00695c' }} />
         </div>
 
         {/* Phi Login Failed */}
@@ -273,4 +417,4 @@ class PhiLogin extends React.Component {
   }
 }
 
-export default PhiLogin
+export default WisnucLogin
