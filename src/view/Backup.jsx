@@ -44,14 +44,14 @@ class Backup extends Base {
     )
   }
 
-  renderToolBar ({ style, openHelp }) {
+  renderToolBar ({ style, openDetail }) {
     return (
       <div style={style}>
         <div style={{ flexGrow: 1 }} />
         <LIButton onClick={() => {}} tooltip={i18n.__('More')} >
           <SettingsIcon />
         </LIButton>
-        <LIButton onClick={openHelp} tooltip={i18n.__('Info')} >
+        <LIButton onClick={openDetail} tooltip={i18n.__('Info')} >
           <InfoIcon />
         </LIButton>
         <div style={{ width: 8 }} />

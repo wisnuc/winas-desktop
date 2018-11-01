@@ -44,8 +44,8 @@ import Search from '../common/Search'
 import Fruitmix from '../common/fruitmix'
 import WindowAction from '../common/WindowAction'
 import DialogOverlay from '../common/PureDialog'
-import { LIButton, TextField, Checkbox } from '../common/Buttons'
-import { TopLogo, FileManage, DeviceChangeIcon, FuncIcon, BackIcon, HelpIcon, WisnucLogo, MenuIcon, SearchIcon, FolderIcon, TransIcon, ShareIcon, BackupIcon, DeviceIcon, ArrowDownIcon, AccountIcon, CloseIcon, PDFIcon, WORDIcon, EXCELIcon, PPTIcon, PhotoIcon, VideoIcon, AudioIcon, ExitIcon } from '../common/Svg'
+import { TextField, Checkbox } from '../common/Buttons'
+import { TopLogo, FileManage, DeviceChangeIcon, FuncIcon, BackIcon, WisnucLogo, MenuIcon, TransIcon, DeviceIcon, ArrowDownIcon, AccountIcon, CloseIcon, PDFIcon, WORDIcon, EXCELIcon, PPTIcon, PhotoIcon, VideoIcon, AudioIcon, ExitIcon } from '../common/Svg'
 
 const HEADER_HEIGHT = 110
 
@@ -193,8 +193,8 @@ class NavViews extends React.Component {
       this.setState({ conflicts: data })
     }
 
-    this.openHelp = () => {
-      this.setState({ onHelp: true })
+    this.openDetail = () => {
+      this.setState({ detail: true })
     }
 
     this.handleCheck = (type) => {
@@ -356,20 +356,19 @@ class NavViews extends React.Component {
     })
   }
 
-  renderHelp () {
-    const isAdmin = this.props.apis.account && this.props.apis.account.data && this.props.apis.account.data.isFirstUser
+  renderDetail () {
     return (
       <div
         style={{
           position: 'absolute',
           top: 0,
-          left: this.state.onHelp ? 0 : '100%',
+          left: this.state.detail ? 0 : '100%',
           width: '100%',
           height: '100%',
           zIndex: 100,
           transition: 'left 175ms'
         }}
-        onMouseDown={() => this.setState({ onHelp: false })}
+        onMouseDown={() => this.setState({ detail: false })}
       >
         <div
           style={{
@@ -386,8 +385,8 @@ class NavViews extends React.Component {
           onMouseDown={(e) => { e.preventDefault(); e.stopPropagation() }}
         >
           {
-            this.state.onHelp && this.views[this.state.nav].renderHelp({
-              nav: this.state.nav, isAdmin, onClose: () => this.setState({ onHelp: false })
+            this.state.detail && this.views[this.state.nav].renderDetail({
+              nav: this.state.nav, onClose: () => this.setState({ detail: false })
             })
           }
         </div>
@@ -413,7 +412,7 @@ class NavViews extends React.Component {
         <div style={{ height: '100%', width: '100%', position: 'relative' }}>
           {/* Toolbar */}
           <div style={{ height: 4 }} />
-          { this.views[this.state.nav].renderToolBar({ style: toolBarStyle, openHelp: this.openHelp }) }
+          { this.views[this.state.nav].renderToolBar({ style: toolBarStyle, openDetail: this.openDetail }) }
           <div style={{ height: 4 }} />
 
           {/* Title and BreadCrumbItem */}
@@ -425,8 +424,8 @@ class NavViews extends React.Component {
           </div>
         </div>
 
-        {/* help frame */}
-        { this.renderHelp() }
+        {/* detail frame */}
+        { this.renderDetail() }
 
         {/* drag item */}
         { this.views[this.state.nav].renderDragItems() }
@@ -478,16 +477,12 @@ class NavViews extends React.Component {
             views={this.views}
             nav={this.state.nav}
             navTo={this.navTo}
-            openHelp={this.openHelp}
           />
         </div>
 
         <div style={{ height: 'calc(100% - 50px)', width: '100%' }} id="content-container">
           { this.renderView() }
         </div>
-
-        {/* help frame */}
-        { this.renderHelp() }
       </div>
     )
   }
@@ -533,14 +528,10 @@ class NavViews extends React.Component {
             style={{ height: 60, minWidth: 210, borderRadius: '0 30px 30px 0' }}
           />
           <div style={{ flexGrow: 1 }} />
-          <div style={{ marginRight: 20 }}>
-            <LIButton onClick={this.openHelp} tooltip={i18n.__('Help')}> <HelpIcon /> </LIButton>
-          </div>
         </div>
         <div style={{ height: 'calc(100% - 50px)', width: '100%' }}>
           { this.renderView() }
         </div>
-        { this.renderHelp() }
       </div>
     )
   }

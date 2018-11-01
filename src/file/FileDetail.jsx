@@ -2,8 +2,7 @@ import i18n from 'i18n'
 import React from 'react'
 import prettysize from 'prettysize'
 import { Divider } from 'material-ui'
-import { LIButton } from '../common/Buttons'
-import { TypeSmallIcon, LocationSmallIcon, SizeSmallIcon, ContentSmallIcon, MTimeSmallIcon, CloseIcon, AllFileIcon, PublicIcon } from '../common/Svg'
+import { TypeSmallIcon, LocationSmallIcon, SizeSmallIcon, ContentSmallIcon, MTimeSmallIcon, AllFileIcon, PublicIcon } from '../common/Svg'
 import renderFileIcon from '../common/renderFileIcon'
 
 const phaseDate = (time) => {
@@ -140,6 +139,7 @@ class FileDetail extends React.PureComponent {
 
   render () {
     const { selected, entries, path, isSearch, isUSB } = this.props
+    console.log('render detail', this.props)
     const entry = entries[selected[0]]
     if (!entry) return <div />
 
@@ -171,33 +171,20 @@ class FileDetail extends React.PureComponent {
     ]
 
     return (
-      <div style={{ width: 280, margin: '0 20px 20px 20px' }}>
-        <div style={{ height: 59, display: 'flex', alignItems: 'center' }} className="title">
-          <div style={{ display: 'flex', alignItems: 'center', height: 59 }} >
-            { i18n.__('Properties') }
-          </div>
-          <div style={{ flexGrow: 1 }} />
-          <div style={{ marginRight: -10 }}>
-            <LIButton onClick={this.props.onRequestClose} >
-              <CloseIcon />
-            </LIButton>
-          </div>
-        </div>
-        <Divider style={{ width: 280 }} className="divider" />
-        <div style={{ height: 20 }} />
-
+      <div style={{ width: 280, margin: '0 20px 20px 20px', zIndex: 200 }}>
         <div style={{ height: 60, display: 'flex', alignItems: 'center' }} >
-          <div style={{ marginRight: 4, marginLeft: -6 }} className="flexCenter">
+          <div style={{ marginRight: 32, marginLeft: 24 }} className="flexCenter">
             {
-              entry.type === 'public' ? <PublicIcon style={{ width: 60, height: 60, color: '#ffa93e' }} />
-                : entry.type === 'file' ? renderFileIcon(entry.name, entry.metadata, 60)
-                  : <AllFileIcon style={{ width: 60, height: 60, color: '#ffa93e' }} />
+              entry.type === 'public' ? <PublicIcon style={{ width: 24, height: 24, color: '#ffa93e' }} />
+                : entry.type === 'file' ? renderFileIcon(entry.name, entry.metadata, 24)
+                  : <AllFileIcon style={{ width: 24, height: 24, color: '#ffa93e' }} />
             }
           </div>
           <div style={{ display: 'flex', flexGrow: 1, alignItems: 'center', color: '#525a60' }} >
             <div
               style={{
                 maxWidth: selected.length > 1 ? 120 : 200,
+                fontSize: 21,
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap'
@@ -210,8 +197,9 @@ class FileDetail extends React.PureComponent {
             </div>
           </div>
         </div>
+        <Divider style={{ width: 280 }} className="divider" />
+        <div style={{ height: 24 }} />
 
-        <div style={{ height: 10 }} />
         {/* data */}
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           { this.renderList(Icons, Titles, Values) }

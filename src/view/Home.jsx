@@ -900,7 +900,7 @@ class Home extends Base {
     )
   }
 
-  renderToolBar ({ style, openHelp }) {
+  renderToolBar ({ style, openDetail }) {
     const { curr, queue } = this.history.get()
     const noBack = curr < 1
     const noForward = curr > queue.length - 2
@@ -954,7 +954,7 @@ class Home extends Base {
           }
         </LIButton>
 
-        <LIButton onClick={openHelp} tooltip={i18n.__('Info')} >
+        <LIButton onClick={openDetail} tooltip={i18n.__('Info')} >
           <InfoIcon />
         </LIButton>
         <div style={{ width: 8 }} />
@@ -1003,9 +1003,6 @@ class Home extends Base {
   }
 
   renderDialogs (openSnackBar, navTo) {
-    const showDetail = this.state.detail && this.select.state && this.select.state.selected &&
-      this.state.entries && this.state.entries[this.select.state.selected[0]]
-
     return (
       <div style={{ width: '100%', height: '100%' }}>
         <DownloadDialog
@@ -1035,21 +1032,6 @@ class Home extends Base {
           title={i18n.__('Confirm Delete Items Title')}
           text={() => this.deleteText()}
         />
-
-        <DialogOverlay open={!!showDetail} onRequestClose={() => this.toggleDialog('detail')}>
-          {
-            showDetail &&
-            <FileDetail
-              {...this.ctx.props}
-              isUSB={this.isUSB}
-              path={this.state.path}
-              entries={this.state.entries}
-              isSearch={!!this.state.showSearch}
-              onRequestClose={() => this.toggleDialog('detail')}
-              selected={this.select.state.selected}
-            />
-          }
-        </DialogOverlay>
 
         <ConfirmDialog
           open={this.state.deleteDriveConfirm}
@@ -1229,6 +1211,20 @@ class Home extends Base {
               )
         }
       </ContextMenu>
+    )
+  }
+
+  renderDetail ({ onClose }) {
+    return (
+      <FileDetail
+        {...this.ctx.props}
+        isUSB={this.isUSB}
+        path={this.state.path}
+        entries={this.state.entries}
+        isSearch={!!this.state.showSearch}
+        onRequestClose={() => onClose()}
+        selected={this.select.state.selected}
+      />
     )
   }
 
