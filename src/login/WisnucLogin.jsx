@@ -3,11 +3,12 @@ import React from 'react'
 import i18n from 'i18n'
 import { shell } from 'electron'
 import { Divider, Checkbox } from 'material-ui'
+import WechatLogin from './WechatLogin'
+import DeviceAPI from '../common/device'
 import Dialog from '../common/PureDialog'
 import { isPhoneNumber } from '../common/validate'
-import { EyeOpenIcon, EyeOffIcon, WinCloseIcon, MobileIcon, LockIcon, CheckBoxOutlineIcon, WisnucLogo } from '../common/Svg'
 import { RRButton, FLButton, RSButton, TFButton, LoginTF } from '../common/Buttons'
-import DeviceAPI from '../common/device'
+import { EyeOpenIcon, EyeOffIcon, WinCloseIcon, MobileIcon, LockIcon, CheckBoxOutlineIcon, WisnucLogo } from '../common/Svg'
 
 const phiResetPwdUrl = 'https://mall.phicomm.com/passport-reset_password.html'
 let firstLogin = true
@@ -372,7 +373,9 @@ class WisnucLogin extends React.Component {
 
   renderWeChatLogin () {
     return (
-      <div className="flexCenter"> WeChat Login </div>
+      <div style={{ width: '100%', height: 400, overflow: 'hidden' }}>
+        <WechatLogin {...this.props} />
+      </div>
     )
   }
 
