@@ -512,7 +512,7 @@ class Fruitmix extends EventEmitter {
     this.request('device')
     this.requestAsync('drives').then((drives) => {
       const drive = drives.find(d => d.tag === 'home')
-      this.request('listNavDir', { driveUUID: drive.uuid, dirUUID: drive.uuid })
+      setTimeout(() => this.request('listNavDir', { driveUUID: drive.uuid, dirUUID: drive.uuid }), 450)
     }).catch((err) => {
       console.error('requestAsync drives error', err)
     })

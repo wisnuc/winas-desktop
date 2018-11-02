@@ -392,10 +392,7 @@ class WisnucLogin extends React.Component {
         view = <WeChatLogin {...this.props} />
         break
       case 'retrievePwd':
-        view = <RetrievePwd {...this.props} />
-        break
-      case 'setPwd':
-        view = this.renderSetPwd()
+        view = <RetrievePwd {...this.props} backToLogin={() => this.setState({ status: 'account' })} />
         break
       default:
         break
@@ -404,36 +401,21 @@ class WisnucLogin extends React.Component {
     return (
       <div style={{ width: 680, zIndex: 100, height: 510, position: 'relative' }} >
         {
-          isLogin
-            ? (
-              <div style={headerStyle}>
-                <div
-                  style={{ opacity: status === 'account' ? 0.87 : 0.12, cursor: 'pointer' }}
-                  onClick={() => this.setState({ status: 'account' })}
-                >
-                  { i18n.__('Account Login') }
-                </div>
-                <div
-                  style={{ marginLeft: 32, opacity: this.state.status === 'wechat' ? 0.87 : 0.12, cursor: 'pointer' }}
-                  onClick={() => this.setState({ status: 'wechat' })}
-                >
-                  { i18n.__('Wechat Login') }
-                </div>
+          isLogin &&
+            <div style={headerStyle}>
+              <div
+                style={{ opacity: status === 'account' ? 0.87 : 0.12, cursor: 'pointer' }}
+                onClick={() => this.setState({ status: 'account' })}
+              >
+                { i18n.__('Account Login') }
               </div>
-            )
-            : (
-              <div style={headerStyle}>
-                <div style={{ opacity: 0.8 }}>
-                  { status === 'retrievePwd' ? i18n.__('Retrieve Password') : i18n.__('Set Password') }
-                </div>
-                <div style={{ flexGrow: 1 }} />
-                <FLButton
-                  labelStyle={{ fontSize: 14, fontWeight: 500, color: 'rgba(0,150,136,.76)', marginRight: -8 }}
-                  label={i18n.__('Login')}
-                  onClick={() => this.setState({ status: 'account' })}
-                />
+              <div
+                style={{ marginLeft: 32, opacity: this.state.status === 'wechat' ? 0.87 : 0.12, cursor: 'pointer' }}
+                onClick={() => this.setState({ status: 'wechat' })}
+              >
+                { i18n.__('Wechat Login') }
               </div>
-            )
+            </div>
         }
         { view }
         <div style={{ position: 'absolute', left: 48, top: 64 }}>

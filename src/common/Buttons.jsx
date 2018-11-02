@@ -651,7 +651,7 @@ export class PwdTF extends React.PureComponent {
         style={{ height: 40, border: 'solid 1px rgba(0,0,0,.12)' }}
         hintStyle={{ color: 'rgba(0,0,0,.38)', fontSize: 14, marginLeft: 16, marginBottom: -4 }}
         inputStyle={{ fontWeight: 500, fontSize: 16, marginLeft: 16 }}
-        errorStyle={{ position: 'absolute', left: -9, bottom: 45 }}
+        errorStyle={{ position: 'absolute', bottom: 48 }}
         {...props}
       />
     )
