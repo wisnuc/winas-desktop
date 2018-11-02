@@ -1,16 +1,15 @@
 import md5 from 'md5'
 import React from 'react'
 import i18n from 'i18n'
-import { shell } from 'electron'
 import { Divider, Checkbox } from 'material-ui'
-import WechatLogin from './WechatLogin'
+import WeChatLogin from './WeChatLogin'
+import RetrievePwd from './RetrievePwd'
 import DeviceAPI from '../common/device'
 import Dialog from '../common/PureDialog'
 import { isPhoneNumber } from '../common/validate'
 import { RRButton, FLButton, RSButton, TFButton, LoginTF } from '../common/Buttons'
 import { EyeOpenIcon, EyeOffIcon, WinCloseIcon, MobileIcon, LockIcon, CheckBoxOutlineIcon, WisnucLogo } from '../common/Svg'
 
-const phiResetPwdUrl = 'https://mall.phicomm.com/passport-reset_password.html'
 let firstLogin = true
 
 class WisnucLogin extends React.Component {
@@ -27,7 +26,7 @@ class WisnucLogin extends React.Component {
       saveToken: false,
       autoLogin: false,
       showFakePwd: false,
-      loginType: 'wisnuc'
+      status: 'account'
     }
 
     this.onPhoneNumber = (pn) => {
@@ -343,7 +342,7 @@ class WisnucLogin extends React.Component {
             <FLButton
               labelStyle={{ fontSize: 12 }}
               label={i18n.__('Forget Password')}
-              onClick={() => shell.openExternal(phiResetPwdUrl)}
+              onClick={() => this.setState({ status: 'retrievePwd' })}
             />
           </div>
         </div>
@@ -371,42 +370,72 @@ class WisnucLogin extends React.Component {
     )
   }
 
-  renderWeChatLogin () {
-    return (
-      <div style={{ width: '100%', height: 400, overflow: 'hidden' }}>
-        <WechatLogin {...this.props} />
-      </div>
-    )
-  }
-
   render () {
-    const { loginType } = this.state
+    const { status } = this.state
+    const isLogin = ['account', 'wechat'].includes(status)
+    const headerStyle = {
+      width: 328,
+      height: 32,
+      fontSize: 28,
+      display: 'flex',
+      alignItems: 'center',
+      marginTop: 72,
+      paddingLeft: 176
+    }
+
+    let view = null
+    switch (status) {
+      case 'account':
+        view = this.renderWisnucLogin()
+        break
+      case 'wechat':
+        view = <WeChatLogin {...this.props} />
+        break
+      case 'retrievePwd':
+        view = <RetrievePwd {...this.props} />
+        break
+      case 'setPwd':
+        view = this.renderSetPwd()
+        break
+      default:
+        break
+    }
+
     return (
       <div style={{ width: 680, zIndex: 100, height: 510, position: 'relative' }} >
-        <div
-          style={{
-            height: 32,
-            fontSize: 28,
-            display: 'flex',
-            alignItems: 'center',
-            marginTop: 72,
-            paddingLeft: 176
-          }}
-        >
-          <div
-            style={{ opacity: loginType === 'wisnuc' ? 0.87 : 0.12, cursor: 'pointer' }}
-            onClick={() => this.setState({ loginType: 'wisnuc' })}
-          >
-            { i18n.__('Account Login') }
-          </div>
-          <div
-            style={{ marginLeft: 32, opacity: this.state.loginType === 'wechat' ? 0.87 : 0.12, cursor: 'pointer' }}
-            onClick={() => this.setState({ loginType: 'wechat' })}
-          >
-            { i18n.__('Wechat Login') }
-          </div>
-        </div>
-        { loginType === 'wisnuc' ? this.renderWisnucLogin() : this.renderWeChatLogin() }
+        {
+          isLogin
+            ? (
+              <div style={headerStyle}>
+                <div
+                  style={{ opacity: status === 'account' ? 0.87 : 0.12, cursor: 'pointer' }}
+                  onClick={() => this.setState({ status: 'account' })}
+                >
+                  { i18n.__('Account Login') }
+                </div>
+                <div
+                  style={{ marginLeft: 32, opacity: this.state.status === 'wechat' ? 0.87 : 0.12, cursor: 'pointer' }}
+                  onClick={() => this.setState({ status: 'wechat' })}
+                >
+                  { i18n.__('Wechat Login') }
+                </div>
+              </div>
+            )
+            : (
+              <div style={headerStyle}>
+                <div style={{ opacity: 0.8 }}>
+                  { status === 'retrievePwd' ? i18n.__('Retrieve Password') : i18n.__('Set Password') }
+                </div>
+                <div style={{ flexGrow: 1 }} />
+                <FLButton
+                  labelStyle={{ fontSize: 14, fontWeight: 500, color: 'rgba(0,150,136,.76)', marginRight: -8 }}
+                  label={i18n.__('Login')}
+                  onClick={() => this.setState({ status: 'account' })}
+                />
+              </div>
+            )
+        }
+        { view }
         <div style={{ position: 'absolute', left: 48, top: 64 }}>
           <WisnucLogo style={{ width: 55, height: 55, color: '#00695c' }} />
         </div>

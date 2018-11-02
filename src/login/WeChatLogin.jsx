@@ -50,7 +50,7 @@ class DeviceList extends React.PureComponent {
   }
 }
 
-class WechatLogin extends React.Component {
+class WeChatLogin extends React.Component {
   constructor (props) {
     super(props)
 
@@ -280,84 +280,86 @@ class WechatLogin extends React.Component {
 
   renderCard () {
     return (
-      <div style={{ marginTop: -32 }}>
-        {
-          !this.state.error
-            ? (
-              <div
-                style={{
-                  width: 332,
-                  height: 400,
-                  margin: '0px auto 0 auto',
-                  position: 'relative',
-                  backgroundColor: '#FFF',
-                  overflow: 'hidden'
-                }}
-              >
-                {/* CircularProgress */}
+      <div style={{ width: '100%', height: 400, overflow: 'hidden' }}>
+        <div style={{ marginTop: -32 }}>
+          {
+            !this.state.error
+              ? (
                 <div
-                  ref={ref => (this.weChatLoadingRef = ref)}
-                  key="weChatLoadingRef"
                   style={{
-                    position: 'absolute',
-                    top: 108,
-                    left: 0,
-                    height: 300,
-                    width: '100%',
-                    backgroundColor: '#FAFAFA',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
+                    width: 332,
+                    height: 400,
+                    margin: '0px auto 0 auto',
+                    position: 'relative',
+                    backgroundColor: '#FFF',
+                    overflow: 'hidden'
                   }}
                 >
-                  <CircularProgress size={64} thickness={5} />
-                </div>
-                <div
-                  style={{ height: 406, width: 300, margin: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                  id="login_container"
-                />
+                  {/* CircularProgress */}
+                  <div
+                    ref={ref => (this.weChatLoadingRef = ref)}
+                    key="weChatLoadingRef"
+                    style={{
+                      position: 'absolute',
+                      top: 108,
+                      left: 0,
+                      height: 300,
+                      width: '100%',
+                      backgroundColor: '#FAFAFA',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    <CircularProgress size={64} thickness={5} />
+                  </div>
+                  <div
+                    style={{ height: 406, width: 300, margin: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    id="login_container"
+                  />
 
-                {/* overlay text */}
-                <div style={{ position: 'absolute', top: 0, left: 0, height: 48, width: '100%', backgroundColor: '#FFF' }} />
-                {/*
+                  {/* overlay text */}
+                  <div style={{ position: 'absolute', top: 0, left: 0, height: 48, width: '100%', backgroundColor: '#FFF' }} />
+                  {/*
                   <div style={{ height: 72 }} />
                   <div style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>
                     {i18n.__('Login via WeChat') }
                   </div>
                 */}
-              </div>
-            )
-            : (
-              <div style={{ width: 380, height: 540, backgroundColor: '#FAFAFA' }}>
-                <div
-                  style={{
-                    width: 270,
-                    height: 270,
-                    margin: '42px auto 12px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
-                >
-                  <img
-                    width={96}
-                    height={96}
-                    alt=""
-                    src="./assets/images/icon.png"
-                    style={{ filter: 'grayscale(100%)' }}
-                  />
                 </div>
-                <div style={{ height: 24 }} />
-                <div style={{ textAlign: 'center', color: 'rgba(0,0,0,0.87)', fontSize: 20 }}>
-                  { this.state.error === 'net' ? i18n.__('Network Error') : i18n.__('Cloud Error') }
+              )
+              : (
+                <div style={{ width: 380, height: 540, backgroundColor: '#FAFAFA' }}>
+                  <div
+                    style={{
+                      width: 270,
+                      height: 270,
+                      margin: '42px auto 12px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    <img
+                      width={96}
+                      height={96}
+                      alt=""
+                      src="./assets/images/icon.png"
+                      style={{ filter: 'grayscale(100%)' }}
+                    />
+                  </div>
+                  <div style={{ height: 24 }} />
+                  <div style={{ textAlign: 'center', color: 'rgba(0,0,0,0.87)', fontSize: 20 }}>
+                    { this.state.error === 'net' ? i18n.__('Network Error') : i18n.__('Cloud Error') }
+                  </div>
+                  <div style={{ height: 24 }} />
+                  <div style={{ textAlign: 'center', color: 'rgba(0,0,0,0.54)', fontSize: 20 }}>
+                    { this.state.error === 'net' ? i18n.__('Network Error Text') : i18n.__('Cloud Error Text') }
+                  </div>
                 </div>
-                <div style={{ height: 24 }} />
-                <div style={{ textAlign: 'center', color: 'rgba(0,0,0,0.54)', fontSize: 20 }}>
-                  { this.state.error === 'net' ? i18n.__('Network Error Text') : i18n.__('Cloud Error Text') }
-                </div>
-              </div>
-            )
-        }
+              )
+          }
+        </div>
       </div>
     )
   }
@@ -365,67 +367,25 @@ class WechatLogin extends React.Component {
   renderFailed () {
     const text = i18n.__('Not Registered User')
     return (
-      <div style={{ width: 380, height: 360, backgroundColor: '#FFF', zIndex: 100, margin: '0 auto' }}>
-        {/* content */}
-        <div style={{ height: 104, paddingTop: 32 }} className="flexCenter">
-          <FailedIcon style={{ color: '#f44336', height: 72, width: 72 }} />
-        </div>
+      <div style={{ width: '100%', height: 400, overflow: 'hidden' }}>
+        <div style={{ width: 380, height: 360, backgroundColor: '#FFF', zIndex: 100, margin: '0 auto' }}>
+          {/* content */}
+          <div style={{ height: 104, paddingTop: 32 }} className="flexCenter">
+            <FailedIcon style={{ color: '#f44336', height: 72, width: 72 }} />
+          </div>
 
-        <div style={{ fontSize: 14, color: '#f44336' }} className="flexCenter">
-          { text }
-        </div>
+          <div style={{ fontSize: 14, color: '#f44336' }} className="flexCenter">
+            { text }
+          </div>
 
-        <div style={{ height: 32 }} />
-        {/* button */}
-        <div style={{ width: 328, height: 40, margin: '0 auto' }}>
-          <RRButton
-            label={i18n.__('Return')}
-            onClick={this.resetWCL}
-          />
-        </div>
-      </div>
-    )
-  }
-
-  renderFailed0 () {
-    return (
-      <div style={{ width: 380, height: 360, backgroundColor: '#FFF', zIndex: 100, margin: '0 auto' }}>
-        {/* title */}
-        <div style={{ height: 72, backgroundColor: '#FFF', display: 'flex', alignItems: 'center' }} >
-          <div style={{ marginLeft: 24 }} >
-            { i18n.__('WeChat Login Failed') }
+          <div style={{ height: 32 }} />
+          {/* button */}
+          <div style={{ width: 328, height: 40, margin: '0 auto' }}>
+            <RRButton
+              label={i18n.__('Return')}
+              onClick={this.resetWCL}
+            />
           </div>
-        </div>
-        <Divider />
-        <div style={{ height: 24 }} />
-
-        {/* content */}
-        <div style={{ height: 200, marginLeft: 24, width: 332 }}>
-          <div style={{ fontSize: 16, marginBottom: 12, color: 'rgba(0,0,0,0.87)' }}>
-            { i18n.__('WeChat Login Failed Comment') }
-          </div>
-          <div style={{ fontSize: 16, marginBottom: 12, color: 'rgba(0,0,0,0.87)' }}>
-            { i18n.__('WeChat Login Failed Text 1') }
-          </div>
-          <div style={{ fontSize: 16, marginBottom: 12, color: 'rgba(0,0,0,0.87)' }}>
-            { i18n.__('WeChat Login Failed Text 2') }
-          </div>
-          <div style={{ fontSize: 16, marginBottom: 12, color: 'rgba(0,0,0,0.87)' }}>
-            { i18n.__('WeChat Login Failed Text 3') }
-          </div>
-          <div style={{ fontSize: 16, marginBottom: 12, color: 'rgba(0,0,0,0.87)' }}>
-            { i18n.__('WeChat Login Failed Text 4') }
-          </div>
-        </div>
-
-        {/* button */}
-        <div style={{ display: 'flex' }}>
-          <div style={{ flexGrow: 1 }} />
-          <FlatButton
-            label={i18n.__('Return')}
-            labelStyle={{ color: '#424242', fontWeight: 500 }}
-            onClick={this.resetWCL}
-          />
         </div>
       </div>
     )
@@ -458,8 +418,9 @@ class WechatLogin extends React.Component {
     if (wcl === 'fail') return this.renderFailed()
 
     return (
-      <div style={{ width: 380, height: 360, backgroundColor: '#FFF', zIndex: 100, margin: '0 auto' }}>
-        {/*
+      <div style={{ width: '100%', height: 400, overflow: 'hidden' }}>
+        <div style={{ width: 380, height: 360, backgroundColor: '#FFF', zIndex: 100, margin: '0 auto' }}>
+          {/*
         <div style={{ height: 72, backgroundColor: '#FAFAFA', display: 'flex', alignItems: 'center' }} >
           <div style={{ marginLeft: 24 }} >
             { wcl === 'lastDevice' ? i18n.__('Last Device') : wcl === 'list'
@@ -467,114 +428,115 @@ class WechatLogin extends React.Component {
           </div>
         </div>
         */}
-        <Divider />
-        {
-          wcl === 'lastDevice' && this.state.wxData
-            ? (
-              <div>
-                <div style={{ height: 312, marginLeft: 24, width: 332, display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ flexGrow: 1 }} />
-
-                  {/* Icon */}
-                  <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    <div style={{ borderRadius: 48, width: 96, height: 96, overflow: 'hidden' }}>
-                      <img
-                        width={96}
-                        height={96}
-                        alt=""
-                        src={this.state.wxData.user.avatarUrl || '../../Desktop/test.jpg'}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Name */}
-                  <div style={{ height: 24 }} />
-                  <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    { this.state.wxData.user.nickName || 'Just_Test'}
-                  </div>
-                  <div style={{ flexGrow: 1 }} />
-                  <div style={{ display: 'flex' }}>
-                    <div style={{ height: 80, width: 80, display: 'flex', alignItems: 'center' }}>
-                      <Barcelona color="rgba(0,0,0,0.54)" style={{ width: 56, height: 56 }} />
-                    </div>
-                    <div>
-                      <div style={{ height: 8 }} />
-                      <div style={{ fontSize: 16, lineHeight: '24px', color: 'rgba(0,0,0,0.87)' }}> { this.state.lastDevice.name } </div>
-                      <div style={{ fontSize: 14, lineHeight: '20px', color: 'rgba(0,0,0,0.54)' }}>
-                        { this.state.lastDevice.LANIP }
-                      </div>
-                      <div style={{ fontSize: 14, lineHeight: '20px', color: 'rgba(0,0,0,0.54)' }}>{ i18n.__('Login via WeChat') } </div>
-
-                    </div>
-                  </div>
-                  <div style={{ height: 8 }} />
-                </div>
-                <Divider />
-                <div style={{ height: 32 }} />
-                {
-                  this.state.logining
-                    ? (
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 16 }}>
-                        <CircularProgress size={48} thickness={3} />
-                      </div>
-                    )
-                    : (
-                      <div>
-                        <div style={{ height: 80, fontSize: 16, fontWeight: 500, color: 'rgba(0,0,0,0.87)', textAlign: 'center' }} >
-                          <span style={{ fontSize: 34 }}> { this.state.count } </span>
-                        </div>
-                        <div style={{ display: 'flex' }}>
-                          <div style={{ flexGrow: 1 }} />
-                          <FlatButton
-                            label={i18n.__('Avaliable Device List')}
-                            labelPosition="before"
-                            labelStyle={{ color: '#424242', fontWeight: 500 }}
-                            onClick={this.enterList}
-                            icon={<RightIcon color="#424242" />}
-                          />
-                        </div>
-                      </div>
-                    )
-                }
-              </div>
-            )
-            : wcl === 'list'
+          <Divider />
+          {
+            wcl === 'lastDevice' && this.state.wxData
               ? (
                 <div>
-                  <div style={{ height: 16 }} />
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <div style={{ width: '100%', height: 436, overflowY: 'auto' }}>
-                      {
-                        this.state.lists.map((list, index) => (
-                          <DeviceList
-                            list={list}
-                            select={this.select}
-                            key={index.toString()}
-                            primaryColor={this.props.primaryColor}
-                          />
-                        ))
-                      }
+                  <div style={{ height: 312, marginLeft: 24, width: 332, display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ flexGrow: 1 }} />
+
+                    {/* Icon */}
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                      <div style={{ borderRadius: 48, width: 96, height: 96, overflow: 'hidden' }}>
+                        <img
+                          width={96}
+                          height={96}
+                          alt=""
+                          src={this.state.wxData.user.avatarUrl || '../../Desktop/test.jpg'}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Name */}
+                    <div style={{ height: 24 }} />
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                      { this.state.wxData.user.nickName || 'Just_Test'}
+                    </div>
+                    <div style={{ flexGrow: 1 }} />
+                    <div style={{ display: 'flex' }}>
+                      <div style={{ height: 80, width: 80, display: 'flex', alignItems: 'center' }}>
+                        <Barcelona color="rgba(0,0,0,0.54)" style={{ width: 56, height: 56 }} />
+                      </div>
+                      <div>
+                        <div style={{ height: 8 }} />
+                        <div style={{ fontSize: 16, lineHeight: '24px', color: 'rgba(0,0,0,0.87)' }}> { this.state.lastDevice.name } </div>
+                        <div style={{ fontSize: 14, lineHeight: '20px', color: 'rgba(0,0,0,0.54)' }}>
+                          { this.state.lastDevice.LANIP }
+                        </div>
+                        <div style={{ fontSize: 14, lineHeight: '20px', color: 'rgba(0,0,0,0.54)' }}>{ i18n.__('Login via WeChat') } </div>
+
+                      </div>
+                    </div>
+                    <div style={{ height: 8 }} />
+                  </div>
+                  <Divider />
+                  <div style={{ height: 32 }} />
+                  {
+                    this.state.logining
+                      ? (
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 16 }}>
+                          <CircularProgress size={48} thickness={3} />
+                        </div>
+                      )
+                      : (
+                        <div>
+                          <div style={{ height: 80, fontSize: 16, fontWeight: 500, color: 'rgba(0,0,0,0.87)', textAlign: 'center' }} >
+                            <span style={{ fontSize: 34 }}> { this.state.count } </span>
+                          </div>
+                          <div style={{ display: 'flex' }}>
+                            <div style={{ flexGrow: 1 }} />
+                            <FlatButton
+                              label={i18n.__('Avaliable Device List')}
+                              labelPosition="before"
+                              labelStyle={{ color: '#424242', fontWeight: 500 }}
+                              onClick={this.enterList}
+                              icon={<RightIcon color="#424242" />}
+                            />
+                          </div>
+                        </div>
+                      )
+                  }
+                </div>
+              )
+              : wcl === 'list'
+                ? (
+                  <div>
+                    <div style={{ height: 16 }} />
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <div style={{ width: '100%', height: 436, overflowY: 'auto' }}>
+                        {
+                          this.state.lists.map((list, index) => (
+                            <DeviceList
+                              list={list}
+                              select={this.select}
+                              key={index.toString()}
+                              primaryColor={this.props.primaryColor}
+                            />
+                          ))
+                        }
+                      </div>
                     </div>
                   </div>
-                </div>
-              )
-              : (
-                <div>
-                  <div style={{ height: 16 }} />
-                  <div style={{ height: 270, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    {
-                      wcl === 'success' ? <div /> : <CircularProgress size={64} thickness={5} />
-                    }
+                )
+                : (
+                  <div>
+                    <div style={{ height: 16 }} />
+                    <div style={{ height: 270, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      {
+                        wcl === 'success' ? <div /> : <CircularProgress size={64} thickness={5} />
+                      }
+                    </div>
+                    <div style={{ textAlign: 'center', color: 'rgba(0,0,0,0.87)', fontSize: 20, height: 36 }}>
+                      { text }
+                    </div>
                   </div>
-                  <div style={{ textAlign: 'center', color: 'rgba(0,0,0,0.87)', fontSize: 20, height: 36 }}>
-                    { text }
-                  </div>
-                </div>
-              )
-        }
+                )
+          }
+        </div>
       </div>
     )
   }
 }
 
-export default WechatLogin
+export default WeChatLogin

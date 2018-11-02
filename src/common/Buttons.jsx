@@ -333,7 +333,7 @@ export class FLButton extends Button {
     const { label, style, labelStyle, disabled } = this.props
 
     const cursor = disabled ? 'default' : 'pointer'
-    const color = this.state.hover ? 'var(--dodger-blue)' : ' var(--grey-text)'
+    const color = this.state.hover && !disabled ? 'rgba(0,150,136,.76)' : 'rgba(0,0,0,.26)'
     const buttonStyle = Object.assign({ padding: '0 8px', cursor, display: 'inline-block' }, style)
     const textStyle = Object.assign({ height: 34, color, fontSzie: 14 }, labelStyle)
 
@@ -632,6 +632,26 @@ export class LoginTF extends React.PureComponent {
         errorStyle={{ position: 'absolute', left: 48, bottom: 49, fontSize: 14 }}
         underlineStyle={{ backgroundColor: '#eaeaea' }}
         underlineDisabledStyle={{ borderBottom: '1px solid #eaeaea' }}
+        {...props}
+      />
+    )
+  }
+}
+
+export class PwdTF extends React.PureComponent {
+  render () {
+    const props = Object.assign({}, this.props)
+
+    delete props.autoFoucus
+    return (
+      <MTF
+        fullWidth
+        underlineShow={false}
+        ref={input => input && this.props.autoFoucus && input.focus()}
+        style={{ height: 40, border: 'solid 1px rgba(0,0,0,.12)' }}
+        hintStyle={{ color: 'rgba(0,0,0,.38)', fontSize: 14, marginLeft: 16, marginBottom: -4 }}
+        inputStyle={{ fontWeight: 500, fontSize: 16, marginLeft: 16 }}
+        errorStyle={{ position: 'absolute', left: -9, bottom: 45 }}
         {...props}
       />
     )

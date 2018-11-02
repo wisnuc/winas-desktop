@@ -175,7 +175,7 @@ class Winas extends React.Component {
               height: isSmall ? 510 : '100%',
               overflow: 'hidden',
               backgroundColor: '#FFF',
-              transition: 'all 225ms',
+              transition: 'height 450ms cubic-bezier(0.0, 0.0, 0.2, 1), width 225ms cubic-bezier(0.0, 0.0, 0.2, 1) 225ms',
               boxShadow: '0px 9px 13.2px 0.8px rgba(0, 105, 92, 0.24), 0px 4px 18.6px 0.4px rgba(0, 105, 92, 0.16)'
             }}
           >
