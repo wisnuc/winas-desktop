@@ -30,7 +30,7 @@ class Transmission extends Base {
   renderContent ({ navToDrive }) {
     return (
       <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>
-        <TrsContainer navToDrive={navToDrive} type="d" />
+        <TrsContainer navToDrive={navToDrive} />
       </div>
     )
   }

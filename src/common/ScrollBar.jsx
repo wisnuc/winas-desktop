@@ -116,7 +116,7 @@ class ScrollBar extends React.PureComponent {
           onMouseMove={this.onHover}
           onMouseDown={this.onMouseDown}
           ref={ref => (this.refBar = ref)}
-          style={Object.assign({ backgroundColor: '#4a95f2', height: barH }, barStyle)}
+          style={Object.assign({ backgroundColor: '#009688', height: barH }, barStyle)}
         />
       </div>
     )

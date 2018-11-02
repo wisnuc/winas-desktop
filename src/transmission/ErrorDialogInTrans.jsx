@@ -1,12 +1,13 @@
-import i18n from 'i18n'
 import React from 'react'
-import { Divider } from 'material-ui'
-import { AutoSizer } from 'react-virtualized'
-
-import ScrollBar from '../common/ScrollBar'
-import renderFileIcon from '../common/renderFileIcon'
-import { LIButton, RSButton } from '../common/Buttons'
-import { FolderIcon, MultiDownloadIcon, MultiUploadIcon, CloseIcon } from '../common/Svg'
+import i18n from 'i18n'
+import { clipboard } from 'electron'
+import { IconButton } from 'material-ui'
+import ErrorIcon from 'material-ui/svg-icons/alert/error-outline'
+import CloseIcon from 'material-ui/svg-icons/navigation/close'
+import EditorInsertDriveFile from 'material-ui/svg-icons/editor/insert-drive-file'
+import FileFolder from 'material-ui/svg-icons/file/folder'
+import JSONTree from 'react-json-tree'
+import FlatButton from '../common/FlatButton'
 
 const convert = (code) => {
   switch (code) {
@@ -40,22 +41,6 @@ const convert = (code) => {
       return i18n.__('ETYPE')
     case 'EIGNORE':
       return i18n.__('EIGNORE')
-    case 'EMKDIR':
-      return i18n.__('EMKDIR')
-    case 'ENOTSTREAM':
-      return i18n.__('ENOTSTREAM')
-    case 'EHOSTUNREACH':
-      return i18n.__('ECONNECT')
-    case 'ETIMEOUT':
-      return i18n.__('ETIMEOUT')
-    case 'ETIMEDOUT':
-      return i18n.__('ETIMEDOUT')
-    case 'ECONNABORTED':
-      return i18n.__('ECONNABORTED')
-    case 'ECANCELED':
-      return i18n.__('ECONNECT')
-    case 'Not Found':
-      return i18n.__('ENOTFOUND')
     default:
       return code || i18n.__('Unknown Error')
   }
@@ -75,6 +60,7 @@ class ErrorTree extends React.PureComponent {
   constructor (props) {
     super(props)
     this.state = {
+      expand: false
     }
 
     this.retry = () => {
@@ -88,13 +74,16 @@ class ErrorTree extends React.PureComponent {
       this.props.ignore(uuid)
       this.props.onRequestClose()
     }
+
+    this.copyText = () => {
+      clipboard.writeText(JSON.stringify(this.props.errors))
+    }
   }
 
-  renderRow ({ node, key, style }) {
+  renderRow (node, key) {
     const code = node.error.code ||
       (node.error.response && node.error.response[0] && node.error.response[0].error && node.error.response[0].error.code) ||
-      (node.error.response && node.error.response.error && node.error.response.error.code) ||
-      (node.error.response && node.error.response.code)
+      (node.error.response && node.error.response.error && node.error.response.error.code)
     const error = code ? convert(code) : translateStatus(node.error.status)
     let name = ''
     if (node.entry && typeof node.entry === 'object') name = node.entry.name
@@ -102,90 +91,117 @@ class ErrorTree extends React.PureComponent {
     if (node.entries && typeof node.entries[0] === 'object') name = node.entries[0].newName
     if (node.entries && typeof node.entries[0] === 'string') name = node.entries[0].replace(/^.*\//, '').replace(/^.*\\/, '')
 
+    const svgStyle = { color: 'rgba(0,0,0,0.54)', width: 16, height: 16 }
     return (
-      <div style={style} key={key}>
-        <div style={{ height: 60, width: '100%', display: 'flex', alignItems: 'center' }}>
-          <div style={{ width: 30, display: 'flex', alignItems: 'center' }}>
-            {
-              node.entries && node.entries.length > 1 ? (node.trsType === 'download' ? <MultiDownloadIcon /> : <MultiUploadIcon />)
-                : node.type === 'file' ? renderFileIcon(name, null, 30)
-                  : <FolderIcon style={{ width: 30, height: 30 }} />
-            }
-          </div>
-          <div style={{ width: 10 }} />
-          <div>
-            <div style={{ width: 320, height: 20, marginTop: 10, letterSpacing: 1.4, color: '#505259' }} className="text">
-              { name }
-            </div>
-            <div style={{ height: 20, letterSpacing: 1.2, color: '#fa5353', fontSize: 12 }} className="text">
-              { error }
-            </div>
-          </div>
+      <div style={{ height: 32, width: '100%', display: 'flex', alignItems: 'center' }} key={key} >
+        <div style={{ margin: '-2px 4px 0 4px', display: 'flex' }}>
+          {
+            node.type === 'directory' ? <FileFolder style={svgStyle} />
+              : node.type === 'file' ? <EditorInsertDriveFile style={svgStyle} />
+                : <ErrorIcon style={svgStyle} />
+          }
+        </div>
+        <div style={{ width: 540, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginRight: 5, fontSize: 13 }} >
+          { name }
+        </div>
+        <div style={{ fontSize: 13 }} >
+          { error }
         </div>
       </div>
     )
   }
 
+  renderSource (errors) {
+    const theme = {
+      scheme: 'wisnuc',
+      author: 'lxw',
+      base00: '#1d1f21',
+      base01: '#282a2e',
+      base02: '#373b41',
+      base03: '#969896',
+      base04: '#b4b7b4',
+      base05: '#c5c8c6',
+      base06: '#e0e0e0',
+      base07: '#ffffff',
+      base08: '#CC342B',
+      base09: '#F96A38',
+      base0A: '#FBA922',
+      base0B: '#00897b',
+      base0C: '#3971ED',
+      base0D: '#3971ED',
+      base0E: '#A36AC7',
+      base0F: '#3971ED'
+    }
+
+    return (
+      <div>
+        <JSONTree
+          hideRoot
+          data={errors}
+          theme={theme}
+          valueRenderer={raw => <span style={{ userSelect: 'text' }}>{raw}</span>}
+          getItemString={type => (<span>{ type }</span>)}
+          shouldExpandNode={(k, d, l) => k[0] === 'error' || l < 2}
+        />
+      </div>
+    )
+  }
+
   render () {
+    const { expand } = this.state
     return (
       <div
         style={{
-          width: 420,
-          maxHeight: 474,
-          padding: '0px 20px',
-          boxSizing: 'border-box',
+          width: expand ? 1080 : 780,
+          height: expand ? 720 : 520,
+          padding: '0px 24px 0px 24px',
           transition: 'all 225ms',
           overflow: 'hidden'
         }}
       >
-        <div
-          className="title"
-          style={{ height: 60, display: 'flex', alignItems: 'center', fontSize: 20, color: '#525a60' }}
-        >
-          { i18n.__('Transfer Error List') }
+        <div style={{ height: 56, display: 'flex', alignItems: 'center' }} >
+          <div style={{ fontSize: 20 }}> { i18n.__('Error Dialog Title') } </div>
           <div style={{ flexGrow: 1 }} />
-          <div style={{ marginRight: -10 }}>
-            { <LIButton onClick={this.props.onRequestClose}> <CloseIcon /> </LIButton> }
-          </div>
+          <IconButton
+            onClick={() => this.props.onRequestClose()}
+            style={{ width: 40, height: 40, padding: 10, marginRight: -10 }}
+            iconStyle={{ width: 20, height: 20, color: 'rgba(0,0,0,0.54)' }}
+          >
+            <CloseIcon />
+          </IconButton>
         </div>
-        <Divider
-          style={{ width: 380, transition: 'all 175ms' }}
-          className="divider"
-        />
-        <div style={{ height: 19 }} />
+        <div style={{ fontSize: 14, marginBottom: 16, height: 20 }}> { i18n.__('Error Dialog Text') } </div>
 
         {/* list of errors */}
-        <div style={{ width: '100%', maxHeight: 300, height: this.props.errors.length * 60, overflowY: 'auto' }} >
-          <AutoSizer>
-            {({ height, width }) => (
-              <ScrollBar
-                height={height}
-                width={width}
-                allHeight={this.props.errors.length * 60}
-                rowCount={this.props.errors.length}
-                rowHeight={60}
-                rowRenderer={({ key, index, style }) => this.renderRow({ node: this.props.errors[index], key, style })}
-              />
-            )}
-          </AutoSizer>
+        <div style={{ width: '100%', height: expand ? 574 : 374, overflowY: 'auto', border: 'solid #ccc 1px' }} >
+          {
+            this.state.expand ? this.renderSource(this.props.errors)
+              : this.props.errors.map((node, index) => this.renderRow(node, index.toString()))
+          }
         </div>
 
-        <div style={{ height: 20 }} />
         {/* confirm button */}
-        <div style={{ height: 34, display: 'flex', alignItems: 'center', margin: '20px 0' }}>
+        <div style={{ height: 52, display: 'flex', alignItems: 'center', marginRight: -24 }}>
+          <FlatButton
+            primary
+            label={this.state.expand ? i18n.__('Return') : i18n.__('Open Detail')}
+            onClick={() => this.setState({ expand: !this.state.expand })}
+          />
           <div style={{ flexGrow: 1 }} />
           {
-            !!this.props.finished &&
-              <RSButton
-                alt
+            !this.state.expand &&
+              <FlatButton
+                primary
                 label={i18n.__('Ignore All')}
                 onClick={this.ignore}
+                disabled={this.props.finished}
               />
           }
-          <div style={{ width: 10 }} />
-          <RSButton
-            label={this.props.finished ? i18n.__('Retry All') : i18n.__('Retry')}
-            onClick={this.retry}
+          <FlatButton
+            primary
+            label={this.state.expand ? i18n.__('Copy to Clipboard') : i18n.__('Retry All')}
+            onClick={this.state.expand ? this.copyText : this.retry}
+            disabled={!this.state.expand && this.props.finished}
           />
         </div>
       </div>

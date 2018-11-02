@@ -20,8 +20,6 @@ import Public from '../view/Public'
 import USB from '../view/USB'
 import Backup from '../view/Backup'
 
-import Downloading from '../view/Downloading'
-import Uploading from '../view/Uploading'
 import Transfer from '../view/Transfer'
 import Finished from '../view/Finished'
 
@@ -70,8 +68,6 @@ class NavViews extends React.Component {
       { name: 'usb', View: USB },
       { name: 'backup', View: Backup },
 
-      { name: 'downloading', View: Downloading },
-      { name: 'uploading', View: Uploading },
       { name: 'transfer', View: Transfer },
       { name: 'finished', View: Finished },
 
@@ -264,88 +260,6 @@ class NavViews extends React.Component {
     )
   }
 
-  renderHeader () {
-    const navs = [
-      {
-        selected: !this.state.changeDevice && this.views[this.state.nav].navGroup() === 'file',
-        Icon: FileManage,
-        text: i18n.__('Files Menu Name'),
-        fn: () => this.navGroup('file')
-      },
-      {
-        selected: !this.state.changeDevice && this.views[this.state.nav].navGroup() === 'transmission',
-        Icon: TransIcon,
-        text: i18n.__('Transmission Menu Name'),
-        fn: () => this.navGroup('transmission')
-      },
-      {
-        selected: !!this.state.changeDevice,
-        Icon: DeviceChangeIcon,
-        text: i18n.__('Change Device'),
-        fn: () => this.showBoundList()
-      },
-      {
-        selected: !this.state.changeDevice && this.views[this.state.nav].navGroup() === 'settings',
-        Icon: FuncIcon,
-        text: i18n.__('Settings Menu Name'),
-        fn: () => this.navGroup('settings')
-      }
-    ]
-    return (
-      <div
-        style={{
-          WebkitAppRegion: 'drag',
-          display: 'flex',
-          alignItems: 'center',
-          height: HEADER_HEIGHT,
-          width: '100%',
-          position: 'relative',
-          backgroundColor: '#f3f8ff',
-          background: 'linear-gradient(to right, #4a95f2, #6363ff)'
-        }}
-      >
-        <div style={{ width: 220, height: 110, overflow: 'hidden' }}>
-          <TopLogo style={{ height: 160, width: 427, margin: '-25px 0 0 -105px' }} />
-        </div>
-        {
-          navs.map(({ Icon, text, fn, selected }) => (
-            <div
-              key={text}
-              style={{
-                width: 130,
-                height: 110,
-                color: '#FFF',
-                cursor: 'pointer',
-                letterSpacing: '1.4px',
-                backgroundColor: selected ? 'rgba(83, 104, 183, 0.17)' : ''
-              }}
-              onClick={fn}
-            >
-              <div
-                style={{
-                  marginTop: 20,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexDirection: 'column',
-                  WebkitAppRegion: 'no-drag'
-                }}
-              >
-                <Icon style={{ width: 40, height: 40, color: '#FFF', opacity: selected ? 1 : 0.7 }} />
-                <div style={{ height: 8 }} />
-                <div style={{ transform: 'scale(1,.9)', opacity: selected ? 1 : 0.7 }}>
-                  { text }
-                </div>
-              </div>
-            </div>
-          ))
-        }
-        {/* Trans Count */}
-        <div style={{ position: 'absolute', top: 20, left: 420, width: 30, height: 30 }} > <TransCount /> </div>
-      </div>
-    )
-  }
-
   renderView () {
     return this.views[this.state.nav].render({
       navTo: this.navTo,
@@ -472,18 +386,8 @@ class NavViews extends React.Component {
 
   renderTrans () {
     return (
-      <div style={{ height: '100%', width: '100%', position: 'relative' }}>
-        <div style={{ height: 50, width: '100%', display: 'flex', alignItems: 'center' }}>
-          <TransMenu
-            views={this.views}
-            nav={this.state.nav}
-            navTo={this.navTo}
-          />
-        </div>
-
-        <div style={{ height: 'calc(100% - 50px)', width: '100%' }} id="content-container">
-          { this.renderView() }
-        </div>
+      <div style={{ height: '100%', width: '100%', position: 'relative' }} id="content-container">
+        { this.renderView() }
       </div>
     )
   }
