@@ -41,9 +41,11 @@ class Login extends React.Component {
     this.enterLANLoginList = () => {
       this.props.phiLogin({ lan: true, name: i18n.__('Account Offline') })
       this.setState({ list: [], loading: true, type: 'LANTOLOGIN', status: 'deviceSelect' })
+      /*
       reqMdns()
         .then(mdns => this.setState({ loading: false, list: mdns }))
         .catch(this.onMDNSError)
+      */
     }
 
     this.openLANLogin = (dev) => {
@@ -120,9 +122,8 @@ class Login extends React.Component {
     }
 
     this.phiLoginSuccess = ({ list, phonenumber, token, phicommUserId, phi }) => {
-      const accountInfo = { list, phonenumber, token, phicommUserId, phi }
       const status = !list.length ? 'phiNoBound' : 'deviceSelect'
-      this.setState({ accountInfo, status, type: 'BOUNDLIST' })
+      this.setState({ list, status, type: 'BOUNDLIST' })
       this.props.phiLogin({ phonenumber, token, phicommUserId, phi, name: phonenumber })
     }
   }
@@ -288,7 +289,7 @@ class Login extends React.Component {
         view = (
           <DeviceLogin
             {...this.props}
-            accountInfo={this.state.accountInfo}
+            list={this.state.list}
             backToLogin={() => this.setState({ status: 'phiLogin' })}
           />
         )

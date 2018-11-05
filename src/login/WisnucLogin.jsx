@@ -54,6 +54,7 @@ class WisnucLogin extends React.Component {
     this.togglePwd = () => this.setState({ showPwd: !this.state.showPwd })
 
     this.login = () => {
+      return this.props.enterLANLoginList()
       this.setState({ loading: true })
       this.props.phi.req(
         'token',
@@ -88,6 +89,7 @@ class WisnucLogin extends React.Component {
     }
 
     this.fakeLogin = () => {
+      return this.props.enterLANLoginList()
       this.setState({ loading: true })
       /* assign token to PhiAPI */
       Object.assign(this.props.phi, { token: this.phi.token })

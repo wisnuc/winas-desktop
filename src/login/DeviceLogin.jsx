@@ -2,6 +2,7 @@ import i18n from 'i18n'
 import React from 'react'
 import Promise from 'bluebird'
 import { CircularProgress } from 'material-ui'
+import reqMdns from '../common/mdns'
 import DeviceAPI from '../common/device'
 import { RRButton, FLButton, LIButton } from '../common/Buttons'
 import { CheckOutlineIcon, CheckedIcon, BackwardIcon, AccountIcon, DeviceIcon } from '../common/Svg'
@@ -12,15 +13,38 @@ class DeviceLogin extends React.Component {
 
     this.state = {
       failed: false,
-      loading: true
+      loading: true,
+      tryLAN: false
+    }
+
+    this.onMDNSError = (e) => {
+      console.error('reqMdns error', e)
+      this.setState({ loading: false, list: [] })
+      this.props.openSnackBar(i18n.__('MDNS Search Error'))
+    }
+
+    this.onMDNSRes = (mdns) => {
+      this.setState({ loading: false })
+      const mdev = Array.isArray(mdns) && mdns[0]
+      console.log('mdev', mdev)
+      if (!mdev) this.setState({ failed: true })
+      else {
+        this.device = new DeviceAPI(mdev)
+        this.device.on('updated', this.onUpdate)
+        this.device.start()
+      }
     }
 
     this.initDevice = () => {
-      const { list } = this.props.accountInfo
+      const { list } = this.props
       console.log('this.onSuccess', list)
       const cdev = list.find(l => l.onlineStatus === 'online')
-      if (!cdev) this.setState({ failed: true, loading: false })
-      else {
+      if (!cdev) {
+        this.setState({ tryLAN: true })
+        reqMdns()
+          .then(this.onMDNSRes)
+          .catch(this.onMDNSError)
+      } else {
         const dev = Object.assign(
           { address: cdev.localIp, domain: 'phiToLoacl', deviceSN: cdev.deviceSN, stationName: cdev.bindingName },
           cdev
@@ -31,12 +55,52 @@ class DeviceLogin extends React.Component {
       }
     }
 
+    this.once = false
+
     this.onUpdate = (prev, next) => {
-      console.log('this.onUpdate', next)
+      console.log('this.onUpdate', next, this.systemStatus())
       this.setState({ dev: next }, () => {
         const status = this.systemStatus()
-        if (status === 'ready') this.getLANToken()
+        /* TODO */
+        if (this.once) return
+        if (status === 'ready' && this.state.tryLAN) {
+          this.once = true
+          setTimeout(() => this.LANLogin(), 1000)
+        } else if (status === 'ready') this.getLANToken()
         else if (status === 'offline') this.remoteLogin()
+      })
+    }
+
+    this.LANLogin = () => {
+      const user = {
+        createTime: 1535357447894,
+        isFirstUser: true,
+        password: true,
+        phicommUserId: '88648258',
+        phoneNumber: '18817301665',
+        smbPassword: true,
+        status: 'ACTIVE',
+        username: 'admin',
+        uuid: 'b8817656-50f5-4c54-a81b-745e93f3fcfc'
+      }
+      const uuid = user.uuid
+      const password = '12345678'
+      console.log('this.LANLogin', this.state, this.device)
+      this.state.dev.request('token', { uuid, password }, (err, data) => {
+        if (err) {
+          console.error(`login err: ${err}`)
+          const msg = (err && err.message === 'Unauthorized') ? i18n.__('Wrong Password') : (err && err.message)
+          this.setState({ pwdError: msg })
+        } else {
+          Object.assign(this.state.dev, { token: { isFulfilled: () => true, ctx: user, data } })
+          this.props.phiLogin({
+            lan: true,
+            name: i18n.__('Account Offline With Phone Number %s', user.phoneNumber),
+            phoneNumber: user.phoneNumber
+          })
+          this.props.deviceLogin({ dev: this.state.dev, user, selectedDevice: this.device })
+        }
+        this.setState({ loading: false })
       })
     }
 
