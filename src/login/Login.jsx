@@ -8,6 +8,7 @@ import SetLANPwd from './SetLANPwd'
 import ConfirmPT from './ConfirmPT'
 import ManageDisk from './ManageDisk'
 import SelectDevice from './SelectDevice'
+import DeviceLogin from './DeviceLogin'
 
 import reqMdns from '../common/mdns'
 import { BackIcon } from '../common/Svg'
@@ -119,8 +120,9 @@ class Login extends React.Component {
     }
 
     this.phiLoginSuccess = ({ list, phonenumber, token, phicommUserId, phi }) => {
+      const accountInfo = { list, phonenumber, token, phicommUserId, phi }
       const status = !list.length ? 'phiNoBound' : 'deviceSelect'
-      this.setState({ list, loading: false, type: 'BOUNDLIST', status })
+      this.setState({ accountInfo, status, type: 'BOUNDLIST' })
       this.props.phiLogin({ phonenumber, token, phicommUserId, phi, name: phonenumber })
     }
   }
@@ -283,7 +285,13 @@ class Login extends React.Component {
         break
 
       case 'deviceSelect':
-        view = this.renderDeviceSelect(props)
+        view = (
+          <DeviceLogin
+            {...this.props}
+            accountInfo={this.state.accountInfo}
+            backToLogin={() => this.setState({ status: 'phiLogin' })}
+          />
+        )
         break
 
       case 'diskManage':
@@ -323,56 +331,17 @@ class Login extends React.Component {
           overflow: 'hidden'
         }}
       >
-        {/* Icon */}
-        {/*
-          <div style={{ position: 'absolute', top: 26, left: 44 }}>
-            <img
-              width={168}
-              height={18}
-              alt=""
-            />
-            <div style={{ fontSize: 14, color: '#888a8c', marginTop: 8, letterSpacing: 1.4 }}>
-              { i18n.__('Welcome') }
-            </div>
-          </div>
-          */}
-
         {/* WebkitAppRegion */}
         <div
           style={{
             position: 'absolute',
             top: 4,
             left: 4,
-            height: 80,
+            height: this.state.status === 'deviceSelect' ? 16 : 80,
             width: 'calc(100% - 8px)',
             WebkitAppRegion: 'drag'
           }}
         />
-
-        {/* QR Code */}
-        {/*
-          <div
-            style={{
-              position: 'absolute',
-              bottom: 72,
-              right: 48,
-              textAlign: 'center',
-              width: 120,
-              height: 135,
-              backgroundColor: '#FFF'
-            }}
-          >
-            <div
-              style={{
-                border: '1px solid #BDBDBD',
-                height: 106,
-                width: 106,
-                margin: '7px auto 0px auto'
-              }}
-            />
-            <div style={{ fontSize: 11, color: '#85868c' }}> { i18n.__('Download Phi App Text') } </div>
-          </div>
-          */}
 
         {/* footer */}
         <div
@@ -382,7 +351,8 @@ class Login extends React.Component {
             boxSizing: 'border-box',
             fontSize: 12,
             width: '100%',
-            height: 40
+            height: 40,
+            display: this.state.status === 'phiLogin' ? '' : 'none'
           }}
           className="flexCenter"
         >

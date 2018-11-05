@@ -4,7 +4,6 @@ import i18n from 'i18n'
 import { Divider, Checkbox } from 'material-ui'
 import WeChatLogin from './WeChatLogin'
 import RetrievePwd from './RetrievePwd'
-import DeviceAPI from '../common/device'
 import Dialog from '../common/PureDialog'
 import { isPhoneNumber } from '../common/validate'
 import { RRButton, FLButton, RSButton, TFButton, LoginTF } from '../common/Buttons'
@@ -106,33 +105,9 @@ class WisnucLogin extends React.Component {
           const list = r.result.list.filter(l => l.type === 'owner' ||
             (l.accountStatus === '1' && ['pending', 'accept'].includes(l.inviteStatus)))
 
-          this.onSuccess({ list, phonenumber: this.state.pn, phicommUserId: this.phi.puid, phi })
+          this.props.onSuccess({ list, phonenumber: this.state.pn, phicommUserId: this.phi.puid, phi })
         }
       })
-    }
-
-    this.onUpdate = (prev, next) => {
-      this.setState({ dev: next }, () => {
-        const status = this.systemStatus()
-        if (status === 'ready') this.getLANToken()
-        else if (status === 'offline') this.remoteLogin()
-      })
-    }
-
-    this.onSuccess = ({ list, phonenumber, token, phicommUserId, phi }) => {
-      console.log('this.onSuccess', list)
-      const cdev = list.find(l => l.onlineStatus === 'online')
-      if (!cdev) this.setState({ failed: true, loading: false })
-      else {
-        const dev = Object.assign(
-          { address: cdev.localIp, domain: 'phiToLoacl', deviceSN: cdev.deviceSN, stationName: cdev.bindingName },
-          cdev
-        )
-        this.device = new DeviceAPI(dev)
-        this.device.on('updated', this.onUpdate)
-        this.device.start()
-        this.props.phiLogin({ phonenumber, token, phicommUserId, phi, name: phonenumber })
-      }
     }
 
     this.reset = () => {
@@ -145,76 +120,6 @@ class WisnucLogin extends React.Component {
         else this.login()
       }
     }
-
-    this.getLANTokenAsync = async () => {
-      const { account } = this.props
-      const { dev } = this.state
-      const args = { deviceSN: dev.mdev.deviceSN }
-      const [tokenRes, users] = await Promise.all([
-        this.props.phi.reqAsync('LANToken', args),
-        this.props.phi.reqAsync('localUsers', args)
-      ])
-      const token = tokenRes.token
-      const user = Array.isArray(users) && users.find(u => u.phicommUserId === account.phicommUserId)
-
-      if (!token || !user) throw Error('get LANToken or user error')
-
-      return ({ dev, user, token })
-    }
-
-    this.getLANToken = () => {
-      this.getLANTokenAsync()
-        .then(({ dev, user, token }) => {
-          Object.assign(dev, { token: { isFulfilled: () => true, ctx: user, data: { token } } })
-          if (!user.password) this.props.jumpToSetLANPwd(this.device)
-          else {
-            this.props.deviceLogin({ dev, user, selectedDevice: this.device, isCloud: false })
-          }
-        })
-        .catch((error) => {
-          console.error('this.getLANToken', error, this.props)
-          this.setState({ status: 'error', error })
-        })
-    }
-
-    this.remoteLoginAsync = async () => {
-      const { account } = this.props
-      const { dev } = this.state
-      const args = { deviceSN: dev.mdev.deviceSN }
-      const token = this.props.phi.token
-      const [boot, users] = await Promise.all([
-        this.props.phi.reqAsync('boot', args),
-        this.props.phi.reqAsync('localUsers', args)
-      ])
-      const user = Array.isArray(users) && users.find(u => u.phicommUserId === account.phicommUserId)
-
-      if (!token || !user || !boot) throw Error('get LANToken or user error')
-      if (boot.state !== 'STARTED') throw Error('station not started')
-      return ({ dev, user, token, boot })
-    }
-
-    this.remoteLogin = () => {
-      this.remoteLoginAsync()
-        .then(({ dev, user, token, boot }) => {
-          /* onSuccess: auto login */
-          Object.assign(dev, {
-            token: {
-              isFulfilled: () => true, ctx: user, data: { token }
-            },
-            boot: {
-              isFulfilled: () => true, ctx: user, data: boot
-            }
-          })
-          if (!user.password) this.props.jumpToSetLANPwd(this.device)
-          else {
-            this.props.deviceLogin({ dev, user, selectedDevice: this.device, isCloud: true })
-          }
-        })
-        .catch((error) => {
-          console.error('this.getLANToken', error)
-          this.setState({ status: 'error', error })
-        })
-    }
   }
 
   componentDidMount () {
@@ -225,6 +130,7 @@ class WisnucLogin extends React.Component {
       if (firstLogin && token && !!autoLogin) this.fakeLogin()
     }
     firstLogin = false
+    this.setState({ status: 'account' })
   }
 
   shouldFire () {
@@ -250,10 +156,6 @@ class WisnucLogin extends React.Component {
         </div>
       </div>
     )
-  }
-
-  systemStatus () {
-    return (this.device && this.device.systemStatus()) || 'probing'
   }
 
   renderWisnucLogin () {
