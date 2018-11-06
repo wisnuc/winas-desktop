@@ -121,10 +121,10 @@ class Login extends React.Component {
       this.setState({ status: 'PT', loginData, selectedDevice: loginData.selectedDevice })
     }
 
-    this.phiLoginSuccess = ({ list, phonenumber, token, phicommUserId, phi }) => {
+    this.phiLoginSuccess = ({ list, phonenumber, winasUserId, phi }) => {
       const status = !list.length ? 'phiNoBound' : 'deviceSelect'
       this.setState({ list, status, type: 'BOUNDLIST' })
-      this.props.phiLogin({ phonenumber, token, phicommUserId, phi, name: phonenumber })
+      this.props.phiLogin({ phonenumber, winasUserId, phi, name: phonenumber })
     }
   }
 

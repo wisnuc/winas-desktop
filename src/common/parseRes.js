@@ -20,12 +20,11 @@ const parseRes = (err, res) => {
     if (body && body.error && body.error !== '0' && body.msg) error = body
 
     /* handle data from pipe command */
-    if (body && body.result && body.result.data) {
-      error = body.result.data.error
-      body = body.result.data.res || {}
+    if (body && body.data) {
+      error = body.data.error
+      body = body.data || {}
     }
   }
-
   return ({ error, body })
 }
 

@@ -6,7 +6,7 @@ import querystring from 'querystring'
 import parseRes from './parseRes'
 import Request from './Request'
 
-const cloudAddress = process.env.CLOUD_TEST === 'dev' ? 'https://sohon2dev.phicomm.com' : 'https://sohon2test.phicomm.com'
+const cloudAddress = 'https://abel.nodetribe.com/c/v1'
 
 /* this module encapsulate most fruitmix apis */
 class Fruitmix extends EventEmitter {
@@ -45,18 +45,18 @@ class Fruitmix extends EventEmitter {
 
     /* adapter of cloud apis */
     this.reqCloud = (ep, qsOrData, type, isFormdata) => {
-      const url = `${cloudAddress}/ResourceManager/app/pipe/command`
-      const url2 = `${cloudAddress}/ResourceManager/app/pipe/resource`
+      const url = `${cloudAddress}/station/${deviceSN}/json`
+      const url2 = `${cloudAddress}/station/${deviceSN}/pipe`
       const data = {
         verb: type,
         urlPath: `/${ep}`,
         params: type === 'GET' ? (qsOrData || {}) : {},
         body: type === 'GET' ? {} : (qsOrData || {})
       }
-      if (!isFormdata) return request.post(url).set('Authorization', this.token).send({ deviceSN, data })
+      if (!isFormdata) return request.post(url).set('Authorization', this.token).send(data)
 
       /* mkdir, delete file */
-      const qs = querystring.stringify({ deviceSN, data: JSON.stringify(data) })
+      const qs = querystring.stringify({ data: JSON.stringify(data) })
       return request.post(`${url2}?${qs}`).set('Authorization', token)
     }
   }
@@ -508,7 +508,6 @@ class Fruitmix extends EventEmitter {
   start () {
     this.request('account')
     this.request('users')
-    this.request('phyDrives')
     this.request('device')
     this.requestAsync('drives').then((drives) => {
       const drive = drives.find(d => d.tag === 'home')

@@ -32,7 +32,7 @@ class CloudLogin extends React.PureComponent {
         this.getPTAsync(args)
       ])
       const token = tokenRes.token
-      const user = Array.isArray(users) && users.find(u => u.phicommUserId === account.phicommUserId)
+      const user = Array.isArray(users) && users.find(u => u.winasUserId === account.winasUserId)
 
       if (!token || !user) throw Error('get LANToken or user error')
 
@@ -66,7 +66,7 @@ class CloudLogin extends React.PureComponent {
         this.props.phi.reqAsync('localUsers', args),
         this.getPTAsync(args)
       ])
-      const user = Array.isArray(users) && users.find(u => u.phicommUserId === account.phicommUserId)
+      const user = Array.isArray(users) && users.find(u => u.winasUserId === account.winasUserId)
 
       if (!token || !user || !boot) throw Error('get LANToken or user error')
       if (boot.state !== 'STARTED') throw Error('station not started')

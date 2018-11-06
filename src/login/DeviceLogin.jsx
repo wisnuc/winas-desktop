@@ -38,7 +38,7 @@ class DeviceLogin extends React.Component {
     this.initDevice = () => {
       const { list } = this.props
       console.log('this.onSuccess', list)
-      const cdev = list.find(l => l.onlineStatus === 'online')
+      const cdev = list.find(l => !!l.online)
       if (!cdev) {
         this.setState({ tryLAN: true })
         reqMdns()
@@ -46,7 +46,7 @@ class DeviceLogin extends React.Component {
           .catch(this.onMDNSError)
       } else {
         const dev = Object.assign(
-          { address: cdev.localIp, domain: 'phiToLoacl', deviceSN: cdev.deviceSN, stationName: cdev.bindingName },
+          { address: cdev.LANIP, domain: 'phiToLoacl', deviceSN: cdev.sn, stationName: 'test station' },
           cdev
         )
         this.device = new DeviceAPI(dev)
@@ -76,7 +76,7 @@ class DeviceLogin extends React.Component {
         createTime: 1535357447894,
         isFirstUser: true,
         password: true,
-        phicommUserId: '88648258',
+        winasUserId: '88648258',
         phoneNumber: '18817301665',
         smbPassword: true,
         status: 'ACTIVE',
@@ -113,8 +113,9 @@ class DeviceLogin extends React.Component {
         this.props.phi.reqAsync('localUsers', args),
         Promise.delay(2000)
       ])
+      console.log('tokenRes, users', tokenRes, users)
       const token = tokenRes.token
-      const user = Array.isArray(users) && users.find(u => u.phicommUserId === account.phicommUserId)
+      const user = Array.isArray(users) && users.find(u => u.winasUserId === account.winasUserId)
 
       if (!token || !user) throw Error('get LANToken or user error')
 
@@ -143,7 +144,8 @@ class DeviceLogin extends React.Component {
         this.props.phi.reqAsync('localUsers', args),
         Promise.delay(2000)
       ])
-      const user = Array.isArray(users) && users.find(u => u.phicommUserId === account.phicommUserId)
+      console.log('tokenRes, users', boot, users)
+      const user = Array.isArray(users) && users.find(u => u.winasUserId === account.winasUserId)
 
       if (!token || !user || !boot) throw Error('get LANToken or user error')
       if (boot.state !== 'STARTED') throw Error('station not started')

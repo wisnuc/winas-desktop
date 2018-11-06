@@ -3,12 +3,11 @@ import React from 'react'
 import Promise from 'bluebird'
 import { ipcRenderer } from 'electron'
 import { FlatButton, DropDownMenu, MenuItem } from 'material-ui'
+import Popover, { PopoverAnimationVertical } from 'material-ui/Popover'
 
 import Tasks from './Tasks'
 import Policy from './Policy'
 import FileMenu from './FileMenu'
-import TransMenu from './TransMenu'
-import TransCount from './TransCount'
 import SettingsMenu from './SettingMenu'
 import ChangeDevice from './ChangeDevice'
 
@@ -43,9 +42,7 @@ import Fruitmix from '../common/fruitmix'
 import WindowAction from '../common/WindowAction'
 import DialogOverlay from '../common/PureDialog'
 import { TextField, Checkbox } from '../common/Buttons'
-import { TopLogo, FileManage, DeviceChangeIcon, FuncIcon, BackIcon, WisnucLogo, MenuIcon, TransIcon, DeviceIcon, ArrowDownIcon, AccountIcon, CloseIcon, PDFIcon, WORDIcon, EXCELIcon, PPTIcon, PhotoIcon, VideoIcon, AudioIcon, ExitIcon } from '../common/Svg'
-
-const HEADER_HEIGHT = 110
+import { BackIcon, WisnucLogo, MenuIcon, DeviceIcon, ArrowDownIcon, AccountIcon, CloseIcon, PDFIcon, WORDIcon, EXCELIcon, PPTIcon, PhotoIcon, VideoIcon, AudioIcon, ExitIcon } from '../common/Svg'
 
 class NavViews extends React.Component {
   constructor (props) {
@@ -207,6 +204,11 @@ class NavViews extends React.Component {
 
     this.offHover = () => {
       this.setState({ hoverNav: false })
+    }
+
+    this.openPop = (e) => {
+      e.preventDefault()
+      this.setState({ open: true, anchorEl: e.currentTarget })
     }
   }
 
@@ -672,6 +674,57 @@ class NavViews extends React.Component {
     )
   }
 
+  renderAccountPop () {
+    console.log('renderAccountPop', this.props)
+    const { avatarUrl, nickName, mail, pn } = this.props.account.phi
+    return (
+      <div style={{ height: 188, width: 312, WebkitAppRegion: 'no-drag' }}>
+        <div style={{ height: 140, display: 'flex', alignItems: 'center' }}>
+          <div style={{ marginLeft: 32, position: 'relative' }}>
+            <AccountIcon
+              onClick={this.changeAvatar}
+              style={{ width: 72, height: 72, color: 'rgba(96,125,139,.26)' }}
+            />
+            <div style={{ position: 'absolute', top: 55, left: 0, height: 17, width: 72, overflow: 'hidden' }}>
+              <div style={{ height: 72, width: 72, marginTop: -55, borderRadius: 36, backgroundColor: 'rgba(0,0,0,.87)' }} />
+              <div style={{ color: '#FFF', marginTop: -17, height: 17 }} className="flexCenter">
+                { i18n.__('Change Avatar') }
+              </div>
+            </div>
+          </div>
+          <div style={{ height: 100, marginLeft: 24, marginTop: 40 }}>
+            <div style={{ height: 20, fontWeight: 500, color: 'rgba(0,0,0,.76)' }}>
+              { nickName || '某某' }
+            </div>
+            <div style={{ height: 20, fontWeight: 500, color: 'rgba(0,0,0,.76)' }}>
+              { pn }
+            </div>
+            <div style={{ height: 37, color: 'rgba(0,0,0,.29)' }}>
+              {
+                mail || (
+                  <FlatButton
+                    style={{ marginLeft: -16, marginTop: -6, height: 32, lineHeight: '32px' }}
+                    label={i18n.__('Bind Email')}
+                    onClick={() => this.setState({ open: false })}
+                    primary
+                  />
+                )
+              }
+            </div>
+          </div>
+        </div>
+        <div style={{ height: 48, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 8 }}>
+          <FlatButton
+            primary
+            label={i18n.__('Return')}
+            onClick={() => this.setState({ open: false })}
+            style={{ height: 32, lineHeight: '32px' }}
+          />
+        </div>
+      </div>
+    )
+  }
+
   render () {
     if (!this.state.nav) return null
     let view = null
@@ -716,7 +769,29 @@ class NavViews extends React.Component {
           >
             <div style={{ fontSize: 21, fontWeight: 50, marginLeft: 24 }}> { this.views[this.state.nav].menuName() } </div>
             <div style={{ flexGrow: 1 }} />
-            <AccountIcon style={{ width: 32, height: 32, marginRight: 24 }} />
+            <AccountIcon
+              onClick={this.openPop}
+              style={{
+                width: 32,
+                height: 32,
+                marginRight: 24,
+                color: 'rgba(96,125,139,.26)',
+                WebkitAppRegion: 'no-drag',
+                cursor: 'pointer'
+              }}
+
+            />
+            <Popover
+              open={this.state.open}
+              animation={PopoverAnimationVertical}
+              anchorEl={this.state.anchorEl}
+              anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
+              targetOrigin={{ horizontal: 'left', vertical: 'top' }}
+              onRequestClose={() => this.setState({ open: false })}
+              style={{ boxShadow: '0px 5px 6.6px 0.4px rgba(96,125,139,.24), 0px 2px 9.8px 0.2px rgba(96,125,139,.16)' }}
+            >
+              { this.renderAccountPop() }
+            </Popover>
           </div>
           <div style={{ height: 'calc(100% - 110px)', width: '100%', position: 'relative' }}>
             { view }

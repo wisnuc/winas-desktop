@@ -947,6 +947,12 @@
   "Clear Running Task Text": "如果下载或上传的是文件夹，文件夹内已完成的文件将保留，确定要删除所有任务吗？",
   "Clear Finished Task Title": "删除所有上传及下载记录",
   "Clear Finished Task Text": "该操作无法撤销，所有记录将被彻底清除，确定继续删除吗？",
+  "Delete Running Task Dialog Text 1": "确定要删除选中的任务吗？",
+  "Delete Running Task Dialog Text 2": "如果是下载或上传的是文件夹，文件夹内已完成的文件将保留。",
+  "Clear Running Task Dialog Text 1": "确定要删除所有任务吗？",
+  "Clear Running Task Dialog Text 2": "如果是下载或上传的是文件夹，文件夹内已完成的文件将保留。",
+  "Clear Finished Task Dialog Text 1": "确定要删除所有上传及下载记录吗？",
+  "Clear Finished Task Dialog Text 2": "该操作无法撤销，所有记录将被彻底清除。",
 
   "==== photo/AssistantApp.jsx ====": "",
   "Hide Photo Title": "隐藏的照片",
@@ -1178,6 +1184,7 @@
   "Confirm Change Device Title": "切换设备",
   "Confirm Logout To LANLogin Text": "切换设备会中断当前设备正在传输的任务，确定继续吗？",
   "Confirm Logout To LANLogin Title": "切换设备",
+  "Change Avatar" : "修改",
 
   "==== commom/HelpMsg.jsx ====": "",
   "Home Help Header": "私有盘",

@@ -1,4 +1,3 @@
-import md5 from 'md5'
 import React from 'react'
 import i18n from 'i18n'
 import { Divider, Checkbox } from 'material-ui'
@@ -54,13 +53,13 @@ class WisnucLogin extends React.Component {
     this.togglePwd = () => this.setState({ showPwd: !this.state.showPwd })
 
     this.login = () => {
-      return this.props.enterLANLoginList()
+      // return this.props.enterLANLoginList()
       this.setState({ loading: true })
       this.props.phi.req(
         'token',
-        { phonenumber: this.state.pn, password: md5(this.state.pwd).toUpperCase() },
+        { phonenumber: this.state.pn, password: this.state.pwd },
         (err, res) => {
-          if (err || (res && res.error !== '0')) {
+          if (err || !res) {
             if (res && res.error === '7') this.setState({ pnError: i18n.__('User Not Exist'), loading: false })
             else if (res && res.error === '8') this.setState({ pwdError: i18n.__('Wrong Password'), loading: false })
             else if (res && res.error === '34') this.setState({ pnError: i18n.__('Invalid Phone Number'), loading: false })
@@ -69,18 +68,18 @@ class WisnucLogin extends React.Component {
             else this.setState({ failed: true, loading: false })
           } else {
             this.props.phi.req('stationList', null, (e, r) => {
-              if (e || !r.result || !Array.isArray(r.result.list) || r.error !== '0') {
+              console.log('stationList e r', e, r)
+              if (e || !r) {
                 this.setState({ failed: true, loading: false })
               } else {
-                const phi = {
+                const phi = Object.assign({}, res, {
                   pn: this.state.pn,
-                  puid: res.uid,
+                  winasUserId: res.id,
                   autoLogin: !!this.state.autoLogin,
-                  token: this.state.saveToken ? res.access_token : null
-                }
-                const list = r.result.list.filter(l => l.type === 'owner' ||
-                  (l.accountStatus === '1' && ['pending', 'accept'].includes(l.inviteStatus)))
-                this.props.onSuccess({ list, phonenumber: this.state.pn, phicommUserId: res.uid, phi })
+                  token: this.state.saveToken ? res.token : null
+                })
+                const list = r.ownStations
+                this.props.onSuccess({ list, phonenumber: this.state.pn, winasUserId: res.id, phi })
               }
             })
           }
@@ -89,25 +88,23 @@ class WisnucLogin extends React.Component {
     }
 
     this.fakeLogin = () => {
-      return this.props.enterLANLoginList()
+      // return this.props.enterLANLoginList()
       this.setState({ loading: true })
       /* assign token to PhiAPI */
       Object.assign(this.props.phi, { token: this.phi.token })
       this.props.phi.req('stationList', null, (e, r) => {
-        if (e || !r.result || !Array.isArray(r.result.list) || r.error !== '0') {
+        if (e || !r) {
           if (r && r.error === '5') this.setState({ showFakePwd: false, pwdError: i18n.__('Token Expired'), loading: false })
           else this.setState({ failed: true, loading: false })
         } else {
-          const phi = {
+          const phi = Object.assign({}, this.phi, {
             pn: this.state.pn,
-            puid: this.phi.puid,
+            winasUserId: this.phi.winasUserId,
             autoLogin: !!this.state.autoLogin,
             token: this.state.saveToken ? this.phi.token : null
-          }
-          const list = r.result.list.filter(l => l.type === 'owner' ||
-            (l.accountStatus === '1' && ['pending', 'accept'].includes(l.inviteStatus)))
-
-          this.props.onSuccess({ list, phonenumber: this.state.pn, phicommUserId: this.phi.puid, phi })
+          })
+          const list = r.ownStations
+          this.props.onSuccess({ list, phonenumber: this.state.pn, winasUserId: this.phi.winasUserId, phi })
         }
       })
     }

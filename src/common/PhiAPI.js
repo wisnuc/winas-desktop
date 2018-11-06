@@ -4,7 +4,7 @@ import request from 'superagent'
 import parseRes from './parseRes'
 import RequestManager from './reqman'
 
-const phiCloudAddress = process.env.CLOUD_TEST === 'dev' ? 'https://sohon2dev.phicomm.com' : 'https://sohon2test.phicomm.com'
+const cloudAddress = 'https://abel.nodetribe.com/c/v1'
 
 class PhiAPI extends RequestManager {
   constructor () {
@@ -15,10 +15,11 @@ class PhiAPI extends RequestManager {
     }
 
     this.setRequest = (name, err, res, next) => {
+      console.log(name, err, res, res.body)
       const { error, body } = parseRes(err, res)
 
       /* save phi token */
-      if (name === 'token' && !error && body) this.token = body.access_token
+      if (name === 'token' && !error && body) this.token = body.token
 
       /* callback next */
       if (typeof next === 'function') next(error, body)
@@ -27,14 +28,14 @@ class PhiAPI extends RequestManager {
 
   aget (ep) {
     return request
-      .get(`${phiCloudAddress}/${ep}`)
+      .get(`${cloudAddress}/${ep}`)
       .set('Content-Type', 'application/json')
       .set('Authorization', this.token)
   }
 
   apost (ep, data) {
     const r = request
-      .post(`${phiCloudAddress}/${ep}`)
+      .post(`${cloudAddress}/${ep}`)
       .set('Content-Type', 'application/json')
       .set('Authorization', this.token)
 
@@ -43,7 +44,7 @@ class PhiAPI extends RequestManager {
 
   apatch (ep, data) {
     const r = request
-      .patch(`${phiCloudAddress}/${ep}`)
+      .patch(`${cloudAddress}/${ep}`)
       .set('Content-Type', 'application/json')
       .set('Authorization', this.token)
 
@@ -52,7 +53,7 @@ class PhiAPI extends RequestManager {
 
   adel (ep, data) {
     const r = request
-      .del(`${phiCloudAddress}/${ep}`)
+      .del(`${cloudAddress}/${ep}`)
       .set('Content-Type', 'application/json')
       .set('Authorization', this.token)
 
@@ -61,10 +62,10 @@ class PhiAPI extends RequestManager {
 
   command (deviceSN, data) {
     return request
-      .post(`${phiCloudAddress}/ResourceManager/app/pipe/command`)
+      .post(`${cloudAddress}/station/${deviceSN}/json`)
       .set('Content-Type', 'application/json')
       .set('Authorization', this.token)
-      .send({ deviceSN, data })
+      .send(data)
   }
 
   req (name, args, next) {
@@ -72,34 +73,29 @@ class PhiAPI extends RequestManager {
     switch (name) {
       case 'authorizationcode':
         r = request
-          .get(`${phiCloudAddress}/v1/authorization`)
-          .query({ client_id: '2149773', client_secret: 'FA35C1A18F830497AF75BD2636E54CBD', response_type: 'code', scope: 'read' })
+          .get(`${cloudAddress}/user/smsCode`)
+          .query({ phone: args.phone })
         break
 
       case 'token':
         r = request
-          .post(`${phiCloudAddress}/v1/login`)
+          .get(`${cloudAddress}/user/token`)
           .timeout({
-            response: 3, // Wait 30 seconds for the server to start sending,
+            response: 30000, // Wait 30 seconds for the server to start sending,
             deadline: 60000 // but allow 1 minute for the file to finish loading.
           })
           .query({
-            authorizationcode: 'feixun*123.SH_2149773',
-            phonenumber: args.phonenumber,
+            clientId: args.clientId || 'qwert',
+            type: 'pc',
+            username: args.phonenumber,
             password: args.password
           })
         break
 
-      case 'client':
-        r = request
-          .get(`${phiCloudAddress}/nasUpdate/client/getVersionInfo`)
-          .set({ license: '2f12ac5dda730dd34c180825919a123bec8309c8807d494b9a8d92f80fd665ee' })
-        break
-
       case 'stationList':
-        r = this.aget('StationManager/station')
+        r = this.aget('station')
           .timeout({
-            response: 3, // Wait 30 seconds for the server to start sending,
+            response: 30000, // Wait 30 seconds for the server to start sending,
             deadline: 60000 // but allow 1 minute for the file to finish loading.
           })
         break
@@ -126,41 +122,6 @@ class PhiAPI extends RequestManager {
           .query({ deviceSN: args.deviceSN })
         break
 
-      case 'registerPhiUser':
-        r = this.apost(
-          'StationManager/relation/invitation/pre',
-          { deviceSN: args.deviceSN, phoneNumber: args.phoneNumber, inviteeNickname: args.nickName }
-        )
-        break
-
-      case 'invitation':
-        r = this.apatch('StationManager/relation/invitation', { deviceSN: args.deviceSN, accept: args.accept })
-        break
-
-      case 'newUser':
-        r = this.command(
-          args.deviceSN,
-          {
-            verb: 'POST',
-            urlPath: '/users',
-            params: {},
-            body: { username: args.username, phicommUserId: args.phicommUserId, phoneNumber: args.phoneNumber }
-          }
-        )
-        break
-
-      case 'activeUser':
-        r = this.command(
-          args.deviceSN,
-          {
-            verb: 'PATCH',
-            urlPath: `/users/${args.uuid}`,
-            params: {},
-            body: { status: 'ACTIVE' }
-          }
-        )
-        break
-
       case 'boot':
         r = this.command(args.deviceSN, { verb: 'GET', urlPath: '/boot', params: {}, body: {} })
         break
@@ -171,10 +132,6 @@ class PhiAPI extends RequestManager {
 
       case 'drives':
         r = this.command(args.deviceSN, { verb: 'GET', urlPath: '/drives', params: {}, body: {} })
-        break
-
-      case 'deleteUser':
-        r = this.command(args.deviceSN, { verb: 'DELETE', urlPath: `/users/${args.uuid}`, params: {}, body: {} })
         break
 
       case 'LANToken':
@@ -190,18 +147,6 @@ class PhiAPI extends RequestManager {
       case 'sambaPwd':
         r = this.command(args.deviceSN, {
           verb: 'PATCH', urlPath: `/users/${args.userUUID}`, params: {}, body: { smbPassword: args.pwd }
-        })
-        break
-
-      case 'pt':
-        r = this.command(args.deviceSN, {
-          verb: 'GET', urlPath: `/platinum`, params: {}, body: {}
-        })
-        break
-
-      case 'updatePT':
-        r = this.command(args.deviceSN, {
-          verb: 'POST', urlPath: `/platinum`, params: {}, body: { status: args.status }
         })
         break
 
