@@ -112,17 +112,17 @@ export class RSButton extends Button {
     const borderRadius = 4
     const color = !alt ? '#FFF'
       : alt && disabled ? 'var(--light-grey-text)'
-        : alt && this.state.pressed ? 'var(--dodger-blue)'
+        : alt && this.state.pressed ? '#009688'
           : '#6d7073'
 
     const backgroundColor = alt ? '#FFF'
       : disabled ? '#c4c5cc'
         : this.state.pressed ? '#2588f2'
-          : 'var(--dodger-blue)'
+          : '#009688'
 
     const border = !alt ? undefined
       : disabled ? 'solid 1px var(--light-grey-text)'
-        : this.state.pressed ? 'solid 1px var(--dodger-blue)'
+        : this.state.pressed ? 'solid 1px #009688'
           : 'solid 1px #dddddd'
 
     const boxShadow = this.state.hover && !disabled

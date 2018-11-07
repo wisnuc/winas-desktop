@@ -1185,6 +1185,7 @@
   "Confirm Logout To LANLogin Text": "切换设备会中断当前设备正在传输的任务，确定继续吗？",
   "Confirm Logout To LANLogin Title": "切换设备",
   "Change Avatar" : "修改",
+  "Bind Email" : "绑定邮箱",
 
   "==== commom/HelpMsg.jsx ====": "",
   "Home Help Header": "私有盘",

@@ -10,6 +10,7 @@ import Policy from './Policy'
 import FileMenu from './FileMenu'
 import SettingsMenu from './SettingMenu'
 import ChangeDevice from './ChangeDevice'
+import BindEmail from './BindEmail'
 
 import Home from '../view/Home'
 import Music from '../view/Music'
@@ -226,7 +227,8 @@ class NavViews extends React.Component {
     const hasDevice = apis && apis.device && apis.device.data
     if (!isCloud && this.showFirmUpdate && isAdmin && hasDevice) {
       this.showFirmUpdate = false
-      this.checkFirmWareAsync().catch(e => console.error('checkFirmWareAsync error', e))
+      /* check FirmWare */
+      // this.checkFirmWareAsync().catch(e => console.error('checkFirmWareAsync error', e))
     }
     this.views[this.state.nav].willReceiveProps(this.props)
   }
@@ -379,6 +381,16 @@ class NavViews extends React.Component {
                 rel={this.state.newRel}
                 device={this.props.apis.device.data}
                 onRequestClose={() => this.setState({ newRel: null })}
+              />
+          }
+        </DialogOverlay>
+
+        <DialogOverlay open={!!this.state.bindEmail} onRequestClose={() => this.setState({ bindEmail: false })} modal transparent >
+          {
+            this.state.bindEmail &&
+              <BindEmail
+                {...this.props}
+                onRequestClose={() => this.setState({ bindEmail: false })}
               />
           }
         </DialogOverlay>
@@ -675,16 +687,20 @@ class NavViews extends React.Component {
   }
 
   renderAccountPop () {
-    console.log('renderAccountPop', this.props)
     const { avatarUrl, nickName, mail, pn } = this.props.account.phi
     return (
       <div style={{ height: 188, width: 312, WebkitAppRegion: 'no-drag' }}>
         <div style={{ height: 140, display: 'flex', alignItems: 'center' }}>
           <div style={{ marginLeft: 32, position: 'relative' }}>
-            <AccountIcon
-              onClick={this.changeAvatar}
-              style={{ width: 72, height: 72, color: 'rgba(96,125,139,.26)' }}
-            />
+            {
+              avatarUrl ? <img src={avatarUrl} width={72} height={72} />
+                : (
+                  <AccountIcon
+                    onClick={this.changeAvatar}
+                    style={{ width: 72, height: 72, color: 'rgba(96,125,139,.26)' }}
+                  />
+                )
+            }
             <div style={{ position: 'absolute', top: 55, left: 0, height: 17, width: 72, overflow: 'hidden' }}>
               <div style={{ height: 72, width: 72, marginTop: -55, borderRadius: 36, backgroundColor: 'rgba(0,0,0,.87)' }} />
               <div style={{ color: '#FFF', marginTop: -17, height: 17 }} className="flexCenter">
@@ -705,7 +721,7 @@ class NavViews extends React.Component {
                   <FlatButton
                     style={{ marginLeft: -16, marginTop: -6, height: 32, lineHeight: '32px' }}
                     label={i18n.__('Bind Email')}
-                    onClick={() => this.setState({ open: false })}
+                    onClick={() => this.setState({ open: false, bindEmail: true })}
                     primary
                   />
                 )

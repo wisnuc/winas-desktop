@@ -43,11 +43,11 @@ class Device extends RequestManager {
   request (name, args, next) {
     let r
 
-    const resTime = process.env.CONN_MODE === 'remote' ? 5 : 1000
+    const resTime = process.env.CONN_MODE === 'remote' ? 5 : 2000
     switch (name) {
       case 'info':
         r = request
-          .get(`http://${this.mdev.address}:3001/v1/info`)
+          .get(`http://${this.mdev.address}:3001/info`)
           .timeout({
             response: resTime, // Wait 5 seconds for the server to start sending,
             deadline: 60000 // but allow 1 minute for the file to finish loading.
@@ -65,7 +65,7 @@ class Device extends RequestManager {
 
       case 'space':
         r = request
-          .get(`http://${this.mdev.address}:3000/boot/boundVolume/space`)
+          .get(`http://${this.mdev.address}:3000/boot/space`)
           .timeout({
             response: resTime, // Wait 5 seconds for the server to start sending,
             deadline: 60000 // but allow 1 minute for the file to finish loading.
@@ -241,7 +241,7 @@ class Device extends RequestManager {
     const info = this.info.value()
 
     /* make sure the same deviceSN */
-    if (this.mdev.deviceSN && info && info.deviceSN && (this.mdev.deviceSN !== info.deviceSN)) return 'offline'
+    if (this.mdev.deviceSN && info && info.device && info.device.sn && (this.mdev.deviceSN !== info.device.sn)) return 'offline'
     if (this.boot.isRejected()) return 'systemError'
 
     const boot = this.boot.value()
@@ -256,7 +256,8 @@ class Device extends RequestManager {
 
     /* assign deviceSN */
     if (info && info.deviceSN && !this.mdev.deviceSN) Object.assign(this.mdev, { deviceSN: info.deviceSN })
-    if (info && info.mac && !this.mdev.mac) Object.assign(this.mdev, { mac: info.mac })
+    const mac = info && info.net && info.net.networkInterface && info.net.networkInterface.mac
+    if (mac && !this.mdev.mac) Object.assign(this.mdev, { mac })
 
     if (state === 'PENDING' && !boundUser) return 'noBoundUser'
     else if (state === 'UNAVAILABLE' && boundUser) return 'noBoundVolume'
