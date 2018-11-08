@@ -95,7 +95,7 @@ class RunningTask extends React.Component {
     const finishCount = task.finishCount > 0 ? task.finishCount : 0
     const uploaded = task.count === 1 ? this.formatSize(task.completeSize) : `${finishCount}/${task.count}`
     return (
-      <div style={{ height: 20, width: 200, display: 'flex', alignItems: 'center' }}>
+      <div style={{ height: 20, width: 160, display: 'flex', alignItems: 'center' }}>
         <div> { uploaded } </div>
         <div style={{ flexGrow: 1 }} />
         <div> { speed } </div>
@@ -143,7 +143,7 @@ class RunningTask extends React.Component {
         <div style={{ display: 'flex', flexGrow: 1, alignItems: 'center' }} >
           <div
             style={{
-              maxWidth: 264,
+              maxWidth: 120,
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap'
@@ -157,11 +157,11 @@ class RunningTask extends React.Component {
         </div>
 
         {/* progress bar */}
-        <div style={{ flex: '0 0 240px' }}>
+        <div style={{ flex: '0 0 200px' }}>
           <div
             style={{
               display: 'flex',
-              width: 200,
+              width: 160,
               height: 6,
               marginRight: 12,
               borderRadius: 2,
@@ -176,13 +176,13 @@ class RunningTask extends React.Component {
         </div>
 
         {/* percent */}
-        <div style={{ flex: '0 0 80px' }}>{ this.renderPercent(task) }</div>
+        <div style={{ flex: '0 0 60px' }}>{ this.renderPercent(task) }</div>
 
         {/* task restTime */}
-        <div style={{ flex: '0 0 120px' }}>{ this.formatSeconds(task.restTime) }</div>
+        <div style={{ flex: '0 0 100px' }}>{ this.formatSeconds(task.restTime) }</div>
 
         {/* Status */}
-        <div style={{ flex: '0 0 100px' }}>{ this.getStatus(task) }</div>
+        <div style={{ flex: '0 0 80px' }}>{ this.getStatus(task) }</div>
 
         {/* Pause, resume and delete task */}
         <div style={{ flex: i18n.getLocale() === 'zh-CN' ? '0 0 120px' : '0 0 132px', display: 'flex', alignItems: 'center' }} >
