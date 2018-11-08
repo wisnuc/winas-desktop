@@ -33,6 +33,7 @@ class Winas extends React.Component {
       phi: new PhiAPI(),
       forceUpdate: false,
       clipboard: new Clipboard(),
+      logout: this.logout.bind(this),
       phiLogin: this.phiLogin.bind(this),
       setPalette: this.setPalette.bind(this),
       deviceLogin: this.deviceLogin.bind(this),

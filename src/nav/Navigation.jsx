@@ -202,7 +202,20 @@ class NavViews extends React.Component {
       this.setState({ hoverNav: true })
     }
 
+    this.timer = null
+    this.onHoverLater = () => {
+      if (this.state.hoverNav || this.timer) return
+      this.timer = setTimeout(() => {
+        this.timer = null
+        this.setState({ hoverNav: true })
+      }, 300)
+    }
+
     this.offHover = () => {
+      if (this.timer) {
+        clearTimeout(this.timer)
+        this.timer = null
+      }
       this.setState({ hoverNav: false })
     }
 
@@ -245,7 +258,6 @@ class NavViews extends React.Component {
   }
 
   componentWillUnmount () {
-    clearInterval(this.timer)
     ipcRenderer.removeAllListeners('snackbarMessage')
     ipcRenderer.removeAllListeners('conflicts')
     ipcRenderer.removeAllListeners('JUMP_TO')
@@ -491,7 +503,7 @@ class NavViews extends React.Component {
   }
 
   renderNavs () {
-    const shrinked = ['pin', 'hoverNav', 'searchMode', 'open', 'openDevice'].every(v => !this.state[v])
+    const shrinked = ['pin', 'hoverNav', 'searchMode', 'openDevice'].every(v => !this.state[v])
     const transition = 'width 225ms'
     return (
       <div
@@ -507,11 +519,13 @@ class NavViews extends React.Component {
           zIndex: 102,
           WebkitAppRegion: 'no-drag',
           overflow: 'hidden',
-          transition
+          transition,
+          boxShadow: (shrinked || this.state.pin) ? ''
+            : '0px 5px 6.6px 0.4px rgba(96,125,139,.24), 0px 2px 9.8px 0.2px rgba(96,125,139,.16)'
         }}
-        onMouseMove={() => this.setState({ hoverNav: true })}
-        onMouseLeave={() => this.setState({ hoverNav: false })}
-        onMouseEnter={() => this.setState({ hoverNav: true })}
+        onMouseMove={this.onHoverLater}
+        onMouseLeave={this.offHover}
+        onMouseEnter={this.onHoverLater}
       >
         <div style={{ height: 34, width: '100%', display: 'flex', alignItems: 'center' }}>
           <div style={{ height: 34, width: 34, margin: 4 }} className="flexCenter">
@@ -745,8 +759,8 @@ class NavViews extends React.Component {
         <div style={{ height: 48, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 8 }}>
           <FlatButton
             primary
-            label={i18n.__('Return')}
-            onClick={() => this.setState({ open: false })}
+            label={i18n.__('Logout')}
+            onClick={this.props.logout}
             style={{ height: 32, lineHeight: '32px' }}
           />
         </div>

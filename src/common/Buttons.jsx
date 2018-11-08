@@ -211,15 +211,17 @@ export class ActButton extends Button {
     }
 
     this.upload = (type) => {
-      this.props.offHover()
-      this.props.upload(type)
-      this.setState({ open: false })
+      this.setState({ open: false }, () => {
+        this.props.offHover()
+        this.props.upload(type)
+      })
     }
 
     this.newFolder = () => {
-      this.props.offHover()
-      this.props.newFolder()
-      this.setState({ open: false })
+      this.setState({ open: false }, () => {
+        this.props.offHover()
+        this.props.newFolder()
+      })
     }
 
     this.onClick = (e) => {
@@ -294,7 +296,7 @@ export class ActButton extends Button {
         >
           <Menu
             style={{ width: 224, maxWidth: 224, height: 176, overflow: 'hidden' }}
-            onMouseMove={() => this.props.onHover()}
+            onMouseMove={() => this.state.open && this.props.onHover()}
           >
             {
               items.map((props, index) => (
