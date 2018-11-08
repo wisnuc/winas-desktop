@@ -11,6 +11,7 @@ import FileMenu from './FileMenu'
 import SettingsMenu from './SettingMenu'
 import ChangeDevice from './ChangeDevice'
 import BindEmail from './BindEmail'
+import RenderDevice from './RenderDevice'
 
 import Home from '../view/Home'
 import Music from '../view/Music'
@@ -139,8 +140,6 @@ class NavViews extends React.Component {
 
     this.init = () => {
       this.navTo('home')
-      this.timer = setInterval(() => process.env.NODE_ENV !== 'dev' && (this.views[this.state.nav].navGroup() === 'file') &&
-        this.props.apis.request('phyDrives'), 3000)
     }
 
     this.handleTask = (uuid, response, conflicts) => {
@@ -211,6 +210,11 @@ class NavViews extends React.Component {
       e.preventDefault()
       this.setState({ open: true, anchorEl: e.currentTarget })
     }
+
+    this.openDevicePop = (e) => {
+      e.preventDefault()
+      this.setState({ openDevice: true, deviceAnchorEl: e.currentTarget })
+    }
   }
 
   componentDidMount () {
@@ -234,10 +238,6 @@ class NavViews extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    if (nextProps.apis && nextProps.apis.phyDrives && Array.isArray(nextProps.apis.phyDrives.data)) {
-      this.hasUSB = nextProps.apis.phyDrives.data.filter(d => d.isUSB).length > 0
-    }
-
     if (this.state.nav && nextProps.forceUpdate && (this.state.nav === 'public')) { // in Public Root should refresh users
       this.props.clearForceUpdate()
       this.views[this.state.nav].navEnter()
@@ -491,7 +491,7 @@ class NavViews extends React.Component {
   }
 
   renderNavs () {
-    const shrinked = !(this.state.pin || this.state.hoverNav || this.state.searchMode)
+    const shrinked = ['pin', 'hoverNav', 'searchMode', 'open', 'openDevice'].every(v => !this.state[v])
     const transition = 'width 225ms'
     return (
       <div
@@ -565,7 +565,6 @@ class NavViews extends React.Component {
                   views={this.views}
                   nav={this.state.nav}
                   navTo={this.navTo}
-                  hasUSB={!!this.hasUSB}
                   device={this.props.selectedDevice.mdev}
                   primaryColor={this.state.primaryColor}
                 />
@@ -577,7 +576,10 @@ class NavViews extends React.Component {
                   })
               }
               <div style={{ flexGrow: 1 }} />
-              <div style={{ height: 72, width: 224, display: 'flex', alignItems: 'center', position: 'relative' }}>
+              <div
+                onClick={this.openDevicePop}
+                style={{ height: 72, width: 224, display: 'flex', alignItems: 'center', position: 'relative' }}
+              >
                 <div style={{ height: 72, width: 88 }} className="flexCenter">
                   <DeviceIcon style={{ width: 24, height: 24 }} />
                 </div>
@@ -600,6 +602,17 @@ class NavViews extends React.Component {
                   <ArrowDownIcon />
                 </div>
               </div>
+              <Popover
+                open={this.state.openDevice}
+                animation={PopoverAnimationVertical}
+                anchorEl={this.state.deviceAnchorEl}
+                anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
+                targetOrigin={{ horizontal: 'left', vertical: 'top' }}
+                onRequestClose={() => this.setState({ openDevice: false, hoverNav: false })}
+                style={{ boxShadow: '0px 5px 6.6px 0.4px rgba(96,125,139,.24), 0px 2px 9.8px 0.2px rgba(96,125,139,.16)' }}
+              >
+                <RenderDevice {...this.props} />
+              </Popover>
             </div>
           ) : (
             <div

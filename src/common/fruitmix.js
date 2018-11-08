@@ -179,6 +179,10 @@ class Fruitmix extends EventEmitter {
         r = this.aget('boot')
         break
 
+      case 'space':
+        r = this.aget('boot/space')
+        break
+
       /* account APIs */
       case 'account':
         r = this.aget(`users/${this.userUUID}`)
@@ -508,6 +512,7 @@ class Fruitmix extends EventEmitter {
   start () {
     this.request('account')
     this.request('users')
+    this.request('stats')
     this.request('device')
     this.requestAsync('drives').then((drives) => {
       const drive = drives.find(d => d.tag === 'home')
