@@ -78,6 +78,7 @@ class WisnucLogin extends React.Component {
                   autoLogin: !!this.state.autoLogin,
                   token: this.state.saveToken ? res.token : null
                 })
+                this.setState({ loading: false })
                 const list = r.ownStations
                 this.props.onSuccess({ list, phonenumber: this.state.pn, winasUserId: res.id, phi })
               }
@@ -103,6 +104,7 @@ class WisnucLogin extends React.Component {
             autoLogin: !!this.state.autoLogin,
             token: this.state.saveToken ? this.phi.token : null
           })
+          this.setState({ loading: false })
           const list = r.ownStations
           this.props.onSuccess({ list, phonenumber: this.state.pn, winasUserId: this.phi.winasUserId, phi })
         }
@@ -256,17 +258,6 @@ class WisnucLogin extends React.Component {
             loading={this.state.loading}
           />
         </div>
-        {/*
-        <div style={{ display: 'flex', alignItems: 'center', position: 'relative', height: 50, color: '#85868c' }}>
-          <div style={{ width: '50%', textAlign: 'right' }}>
-            <FLButton
-              label={i18n.__('Sign Up')}
-              onClick={() => shell.openExternal(phiSignupUrl)}
-            />
-          </div>
-          <div style={{ width: 1, height: 10, backgroundColor: 'rgba(0,0,0,.38)' }} />
-        </div>
-        */}
       </div>
     )
   }

@@ -15,7 +15,6 @@ class PhiAPI extends RequestManager {
     }
 
     this.setRequest = (name, err, res, next) => {
-      console.log(name, err, res, res.body)
       const { error, body } = parseRes(err, res)
 
       /* save phi token */

@@ -2,7 +2,6 @@ import i18n from 'i18n'
 import React from 'react'
 
 import WisnucLogin from './WisnucLogin'
-import SelectDevice from './SelectDevice'
 import DeviceLogin from './DeviceLogin'
 
 import WindowAction from '../common/WindowAction'
@@ -14,12 +13,12 @@ class Login extends React.Component {
       list: [],
       hello: true,
       loading: true,
-      status: 'phiLogin'
+      status: 'wisnucLogin'
     }
 
     this.enterLANLoginList = () => {
-      this.props.phiLogin({ lan: true, name: i18n.__('Account Offline') })
-      this.setState({ list: [], loading: true, type: 'LANTOLOGIN', status: 'deviceSelect' })
+      this.props.wisnucLogin({ lan: true, name: i18n.__('Account Offline') })
+      this.setState({ list: [], loading: true, type: 'LANTOLOGIN', status: 'deviceList' })
     }
 
     this.refreshStationList = () => {
@@ -30,7 +29,7 @@ class Login extends React.Component {
         } else {
           const list = r.result.list.filter(l => l.type === 'owner' ||
             (l.accountStatus === '1' && ['pending', 'accept'].includes(l.inviteStatus)))
-          const status = !list.length ? 'phiNoBound' : 'deviceSelect'
+          const status = !list.length ? 'phiNoBound' : 'deviceList'
           this.setState({ list, loading: false, type: 'BOUNDLIST', status })
         }
       })
@@ -52,13 +51,13 @@ class Login extends React.Component {
     }
 
     this.backToList = () => {
-      this.setState({ selectedDevice: null, status: 'deviceSelect', type: 'BOUNDLIST' }, () => this.refresh())
+      this.setState({ selectedDevice: null, status: 'deviceList', type: 'BOUNDLIST' }, () => this.refresh())
     }
 
-    this.phiLoginSuccess = ({ list, phonenumber, winasUserId, phi }) => {
-      const status = !list.length ? 'phiNoBound' : 'deviceSelect'
+    this.wisnucLoginSuccess = ({ list, phonenumber, winasUserId, phi }) => {
+      const status = !list.length ? 'phiNoBound' : 'deviceList'
       this.setState({ list, status, type: 'BOUNDLIST' })
-      this.props.phiLogin({ phonenumber, winasUserId, phi, name: phonenumber })
+      this.props.wisnucLogin({ phonenumber, winasUserId, phi, name: phonenumber })
     }
   }
 
@@ -71,40 +70,11 @@ class Login extends React.Component {
 
   /* make sure log out phi account success */
   componentWillReceiveProps (nextProps) {
-    if (!nextProps.account && this.state.status !== 'phiLogin') this.setState({ status: 'phiLogin', selectedDevice: null })
+    if (!nextProps.account && this.state.status !== 'wisnucLogin') this.setState({ status: 'wisnucLogin', selectedDevice: null })
   }
 
   render () {
-    const props = this.props
-    let view = null
-
-    switch (this.state.status) {
-      case 'phiLogin':
-        view = (<WisnucLogin {...props} onSuccess={this.phiLoginSuccess} enterLANLoginList={this.enterLANLoginList} phiLogin={this.props.phiLogin} />)
-        break
-
-      case 'phiNoBound':
-        view = this.renderNoBound()
-        break
-
-      case 'deviceSelect':
-        view = (
-          <DeviceLogin
-            {...this.props}
-            list={this.state.list}
-            backToLogin={() => this.setState({ status: 'phiLogin' })}
-          />
-        )
-        break
-
-      case 'diskError':
-        view = this.renderDiskError()
-        break
-
-      default:
-        break
-    }
-
+    const beforeLogin = this.state.status === 'wisnucLogin'
     return (
       <div
         style={{
@@ -124,7 +94,7 @@ class Login extends React.Component {
             position: 'absolute',
             top: 4,
             left: 4,
-            height: this.state.status === 'deviceSelect' ? 16 : 80,
+            height: this.state.status === 'deviceList' ? 16 : 80,
             width: 'calc(100% - 8px)',
             WebkitAppRegion: 'drag'
           }}
@@ -139,7 +109,7 @@ class Login extends React.Component {
             fontSize: 12,
             width: '100%',
             height: 40,
-            display: this.state.status === 'phiLogin' ? '' : 'none'
+            display: this.state.status === 'wisnucLogin' ? '' : 'none'
           }}
           className="flexCenter"
         >
@@ -150,7 +120,45 @@ class Login extends React.Component {
             { i18n.__('Client Version %s', global.config && global.config.appVersion) }
           </div>
         </div>
-        { view }
+        <div style={{ width: 680, zIndex: 100, height: 510, position: 'relative', overflow: 'hidden' }} >
+          <div
+            style={{
+              width: 680,
+              zIndex: 100,
+              height: 510,
+              position: 'absolute',
+              left: beforeLogin ? 0 : -680,
+              transition: 'all 450ms'
+            }}
+          >
+            <WisnucLogin
+              {...this.props}
+              status={this.state.status}
+              onSuccess={this.wisnucLoginSuccess}
+              enterLANLoginList={this.enterLANLoginList}
+              wisnucLogin={this.props.wisnucLogin}
+            />
+          </div>
+          <div
+            style={{
+              width: 680,
+              zIndex: 100,
+              height: 510,
+              position: 'absolute',
+              left: beforeLogin ? 680 : 0,
+              transition: 'all 450ms'
+            }}
+          >
+            {
+              <DeviceLogin
+                {...this.props}
+                list={this.state.list}
+                status={this.state.status}
+                backToLogin={() => this.setState({ status: 'wisnucLogin' })}
+              />
+            }
+          </div>
+        </div>
         <WindowAction noResize />
       </div>
     )

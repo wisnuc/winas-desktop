@@ -34,7 +34,7 @@ class Winas extends React.Component {
       forceUpdate: false,
       clipboard: new Clipboard(),
       logout: this.logout.bind(this),
-      phiLogin: this.phiLogin.bind(this),
+      wisnucLogin: this.wisnucLogin.bind(this),
       setPalette: this.setPalette.bind(this),
       deviceLogin: this.deviceLogin.bind(this),
       deviceLogout: this.deviceLogout.bind(this),
@@ -64,7 +64,7 @@ class Winas extends React.Component {
     this.setState({ forceUpdate: false })
   }
 
-  phiLogin (user) {
+  wisnucLogin (user) {
     this.setState({ account: user })
     /* save phi login data */
     if (user && user.phi) ipcRenderer.send('SETCONFIG', { phi: user.phi })

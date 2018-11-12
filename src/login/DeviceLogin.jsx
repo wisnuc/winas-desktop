@@ -1,9 +1,10 @@
 import i18n from 'i18n'
 import React from 'react'
 import Promise from 'bluebird'
+import prettysize from 'prettysize'
 import { CircularProgress } from 'material-ui'
-import reqMdns from '../common/mdns'
 import DeviceAPI from '../common/device'
+import FlatButton from '../common/FlatButton'
 import { RRButton, FLButton, LIButton } from '../common/Buttons'
 import { CheckOutlineIcon, CheckedIcon, BackwardIcon, AccountIcon, DeviceIcon } from '../common/Svg'
 
@@ -13,25 +14,7 @@ class DeviceLogin extends React.Component {
 
     this.state = {
       failed: false,
-      loading: true,
-      tryLAN: false
-    }
-
-    this.onMDNSError = (e) => {
-      console.error('reqMdns error', e)
-      this.setState({ loading: false, list: [] })
-      this.props.openSnackBar(i18n.__('MDNS Search Error'))
-    }
-
-    this.onMDNSRes = (mdns) => {
-      this.setState({ loading: false })
-      const mdev = Array.isArray(mdns) && mdns[0]
-      if (!mdev) this.setState({ failed: true })
-      else {
-        this.device = new DeviceAPI(mdev)
-        this.device.on('updated', this.onUpdate)
-        this.device.start()
-      }
+      status: 'logging'
     }
 
     this.initDevice = () => {
@@ -39,10 +22,7 @@ class DeviceLogin extends React.Component {
       console.log('this.onSuccess', list)
       const cdev = list.find(l => !!l.online)
       if (!cdev) {
-        this.setState({ tryLAN: true })
-        reqMdns()
-          .then(this.onMDNSRes)
-          .catch(this.onMDNSError)
+        this.setState({ status: 'error' })
       } else {
         const dev = Object.assign(
           { address: cdev.LANIP, domain: 'phiToLoacl', deviceSN: cdev.sn, stationName: 'test station' },
@@ -62,8 +42,7 @@ class DeviceLogin extends React.Component {
         /* TODO */
         if (this.once) return
         this.once = true
-        if (status === 'ready' && this.state.tryLAN) setTimeout(() => this.LANLogin(), 1000)
-        else if (status === 'ready') this.getLANToken()
+        if (status === 'ready') this.getLANToken()
         else if (status === 'offline') this.remoteLogin()
         else this.once = false
       })
@@ -90,14 +69,13 @@ class DeviceLogin extends React.Component {
           this.setState({ pwdError: msg })
         } else {
           Object.assign(this.state.dev, { token: { isFulfilled: () => true, ctx: user, data } })
-          this.props.phiLogin({
+          this.props.wisnucLogin({
             lan: true,
             name: i18n.__('Account Offline With Phone Number %s', user.phoneNumber),
             phoneNumber: user.phoneNumber
           })
           this.props.deviceLogin({ dev: this.state.dev, user, selectedDevice: this.device })
         }
-        this.setState({ loading: false })
       })
     }
 
@@ -173,7 +151,13 @@ class DeviceLogin extends React.Component {
   }
 
   componentDidMount () {
-    this.initDevice()
+    if (this.props.status === 'deviceList') this.initDevice()
+  }
+
+  componentDidUpdate (prevProps, prevState) {
+    if (prevProps && prevProps.status === 'wisnucLogin' && this.props && this.props.status === 'deviceList') {
+      this.initDevice()
+    }
   }
 
   renderSuccess () {
@@ -225,41 +209,97 @@ class DeviceLogin extends React.Component {
     )
   }
 
+  deviceStatus () {
+    switch (this.systemStatus()) {
+      case 'probing':
+        return i18n.__('Probing')
+      case 'offline':
+        return i18n.__('Offline')
+      case 'systemError':
+        return i18n.__('System Error')
+      case 'ready':
+        return ''
+      case 'booting':
+        return i18n.__('Booting')
+      default:
+        return ''
+    }
+  }
+
+  loginStatus () {
+    switch (this.state.status) {
+      case 'error':
+        return i18n.__('Login Error')
+      case 'logging':
+        return i18n.__('Logging')
+      case 'Logging Error':
+        return i18n.__('Logging Error')
+      default:
+        return ''
+    }
+  }
+
   render () {
     const username = 'WISNUC Office'
-    const loginStatus = '登陆中...'
+    console.log('render DeviceLogin', this.props, this.device)
+    let [total, used, percent] = ['', '', '', 0]
+    try {
+      const space = this.device.state.space.data
+      total = prettysize(space.total * 1024)
+      used = prettysize(space.used * 1024)
+      percent = space.used / space.total
+    } catch (e) {
+      // console.error('parse error')
+    }
+    const info = this.device && this.device.state && this.device.state.info && this.device.state.info.data
+    const sn = info && info.device && info.device.sn && info.device.sn.slice(-4)
+    const deviceName = sn ? `Winas-${sn}` : 'Winas'
+    const isLogging = this.state.status === 'logging'
     return (
       <div style={{ width: 680, zIndex: 100, height: 510, position: 'relative' }} >
         <div style={{ marginTop: 46, height: 24, display: 'flex', alignItems: 'center' }}>
-          <LIButton style={{ marginLeft: 48 }} onClick={this.props.backToLogin}>
-            <BackwardIcon />
-          </LIButton>
+          {
+            !isLogging &&
+            <LIButton style={{ marginLeft: 48 }} onClick={this.props.backToLogin}>
+              <BackwardIcon />
+            </LIButton>
+          }
           <div style={{ flexGrow: 1 }} />
-          <div style={{ marginRight: 48 }}>
-            <FLButton
-              label={i18n.__('Change Device')}
-              onClick={() => this.setState({ view: 'list' })}
-            />
-          </div>
+          {
+            !isLogging &&
+            <div style={{ marginRight: 32 }}>
+              <FlatButton
+                primary
+                label={i18n.__('Change Device')}
+                onClick={() => this.setState({ view: 'list' })}
+              />
+            </div>
+          }
         </div>
         <div style={{ marginTop: 24, height: 80, position: 'relative' }} className="flexCenter">
           <div style={{ position: 'absolute', top: 0, margin: '0 auto' }}>
             <CircularProgress size={79} thickness={4} />
           </div>
-          <AccountIcon style={{ width: 72, height: 72, color: 'rgba(96,125,139,.26)' }} />
+          {
+            username ? (
+              <div style={{ width: 72, height: 72, borderRadius: 36, overflow: 'hidden' }}>
+                <img src="/home/lxw/Desktop/760373812.jpg" width={72} height={72} />
+              </div>
+            ) : <AccountIcon style={{ width: 72, height: 72, color: 'rgba(96,125,139,.26)' }} />
+          }
         </div>
         <div style={{ marginTop: 12, fontSize: 14, height: 22 }} className="flexCenter">
           { username }
         </div>
         <div style={{ fontSize: 12, color: 'rgba(0,0,0,.38)', height: 20 }} className="flexCenter">
-          { loginStatus }
+          { this.loginStatus() }
         </div>
         <div style={{ marginTop: 24, height: 80, display: 'flex', alignItems: 'center', width: '100%' }}>
           <div style={{ width: 102, marginLeft: 16 }} className="flexCenter">
             <DeviceIcon style={{ width: 24, height: 24 }} />
           </div>
           <div>
-            <div style={{ opacity: 0.87, fontWeight: 500 }}> Winsun office </div>
+            <div style={{ opacity: 0.87, fontWeight: 500 }}> { deviceName } </div>
             <div
               style={{
                 height: 10,
@@ -274,20 +314,22 @@ class DeviceLogin extends React.Component {
                 style={{
                   position: 'absolute',
                   height: 10,
-                  width: 40,
+                  width: percent * 280 || 0,
                   borderRadius: 4,
                   backgroundImage: 'linear-gradient(to right, #006e7b, #009688)'
                 }}
               />
             </div>
-            <div style={{ opacity: 0.54, color: 'rgba(0,0,0,.54)', fontSize: 12, fontWeight: 500 }}> 125.45GB / 4TB </div>
+            <div style={{ opacity: 0.54, color: 'rgba(0,0,0,.54)', fontSize: 12, fontWeight: 500 }}>
+              { (used && total) ? `${used} / ${total}` : '-- / --' }
+            </div>
           </div>
           <div style={{ flexGrow: 1 }} />
           <div style={{ marginRight: 24 }}>
-            离线
+            { this.deviceStatus() }
           </div>
           <div style={{ marginRight: 48 }}>
-            默认登陆设备
+            { i18n.__('Default Device') }
           </div>
         </div>
       </div>

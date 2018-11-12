@@ -9,7 +9,6 @@ import Tasks from './Tasks'
 import Policy from './Policy'
 import FileMenu from './FileMenu'
 import SettingsMenu from './SettingMenu'
-import ChangeDevice from './ChangeDevice'
 import BindEmail from './BindEmail'
 import RenderDevice from './RenderDevice'
 
@@ -105,7 +104,6 @@ class NavViews extends React.Component {
     }
 
     this.navGroup = (group) => {
-      if (this.state.changeDevice) this.setState({ changeDevice: false })
       if (!this.state.nav || this.views[this.state.nav].navGroup() !== group) {
         switch (group) {
           case 'file':
@@ -168,13 +166,8 @@ class NavViews extends React.Component {
       })
     }
 
-    this.showBoundList = () => {
-      this.setState({ changeDevice: true })
-    }
-
     this.jumpTo = (nav) => {
-      if (nav === 'changeDevice') this.showBoundList()
-      else if (nav === 'settings') this.navGroup('settings')
+      if (nav === 'settings') this.navGroup('settings')
       else if (nav === 'home') this.navGroup('file')
     }
 
@@ -268,12 +261,6 @@ class NavViews extends React.Component {
       this.views[name] = new View(this)
       this.views[name].on('updated', next => this.setState({ [name]: next }))
     })
-  }
-
-  renderChangeDevice () {
-    return (
-      <ChangeDevice {...this.props} />
-    )
   }
 
   renderView () {
@@ -784,7 +771,6 @@ class NavViews extends React.Component {
       default:
         break
     }
-    if (this.state.changeDevice) view = this.renderChangeDevice()
     return (
       <div style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }} >
         {/* Navs */}
