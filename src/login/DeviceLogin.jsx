@@ -26,7 +26,6 @@ class DeviceLogin extends React.Component {
     this.onMDNSRes = (mdns) => {
       this.setState({ loading: false })
       const mdev = Array.isArray(mdns) && mdns[0]
-      console.log('mdev', mdev)
       if (!mdev) this.setState({ failed: true })
       else {
         this.device = new DeviceAPI(mdev)
@@ -58,16 +57,15 @@ class DeviceLogin extends React.Component {
     this.once = false
 
     this.onUpdate = (prev, next) => {
-      console.log('this.onUpdate', next, this.systemStatus())
       this.setState({ dev: next }, () => {
         const status = this.systemStatus()
         /* TODO */
         if (this.once) return
-        if (status === 'ready' && this.state.tryLAN) {
-          this.once = true
-          setTimeout(() => this.LANLogin(), 1000)
-        } else if (status === 'ready') this.getLANToken()
+        this.once = true
+        if (status === 'ready' && this.state.tryLAN) setTimeout(() => this.LANLogin(), 1000)
+        else if (status === 'ready') this.getLANToken()
         else if (status === 'offline') this.remoteLogin()
+        else this.once = false
       })
     }
 
@@ -85,7 +83,6 @@ class DeviceLogin extends React.Component {
       }
       const uuid = user.uuid
       const password = '12345678'
-      console.log('this.LANLogin', this.state, this.device)
       this.state.dev.request('token', { uuid, password }, (err, data) => {
         if (err) {
           console.error(`login err: ${err}`)
@@ -113,7 +110,6 @@ class DeviceLogin extends React.Component {
         this.props.phi.reqAsync('localUsers', args),
         Promise.delay(2000)
       ])
-      console.log('tokenRes, users', tokenRes, users)
       const token = tokenRes.token
       const user = Array.isArray(users) && users.find(u => u.winasUserId === account.winasUserId)
 
@@ -144,7 +140,6 @@ class DeviceLogin extends React.Component {
         this.props.phi.reqAsync('localUsers', args),
         Promise.delay(2000)
       ])
-      console.log('tokenRes, users', boot, users)
       const user = Array.isArray(users) && users.find(u => u.winasUserId === account.winasUserId)
 
       if (!token || !user || !boot) throw Error('get LANToken or user error')
@@ -233,7 +228,6 @@ class DeviceLogin extends React.Component {
   render () {
     const username = 'WISNUC Office'
     const loginStatus = '登陆中...'
-    console.log('DeviceLogin this.props', this.props)
     return (
       <div style={{ width: 680, zIndex: 100, height: 510, position: 'relative' }} >
         <div style={{ marginTop: 46, height: 24, display: 'flex', alignItems: 'center' }}>

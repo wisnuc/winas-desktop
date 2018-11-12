@@ -1,19 +1,11 @@
 import i18n from 'i18n'
 import React from 'react'
-import { Divider } from 'material-ui'
 
 import WisnucLogin from './WisnucLogin'
-import LANLogin from './LANLogin'
-import SetLANPwd from './SetLANPwd'
-import ConfirmPT from './ConfirmPT'
-import ManageDisk from './ManageDisk'
 import SelectDevice from './SelectDevice'
 import DeviceLogin from './DeviceLogin'
 
-import reqMdns from '../common/mdns'
-import { BackIcon } from '../common/Svg'
 import WindowAction from '../common/WindowAction'
-import { RRButton, LIButton } from '../common/Buttons'
 
 class Login extends React.Component {
   constructor (props) {
@@ -25,35 +17,9 @@ class Login extends React.Component {
       status: 'phiLogin'
     }
 
-    this.onMDNSError = (e) => {
-      console.error('reqMdns error', e)
-      this.setState({ loading: false, list: [] })
-      this.props.openSnackBar(i18n.__('MDNS Search Error'))
-    }
-
-    this.showDeviceToBind = () => {
-      this.setState({ list: [], loading: true, type: 'LANTOBIND', status: 'deviceSelect' })
-      reqMdns()
-        .then(mdns => this.setState({ loading: false, list: mdns }))
-        .catch(this.onMDNSError)
-    }
-
     this.enterLANLoginList = () => {
       this.props.phiLogin({ lan: true, name: i18n.__('Account Offline') })
       this.setState({ list: [], loading: true, type: 'LANTOLOGIN', status: 'deviceSelect' })
-      /*
-      reqMdns()
-        .then(mdns => this.setState({ loading: false, list: mdns }))
-        .catch(this.onMDNSError)
-      */
-    }
-
-    this.openLANLogin = (dev) => {
-      this.setState({ selectedDevice: dev, status: 'LANLogin' })
-    }
-
-    this.backToLANList = () => {
-      this.setState({ selectedDevice: null, status: 'deviceSelect', type: 'LANTOLOGIN' }, () => this.refresh())
     }
 
     this.refreshStationList = () => {
@@ -70,18 +36,10 @@ class Login extends React.Component {
       })
     }
 
-    this.addBindDevice = () => {
-      this.showDeviceToBind()
-    }
-
     this.refresh = () => {
       switch (this.state.type) {
         case 'LANTOLOGIN':
           this.enterLANLoginList()
-          break
-
-        case 'LANTOBIND':
-          this.showDeviceToBind()
           break
 
         case 'BOUNDLIST':
@@ -93,32 +51,8 @@ class Login extends React.Component {
       }
     }
 
-    this.manageDisk = (dev) => {
-      this.setState({ loading: true })
-      if (!dev || !dev.mdev) {
-        this.setState({ type: 'BOUNDLIST' }, () => this.refresh())
-        return
-      }
-      /* bind device and jump to manageDisk: should regard as admin */
-      if (dev.mdev.domain === 'local') Object.assign(dev.mdev, { type: 'owner' })
-      const isAdmin = dev.mdev.type === 'owner'
-      dev.refreshSystemState(() => {
-        if (dev.systemStatus() === 'noBoundVolume' && isAdmin) this.setState({ selectedDevice: dev, status: 'diskManage' })
-        else if (dev.systemStatus() === 'noBoundVolume' && !isAdmin) this.setState({ status: 'diskError' })
-        else this.setState({ type: 'BOUNDLIST' }, () => this.refresh())
-      })
-    }
-
     this.backToList = () => {
       this.setState({ selectedDevice: null, status: 'deviceSelect', type: 'BOUNDLIST' }, () => this.refresh())
-    }
-
-    this.jumpToSetLANPwd = (dev) => {
-      this.setState({ status: 'LANPwd', selectedDevice: dev })
-    }
-
-    this.onSetLANPwdSuccess = (loginData) => {
-      this.setState({ status: 'PT', loginData, selectedDevice: loginData.selectedDevice })
     }
 
     this.phiLoginSuccess = ({ list, phonenumber, winasUserId, phi }) => {
@@ -140,134 +74,6 @@ class Login extends React.Component {
     if (!nextProps.account && this.state.status !== 'phiLogin') this.setState({ status: 'phiLogin', selectedDevice: null })
   }
 
-  renderDeviceSelect (props) {
-    return (
-      <div
-        style={{
-          position: 'absolute',
-          top: 110,
-          width: '100%',
-          height: 'calc(100% - 150px)',
-          zIndex: 200,
-          overflow: 'hidden'
-        }}
-      >
-        <SelectDevice
-          {...props}
-          {...this.state}
-          refresh={this.refresh}
-          manageDisk={this.manageDisk}
-          addBindDevice={this.addBindDevice}
-          refreshStationList={this.refreshStationList}
-          jumpToSetLANPwd={this.jumpToSetLANPwd}
-          jumpToSetPT={this.onSetLANPwdSuccess}
-          openLANLogin={this.openLANLogin}
-        />
-      </div>
-    )
-  }
-
-  renderDiskManage () {
-    return (
-      <ManageDisk
-        {...this.props}
-        selectedDevice={this.state.selectedDevice.state}
-        backToList={this.backToList}
-        onFormatSuccess={() => this.jumpToSetLANPwd(this.state.selectedDevice)}
-      />
-    )
-  }
-
-  renderLANPwd () {
-    return (
-      <SetLANPwd
-        {...this.props}
-        {...this.state}
-        onSuccess={this.onSetLANPwdSuccess}
-        dev={this.state.selectedDevice.state}
-        selectedDevice={this.state.selectedDevice}
-      />
-    )
-  }
-
-  renderPT () {
-    return (
-      <ConfirmPT
-        {...this.props}
-        {...this.state}
-        loginData={this.state.loginData}
-        selectedDevice={this.state.selectedDevice}
-      />
-    )
-  }
-
-  renderLANLogin () {
-    return (
-      <LANLogin
-        {...this.props}
-        dev={this.state.selectedDevice.state}
-        selectedDevice={this.state.selectedDevice}
-        onRequestClose={this.backToLANList}
-      />
-    )
-  }
-
-  renderNoBound () {
-    return (
-      <div style={{ width: 320, height: 310, overflow: 'hidden', zIndex: 200, position: 'relative' }}
-        className="paper"
-      >
-        <div
-          style={{ height: 59, display: 'flex', alignItems: 'center', paddingLeft: 19 }}
-          className="title"
-        >
-          { i18n.__('Add Device') }
-        </div>
-        <Divider style={{ marginLeft: 20, width: 280 }} className="divider" />
-        <div style={{ height: 180, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <img
-            style={{ width: 220, height: 116 }}
-            src="./assets/images/pic-login.png"
-            alt=""
-          />
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <RRButton
-            label={i18n.__('Add Device')}
-            onClick={this.showDeviceToBind}
-          />
-        </div>
-      </div>
-    )
-  }
-
-  renderDiskError () {
-    return (
-      <div
-        className="paper"
-        style={{ width: 320, overflow: 'hidden', zIndex: 200, position: 'relative' }}
-      >
-        <div style={{ height: 60, display: 'flex', alignItems: 'center', paddingLeft: 5 }} className="title">
-          <LIButton onClick={this.backToList} >
-            <BackIcon />
-          </LIButton>
-          { i18n.__('Disk Changed Title') }
-        </div>
-        <Divider style={{ marginLeft: 20, width: 280 }} className="divider" />
-        <div style={{ height: 150, width: 280, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <img
-            style={{ width: 280, height: 150 }}
-            src="./assets/images/pic-diskchange.png"
-            alt=""
-          />
-        </div>
-        <div style={{ color: '#fa5353', height: 40, margin: '20px 0 30px 0' }} className="flexCenter">
-          { i18n.__('Disk Error for Normal User') }
-        </div>
-      </div>
-    )
-  }
-
   render () {
     const props = this.props
     let view = null
@@ -281,10 +87,6 @@ class Login extends React.Component {
         view = this.renderNoBound()
         break
 
-      case 'listError':
-        view = this.renderDeviceSelect(props)
-        break
-
       case 'deviceSelect':
         view = (
           <DeviceLogin
@@ -295,24 +97,8 @@ class Login extends React.Component {
         )
         break
 
-      case 'diskManage':
-        view = this.renderDiskManage()
-        break
-
-      case 'LANPwd':
-        view = this.renderLANPwd()
-        break
-
       case 'diskError':
         view = this.renderDiskError()
-        break
-
-      case 'LANLogin':
-        view = this.renderLANLogin()
-        break
-
-      case 'PT':
-        view = this.renderPT()
         break
 
       default:

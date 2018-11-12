@@ -5,7 +5,6 @@ import { AutoSizer } from 'react-virtualized'
 
 import Dialog from '../common/PureDialog'
 import interpretModel from '../common/diskModel'
-import DiskModeGuide from '../login/DiskModeGuide'
 import ConfirmDialog from '../common/ConfirmDialog'
 import { RSButton, LIButton } from '../common/Buttons'
 import SimpleScrollBar from '../common/SimpleScrollBar'
@@ -286,16 +285,6 @@ class Disk extends React.PureComponent {
             </SimpleScrollBar>
           )}
         </AutoSizer>
-
-        <Dialog open={!!this.state.showGuide} onRequestClose={() => this.setState({ showGuide: false })}>
-          {
-            !!this.state.showGuide &&
-            <DiskModeGuide
-              onRequestClose={() => this.setState({ showGuide: false })}
-              powerOff={() => {}}
-            />
-          }
-        </Dialog>
 
         <ConfirmDialog
           open={this.state.confirmRemoveData}

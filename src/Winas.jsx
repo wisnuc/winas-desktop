@@ -40,7 +40,6 @@ class Winas extends React.Component {
       deviceLogout: this.deviceLogout.bind(this),
       openSnackBar: this.openSnackBar.bind(this),
       jumpToLANLogin: this.jumpToLANLogin.bind(this),
-      jumpToSetLANPwd: this.jumpToSetLANPwd.bind(this),
       jumpToBindDevice: this.jumpToBindDevice.bind(this),
       clearForceUpdate: this.clearForceUpdate.bind(this)
     }
@@ -72,6 +71,7 @@ class Winas extends React.Component {
   }
 
   deviceLogin ({ dev, user, selectedDevice, isCloud }) {
+    console.log('deviceLogin--')
     if (this.state.selectedDevice) {
       ipcRenderer.send('LOGOUT')
       this.setState({ view: '', selectedDevice: null, jump: null }, () => this.deviceLogin({ dev, user, selectedDevice, isCloud }))
@@ -117,10 +117,6 @@ class Winas extends React.Component {
       jump: { selectedDevice: dev, status: 'LANLogin' },
       account: { lan: true, name: i18n.__('Account Offline') }
     })
-  }
-
-  jumpToSetLANPwd (dev) {
-    this.setState({ view: 'login', selectedDevice: null, jump: { status: 'LANPwd', selectedDevice: dev } })
   }
 
   openSnackBar (message) {
@@ -199,17 +195,6 @@ class Winas extends React.Component {
             }
 
           </div>
-
-          {/*
-            !!this.state.showUsers &&
-              <Users
-                phi={this.state.phi}
-                open={this.state.showUsers}
-                device={this.state.selectedDevice}
-                onCancel={this.onCloseUsers}
-                openSnackBar={msg => this.openSnackBar(msg)}
-              />
-          */}
 
           {/* snackBar */}
           { this.renderSnackBar() }

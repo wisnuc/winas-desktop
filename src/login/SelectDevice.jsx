@@ -4,11 +4,6 @@ import { Divider } from 'material-ui'
 import { AutoSizer } from 'react-virtualized'
 
 import Device from './Device'
-import CloudLogin from './CloudLogin'
-import ConfirmBind from './ConfirmBind'
-import ConnectionHint from './ConnectionHint'
-import InvitationConfirm from './InvitationConfirm'
-
 import Dialog from '../common/PureDialog'
 import ScrollBar from '../common/ScrollBar'
 import ConfirmDialog from '../common/ConfirmDialog'
@@ -255,54 +250,10 @@ class DeviceSelect extends React.Component {
               : arr.length ? this.renderDevs(arr) : this.renderNoDev() }
         </div>
 
-        {/* Connection Hint */}
-        <Dialog open={!!this.state.showHelp} onRequestClose={() => this.setState({ showHelp: false })}>
-          {
-            !!this.state.showHelp &&
-            <ConnectionHint
-              isAdd={this.props.type === 'LANTOBIND'}
-              isLAN={this.props.account && this.props.account.lan}
-              onRequestClose={() => this.setState({ showHelp: false })}
-            />
-          }
-        </Dialog>
-
-        {/* Confirm Device Bind */}
-        <Dialog open={!!this.state.confirm} onRequestClose={() => this.setState({ confirm: false })} modal >
-          {
-            !!this.state.confirm &&
-            <ConfirmBind
-              {...this.props}
-              dev={this.state.dev}
-              onSuccess={() => this.bindVolume(this.state.dev, this.state.selectedDevice)}
-              onFailed={() => this.setState({ confirm: false })}
-            />
-          }
-        </Dialog>
-
         {/* Device boot failed, due to disk changed */}
         <Dialog open={!!this.state.UserMaint} onRequestClose={() => this.setState({ UserMaint: null })} modal >
           { !!this.state.UserMaint && this.renderUserMaint() }
         </Dialog>
-
-        {/* CloudLogin */}
-        {
-          !!this.state.cloudLogin &&
-            <CloudLogin
-              {...this.props}
-              dev={this.state.cloudLogin}
-              selectedDevice={this.state.selectedDevice}
-              onRequestClose={() => this.setState({ cloudLogin: null })}
-            />
-        }
-
-        {/* Invitaion */}
-        <InvitationConfirm
-          {...this.props}
-          dev={this.state.invitation}
-          open={!!this.state.invitation}
-          onClose={() => this.setState({ invitation: null })}
-        />
 
         {/* confirm to change device */}
         <ConfirmDialog
