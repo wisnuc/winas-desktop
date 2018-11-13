@@ -53,7 +53,6 @@ class WisnucLogin extends React.Component {
     this.togglePwd = () => this.setState({ showPwd: !this.state.showPwd })
 
     this.login = () => {
-      // return this.props.enterLANLoginList()
       this.setState({ loading: true })
       this.props.phi.req(
         'token',
@@ -89,7 +88,6 @@ class WisnucLogin extends React.Component {
     }
 
     this.fakeLogin = () => {
-      // return this.props.enterLANLoginList()
       this.setState({ loading: true })
       /* assign token to PhiAPI */
       Object.assign(this.props.phi, { token: this.phi.token })
@@ -113,6 +111,11 @@ class WisnucLogin extends React.Component {
 
     this.reset = () => {
       this.setState({ failed: false, pnError: '', pwdError: '' })
+    }
+
+    this.enterLAN = () => {
+      this.setState({ failed: false })
+      this.props.enterLANLoginList()
     }
 
     this.onKeyDown = (e) => {
@@ -153,7 +156,7 @@ class WisnucLogin extends React.Component {
           <div style={{ flexGrow: 1 }} />
           <RSButton label={i18n.__('Cancel')} onClick={this.reset} alt />
           <div style={{ width: 10 }} />
-          <RSButton label={i18n.__('OK')} onClick={this.props.enterLANLoginList} />
+          <RSButton label={i18n.__('OK')} onClick={this.enterLAN} />
         </div>
       </div>
     )

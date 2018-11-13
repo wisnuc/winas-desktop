@@ -222,7 +222,7 @@ class TrsContainer extends React.Component {
     }
 
     this.updateTransmission = (e, userTasks, finishTasks) => {
-      console.log('this.updateTransmission', userTasks, finishTasks)
+      // console.log('this.updateTransmission', userTasks, finishTasks)
       this.setState({ userTasks, finishTasks })
     }
   }
