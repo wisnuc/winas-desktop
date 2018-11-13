@@ -85,7 +85,6 @@ class NavViews extends React.Component {
     ])
 
     this.navTo = (nav, target) => {
-      this.setState({ hoverNav: false })
       if ((nav !== this.state.nav) || (target && target.dirUUID)) {
         this.props.setPalette(this.views[nav].primaryColor(), this.views[nav].accentColor())
         this.setState({ nav, primaryColor: this.views[nav].primaryColor() })
@@ -314,7 +313,7 @@ class NavViews extends React.Component {
   }
 
   renderFileGroup () {
-    const toolBarStyle = { height: 56, marginLeft: 48, width: 'calc(100% -36px)', display: 'flex', alignItems: 'center', borderBottom: '1px solid #e8eaed' }
+    const toolBarStyle = { height: 56, marginLeft: 48, width: 'calc(100% -36px)', display: 'flex', alignItems: 'center' }
     const titleStyle = { height: 32, display: 'flex', alignItems: 'center' }
 
     return (
@@ -336,6 +335,8 @@ class NavViews extends React.Component {
 
           {/* Title and BreadCrumbItem */}
           { this.views[this.state.nav].renderTitle({ style: titleStyle }) }
+
+          <div style={{ backgroundColor: '#e8eaed', height: 1, width: '100%', marginTop: 8 }} />
 
           {/* File Content */}
           <div style={{ height: 'calc(100% - 120px)', width: '100%' }} id="content-container">

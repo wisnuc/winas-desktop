@@ -882,26 +882,10 @@ class Home extends Base {
   }
 
   renderTitle ({ style }) {
-    const { curr, queue } = this.history.get()
-    const noBack = curr < 1
-    const noForward = curr > queue.length - 2
-    const color = 'rgba(0,0,0,.54)'
-    const breadCrumbStyle = { height: 28, fontSize: 12, color: 'rgba(0,0,0,.54)', display: 'flex', alignItems: 'center', flexWrap: 'wrap' }
+    const breadCrumbStyle = { height: 40, fontSize: 18, color: 'rgba(0,0,0,.54)', display: 'flex', alignItems: 'center', flexWrap: 'wrap' }
     return (
       <div style={style}>
-        <div style={{ width: 56 }} />
-        <SIButton onClick={this.back} tooltip={i18n.__('Backward')} disabled={noBack} style={{ marginLeft: -8 }}>
-          <BackwardIcon color={color} />
-        </SIButton>
-        <div style={{ width: 8 }} />
-        <SIButton
-          onClick={this.forward}
-          tooltip={i18n.__('Forward')}
-          disabled={noForward}
-          iconStyle={{ transform: 'rotate(180deg)' }}
-        >
-          <BackwardIcon color={color} />
-        </SIButton>
+        <div style={{ width: 28 }} />
         <div style={{ height: 40, display: 'flex', alignItems: 'center' }}>
           { this.renderBreadCrumbItem({ style: breadCrumbStyle }) }
         </div>
@@ -911,6 +895,9 @@ class Home extends Base {
 
   renderToolBar ({ style, openDetail }) {
     const color = 'rgba(0,0,0,.54)'
+    const { curr, queue } = this.history.get()
+    const noBack = curr < 1
+    const noForward = curr > queue.length - 2
     const { select } = this.state
     const itemSelected = select && select.selected && select.selected.length
 
@@ -918,9 +905,20 @@ class Home extends Base {
     const inRoot = this.state.inRoot || (this.hasRoot && !this.phyDrive)
     return (
       <div style={style}>
-        <div style={{ fontSize: 21, fontWeight: 500 }}>
-          { this.menuName() }
-        </div>
+        {/*
+        <LIButton onClick={this.back} tooltip={i18n.__('Backward')} disabled={noBack} style={{ marginLeft: -8 }}>
+          <BackwardIcon color={color} />
+        </LIButton>
+        <div style={{ width: 8 }} />
+        <LIButton
+          onClick={this.forward}
+          tooltip={i18n.__('Forward')}
+          disabled={noForward}
+          iconStyle={{ transform: 'rotate(180deg)' }}
+        >
+          <BackwardIcon color={color} />
+        </LIButton>
+        */}
         <div style={{ flexGrow: 1 }} />
         <LIButton onClick={() => this.refresh()} tooltip={i18n.__('Refresh')} >
           <RefreshAltIcon color={color} />
@@ -928,9 +926,9 @@ class Home extends Base {
 
         {
           !!itemSelected &&
-            <LIButton onClick={() => this.toggleDialog('delete')} tooltip={i18n.__('Delete')} >
-              <DeleteIcon />
-            </LIButton>
+          <LIButton onClick={() => this.toggleDialog('delete')} tooltip={i18n.__('Delete')} >
+            <DeleteIcon />
+          </LIButton>
         }
 
         <LIButton onClick={() => {}} tooltip={i18n.__('More')} >
