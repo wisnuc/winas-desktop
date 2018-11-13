@@ -1,12 +1,9 @@
 import i18n from 'i18n'
 import React from 'react'
-import { shell } from 'electron'
-import { Popover, MenuItem } from 'material-ui'
-import ADD from 'material-ui/svg-icons/navigation/arrow-drop-down'
+import Popover, { PopoverAnimationVertical } from 'material-ui/Popover'
+import FlatButton from '../common/FlatButton'
 
-import { PersonIcon, UsersIcon, LogoutIcon, AvatarOnlineIcon, AvatarOfflineIcon } from '../common/Svg'
-
-const phicommUrl = 'https://sohon2test.phicomm.com/v1/ui/index'
+import { AccountIcon } from '../common/Svg'
 
 class Account extends React.Component {
   constructor (props) {
@@ -31,111 +28,86 @@ class Account extends React.Component {
     clearTimeout(this.timer)
   }
 
-  render () {
-    const { user, device, logout } = this.props
-    if (!user) return (<div />)
-    const { name, phicommUserId } = user
-
-    const color = 'rgba(255, 255, 255, 0.7)'
-
-    const iconStyle = { marginLeft: 30, marginTop: 5, width: 30, height: 30, color: '#7d868f' }
-    const items = []
-    /* phi account */
-    if (phicommUserId) {
-      items.push({
-        primaryText: i18n.__('Account Settings'),
-        leftIcon: <PersonIcon style={iconStyle} />,
-        onClick: () => { shell.openExternal(phicommUrl); this.setState({ open: false }) }
-      })
-    }
-    /* device logged */
-    if (phicommUserId && device && device.mdev && device.mdev.type === 'owner') {
-      items.push({
-        primaryText: i18n.__('Users Management'),
-        leftIcon: <UsersIcon style={iconStyle} />,
-        onClick: () => this.openUsers()
-      })
-    }
-    /* return phiLogin */
-    items.push({
-      primaryText: i18n.__('Log Out'),
-      leftIcon: <LogoutIcon style={iconStyle} />,
-      onClick: logout
-    })
-
+  renderAccountPop () {
+    const { avatarUrl, nickName, mail, pn } = this.props.account.phi
     return (
-      <div
-        style={{
-          height: 30,
-          display: 'flex',
-          alignItems: 'center',
-          cursor: 'pointer',
-          WebkitAppRegion: 'no-drag'
-        }}
-        onClick={this.openPop}
-      >
-
-        <div style={{ width: 30, height: 30, borderRadius: 15, backgroundColor: 'rgba(255,255,255,.2)' }}>
-          { phicommUserId ? <AvatarOnlineIcon style={{ color: '#FFF' }} /> : <AvatarOfflineIcon style={{ color: '#FFF' }} /> }
+      <div style={{ height: 188, width: 312, WebkitAppRegion: 'no-drag' }}>
+        <div style={{ height: 140, display: 'flex', alignItems: 'center' }}>
+          <div style={{ marginLeft: 32, position: 'relative' }}>
+            {
+              avatarUrl ? <img src={avatarUrl} width={72} height={72} />
+                : (
+                  <AccountIcon
+                    onClick={this.changeAvatar}
+                    style={{ width: 72, height: 72, color: 'rgba(96,125,139,.26)' }}
+                  />
+                )
+            }
+            <div style={{ position: 'absolute', top: 55, left: 0, height: 17, width: 72, overflow: 'hidden' }}>
+              <div style={{ height: 72, width: 72, marginTop: -55, borderRadius: 36, backgroundColor: 'rgba(0,0,0,.87)' }} />
+              <div style={{ color: '#FFF', marginTop: -17, height: 17 }} className="flexCenter">
+                { i18n.__('Change Avatar') }
+              </div>
+            </div>
+          </div>
+          <div style={{ height: 100, marginLeft: 24, marginTop: 40 }}>
+            <div style={{ height: 20, fontWeight: 500, color: 'rgba(0,0,0,.76)' }}>
+              { nickName || '某某' }
+            </div>
+            <div style={{ height: 20, fontWeight: 500, color: 'rgba(0,0,0,.76)' }}>
+              { pn }
+            </div>
+            <div style={{ height: 37, color: 'rgba(0,0,0,.29)' }}>
+              {
+                mail || (
+                  <FlatButton
+                    style={{ marginLeft: -16, marginTop: -6, height: 32, lineHeight: '32px' }}
+                    label={i18n.__('Bind Email')}
+                    onClick={() => this.setState({ open: false, bindEmail: true })}
+                    primary
+                  />
+                )
+              }
+            </div>
+          </div>
         </div>
-        <div style={{ paddingLeft: 10, color }}>
-          { name }
+        <div style={{ height: 48, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 8 }}>
+          <FlatButton
+            primary
+            label={i18n.__('Logout')}
+            onClick={this.props.logout}
+            style={{ height: 32, lineHeight: '32px' }}
+          />
         </div>
+      </div>
+    )
+  }
 
-        <div
+  render () {
+    if (!this.props.account || !this.props.account.phi) return <div />
+    return (
+      <div style={{ height: 32, display: 'flex', alignItems: 'center', cursor: 'pointer', WebkitAppRegion: 'no-drag' }} >
+        <AccountIcon
+          onClick={this.openPop}
           style={{
-            width: 26,
-            height: 26,
-            padding: 4,
-            margin: '0 8px 0 0',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
-        >
-          <ADD color={color} />
-        </div>
-
-        <div style={{ height: 12, width: 1, backgroundColor: color, opacity: 0.3 }} />
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            display: this.state.open ? '' : 'none',
-            WebkitAppRegion: 'no-drag'
+            width: 32,
+            height: 32,
+            marginRight: 24,
+            color: 'rgba(96,125,139,.26)',
+            WebkitAppRegion: 'no-drag',
+            cursor: 'pointer'
           }}
         />
         <Popover
           open={this.state.open}
+          animation={PopoverAnimationVertical}
           anchorEl={this.state.anchorEl}
-          anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-          targetOrigin={{ horizontal: 'right', vertical: 'top' }}
+          anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
+          targetOrigin={{ horizontal: 'left', vertical: 'top' }}
           onRequestClose={() => this.setState({ open: false })}
-          style={{ boxShadow: '0 0 20px 0 rgba(23, 99, 207, 0.1)', opacity: this.state.show ? 1 : 0, marginLeft: -20 }}
+          style={{ boxShadow: '0px 5px 6.6px 0.4px rgba(96,125,139,.24), 0px 2px 9.8px 0.2px rgba(96,125,139,.16)' }}
         >
-          <div style={{ width: 125, maxWidth: 125, height: items.length * 40, overflow: 'hidden' }} >
-            {
-              items.map((props, index) => (
-                <MenuItem
-                  {...props}
-                  key={index.toString()}
-                  style={{
-                    marginLeft: -24,
-                    marginTop: 0,
-                    fontSize: 14,
-                    color: '#505259',
-                    height: 40,
-                    minHeight: 40,
-                    lineHeight: '40px'
-                  }}
-                />
-              ))
-            }
-            <div style={{ height: 5, width: '100%' }} />
-          </div>
+          { this.renderAccountPop() }
         </Popover>
       </div>
     )

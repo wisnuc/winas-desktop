@@ -4,8 +4,7 @@ import request from 'superagent'
 import parseRes from './parseRes'
 import RequestManager from './reqman'
 
-// const cloudAddress = 'https://abel.nodetribe.com/c/v1'
-const cloudAddress = 'http://54.223.150.188/c/v1'
+const cloudAddress = 'https://abel.nodetribe.com/c/v1'
 
 class PhiAPI extends RequestManager {
   constructor () {
@@ -98,6 +97,10 @@ class PhiAPI extends RequestManager {
             response: 10000, // Wait 30 seconds for the server to start sending,
             deadline: 20000 // but allow 1 minute for the file to finish loading.
           })
+        break
+
+      case 'setLastSN':
+        r = this.apost('user/deviceInfo', { sn: args.sn })
         break
 
       case 'bindDevice':

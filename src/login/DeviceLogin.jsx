@@ -101,6 +101,7 @@ class DeviceLogin extends React.Component {
         .then(({ dev, user, token }) => {
           Object.assign(dev, { token: { isFulfilled: () => true, ctx: user, data: { token } } })
           this.props.deviceLogin({ dev, user, selectedDevice: this.device, isCloud: false })
+          this.props.phi.req('setLastSN', { sn: dev.mdev.deviceSN })
         })
         .catch((error) => {
           console.error('this.getLANToken', error, this.props)
@@ -130,14 +131,11 @@ class DeviceLogin extends React.Component {
         .then(({ dev, user, token, boot }) => {
           /* onSuccess: auto login */
           Object.assign(dev, {
-            token: {
-              isFulfilled: () => true, ctx: user, data: { token }
-            },
-            boot: {
-              isFulfilled: () => true, ctx: user, data: boot
-            }
+            token: { isFulfilled: () => true, ctx: user, data: { token } },
+            boot: { isFulfilled: () => true, ctx: user, data: boot }
           })
           this.props.deviceLogin({ dev, user, selectedDevice: this.device, isCloud: true })
+          this.props.phi.req('setLastSN', { sn: dev.mdev.deviceSN })
         })
         .catch((error) => {
           console.error('this.getLANToken', error)

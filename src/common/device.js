@@ -236,7 +236,7 @@ class Device extends RequestManager {
   **/
 
   systemStatus () {
-    if (['info', 'boot', 'users'].some(v => (!this[v] || this[v].isPending()))) return 'probing'
+    if (['info', 'boot', 'users', 'space'].some(v => (!this[v] || this[v].isPending()))) return 'probing'
     else if (this.info.isRejected()) return 'offline'
     const info = this.info.value()
 

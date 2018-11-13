@@ -269,7 +269,7 @@ class RenderListByRow extends React.Component {
             height: 48,
             width: 'calc(100% - 40px)',
             margin: '0 40px',
-            zIndex: 100,
+            zIndex: 1,
             display: 'flex',
             alignItems: 'center',
             backgroundColor: '#f8f9fa'

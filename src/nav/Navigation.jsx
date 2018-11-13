@@ -43,7 +43,7 @@ import Fruitmix from '../common/fruitmix'
 import WindowAction from '../common/WindowAction'
 import DialogOverlay from '../common/PureDialog'
 import { TextField, Checkbox } from '../common/Buttons'
-import { BackIcon, WisnucLogo, MenuIcon, DeviceIcon, ArrowDownIcon, AccountIcon, CloseIcon, PDFIcon, WORDIcon, EXCELIcon, PPTIcon, PhotoIcon, VideoIcon, AudioIcon, ExitIcon } from '../common/Svg'
+import { BackIcon, WisnucLogo, MenuIcon, DeviceIcon, ArrowDownIcon, CloseIcon, PDFIcon, WORDIcon, EXCELIcon, PPTIcon, PhotoIcon, VideoIcon, AudioIcon, ExitIcon } from '../common/Svg'
 
 class NavViews extends React.Component {
   constructor (props) {
@@ -85,6 +85,7 @@ class NavViews extends React.Component {
     ])
 
     this.navTo = (nav, target) => {
+      this.setState({ hoverNav: false })
       if ((nav !== this.state.nav) || (target && target.dirUUID)) {
         this.props.setPalette(this.views[nav].primaryColor(), this.views[nav].accentColor())
         this.setState({ nav, primaryColor: this.views[nav].primaryColor() })
@@ -201,7 +202,7 @@ class NavViews extends React.Component {
       this.timer = setTimeout(() => {
         this.timer = null
         this.setState({ hoverNav: true })
-      }, 300)
+      }, 225)
     }
 
     this.offHover = () => {
@@ -313,8 +314,8 @@ class NavViews extends React.Component {
   }
 
   renderFileGroup () {
-    const toolBarStyle = { height: 40, marginLeft: 48, width: 'calc(100% -36px)', display: 'flex', alignItems: 'center', borderBottom: '1px solid #e8eaed' }
-    const titleStyle = { height: 52, display: 'flex', alignItems: 'center' }
+    const toolBarStyle = { height: 56, marginLeft: 48, width: 'calc(100% -36px)', display: 'flex', alignItems: 'center', borderBottom: '1px solid #e8eaed' }
+    const titleStyle = { height: 32, display: 'flex', alignItems: 'center' }
 
     return (
       <div
@@ -700,61 +701,6 @@ class NavViews extends React.Component {
     )
   }
 
-  renderAccountPop () {
-    const { avatarUrl, nickName, mail, pn } = this.props.account.phi
-    return (
-      <div style={{ height: 188, width: 312, WebkitAppRegion: 'no-drag' }}>
-        <div style={{ height: 140, display: 'flex', alignItems: 'center' }}>
-          <div style={{ marginLeft: 32, position: 'relative' }}>
-            {
-              avatarUrl ? <img src={avatarUrl} width={72} height={72} />
-                : (
-                  <AccountIcon
-                    onClick={this.changeAvatar}
-                    style={{ width: 72, height: 72, color: 'rgba(96,125,139,.26)' }}
-                  />
-                )
-            }
-            <div style={{ position: 'absolute', top: 55, left: 0, height: 17, width: 72, overflow: 'hidden' }}>
-              <div style={{ height: 72, width: 72, marginTop: -55, borderRadius: 36, backgroundColor: 'rgba(0,0,0,.87)' }} />
-              <div style={{ color: '#FFF', marginTop: -17, height: 17 }} className="flexCenter">
-                { i18n.__('Change Avatar') }
-              </div>
-            </div>
-          </div>
-          <div style={{ height: 100, marginLeft: 24, marginTop: 40 }}>
-            <div style={{ height: 20, fontWeight: 500, color: 'rgba(0,0,0,.76)' }}>
-              { nickName || '某某' }
-            </div>
-            <div style={{ height: 20, fontWeight: 500, color: 'rgba(0,0,0,.76)' }}>
-              { pn }
-            </div>
-            <div style={{ height: 37, color: 'rgba(0,0,0,.29)' }}>
-              {
-                mail || (
-                  <FlatButton
-                    style={{ marginLeft: -16, marginTop: -6, height: 32, lineHeight: '32px' }}
-                    label={i18n.__('Bind Email')}
-                    onClick={() => this.setState({ open: false, bindEmail: true })}
-                    primary
-                  />
-                )
-              }
-            </div>
-          </div>
-        </div>
-        <div style={{ height: 48, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 8 }}>
-          <FlatButton
-            primary
-            label={i18n.__('Logout')}
-            onClick={this.props.logout}
-            style={{ height: 32, lineHeight: '32px' }}
-          />
-        </div>
-      </div>
-    )
-  }
-
   render () {
     if (!this.state.nav) return null
     let view = null
@@ -785,44 +731,8 @@ class NavViews extends React.Component {
             transition: 'margin 225ms'
           }}
         >
-          <div
-            style={{
-              height: 72,
-              padding: '34px 0 0 32px',
-              width: 'calc(100% - 32px)',
-              backgroundColor: '#f8f8f8',
-              display: 'flex',
-              alignItems: 'center',
-              WebkitAppRegion: this.state.hoverNav && !this.state.pin ? 'no-drag' : 'drag'
-            }}
-          >
-            <div style={{ fontSize: 21, fontWeight: 50, marginLeft: 24 }}> { this.views[this.state.nav].menuName() } </div>
-            <div style={{ flexGrow: 1 }} />
-            <AccountIcon
-              onClick={this.openPop}
-              style={{
-                width: 32,
-                height: 32,
-                marginRight: 24,
-                color: 'rgba(96,125,139,.26)',
-                WebkitAppRegion: 'no-drag',
-                cursor: 'pointer'
-              }}
-
-            />
-            <Popover
-              open={this.state.open}
-              animation={PopoverAnimationVertical}
-              anchorEl={this.state.anchorEl}
-              anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
-              targetOrigin={{ horizontal: 'left', vertical: 'top' }}
-              onRequestClose={() => this.setState({ open: false })}
-              style={{ boxShadow: '0px 5px 6.6px 0.4px rgba(96,125,139,.24), 0px 2px 9.8px 0.2px rgba(96,125,139,.16)' }}
-            >
-              { this.renderAccountPop() }
-            </Popover>
-          </div>
-          <div style={{ height: 'calc(100% - 110px)', width: '100%', position: 'relative' }}>
+          <div style={{ height: 34, backgroundColor: '#f8f8f8', WebkitAppRegion: 'drag' }} />
+          <div style={{ height: 'calc(100% - 38px)', width: '100%', position: 'relative' }}>
             { view }
           </div>
         </div>

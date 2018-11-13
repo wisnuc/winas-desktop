@@ -507,8 +507,8 @@ const styles = {
     justifyContent: 'center'
   },
   smallIcon: {
-    width: 24,
-    height: 24
+    width: 18,
+    height: 18
   },
   smallButton: {
     width: 24,
@@ -528,6 +528,8 @@ export class LIButton extends React.PureComponent {
     const iconStyle = Object.assign({ color: '#7d868f', opacity: disabled ? 0.5 : 1 }, styles.largeIcon, this.props.iconStyle)
     const props = Object.assign({}, this.props)
     delete props.tooltip
+    delete props.iconStyle
+    delete props.style
     return (
       <Tooltip tooltip={this.props.tooltip} disabled={disabled} >
         <IconButton style={style} iconStyle={iconStyle} {...props} />
@@ -544,6 +546,8 @@ export class SIButton extends React.PureComponent {
     const iconStyle = Object.assign({ color: 'rgba(0,0,0,.54)', opacity: disabled ? 0.5 : 1 }, styles.smallIcon, this.props.iconStyle)
     const props = Object.assign({}, this.props)
     delete props.tooltip
+    delete props.iconStyle
+    delete props.style
     return (
       <Tooltip tooltip={this.props.tooltip} disabled={disabled} >
         <IconButton style={style} iconStyle={iconStyle} {...props} />
