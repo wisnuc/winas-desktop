@@ -720,7 +720,7 @@ class Home extends Base {
         : drives.find(d => d.type === 'private').uuid // home
     const order = types ? 'newest' : 'find'
 
-    this.ctx.props.apis.pureRequest('search', { name, places, types, order }, (err, res) => {
+    this.ctx.props.apis.pureRequest('search', { name, places, order }, (err, res) => {
       if (err || !res || !Array.isArray(res)) this.setState({ error: true, loading: false })
       else {
         const pdrives = places.split('.')
@@ -887,7 +887,6 @@ class Home extends Base {
       <div style={style}>
         <div style={{ width: 28 }} />
         <div style={{ height: 40, display: 'flex', alignItems: 'center' }}>
-          { this.renderBreadCrumbItem({ style: breadCrumbStyle }) }
         </div>
       </div>
     )
@@ -903,6 +902,7 @@ class Home extends Base {
 
     const iconStyle = disabled => ({ color: disabled ? 'rgba(0,0,0,.54)' : color, width: 24, height: 24 })
     const inRoot = this.state.inRoot || (this.hasRoot && !this.phyDrive)
+    const breadCrumbStyle = { height: 40, fontSize: 18, color: 'rgba(0,0,0,.54)', display: 'flex', alignItems: 'center', flexWrap: 'wrap' }
     return (
       <div style={style}>
         {/*
@@ -919,6 +919,22 @@ class Home extends Base {
           <BackwardIcon color={color} />
         </LIButton>
         */}
+        {
+          !this.state.showSearch ? this.renderBreadCrumbItem({ style: breadCrumbStyle })
+            : (
+              <div
+                style={{
+                  fontSize: 18,
+                  height: 32,
+                  marginLeft: 24,
+                  display: 'flex',
+                  alignItems: 'center'
+                }}
+              >
+                { i18n.__('Search Result of %s', this.state.showSearch) }
+              </div>
+            )
+        }
         <div style={{ flexGrow: 1 }} />
         <LIButton onClick={() => this.refresh()} tooltip={i18n.__('Refresh')} >
           <RefreshAltIcon color={color} />
@@ -926,9 +942,9 @@ class Home extends Base {
 
         {
           !!itemSelected &&
-          <LIButton onClick={() => this.toggleDialog('delete')} tooltip={i18n.__('Delete')} >
-            <DeleteIcon />
-          </LIButton>
+            <LIButton onClick={() => this.toggleDialog('delete')} tooltip={i18n.__('Delete')} >
+              <DeleteIcon />
+            </LIButton>
         }
 
         <LIButton onClick={() => {}} tooltip={i18n.__('More')} >
@@ -1008,14 +1024,14 @@ class Home extends Base {
 
         <DialogOverlay open={!!this.state.createNewFolder} onRequestClose={() => this.toggleDialog('createNewFolder')}>
           { this.state.createNewFolder &&
-            <NewFolderDialog
-              onRequestClose={() => this.toggleDialog('createNewFolder')}
-              apis={this.ctx.props.apis}
-              path={this.state.path}
-              entries={this.state.entries}
-              openSnackBar={openSnackBar}
-              refresh={this.refresh}
-            /> }
+          <NewFolderDialog
+            onRequestClose={() => this.toggleDialog('createNewFolder')}
+            apis={this.ctx.props.apis}
+            path={this.state.path}
+            entries={this.state.entries}
+            openSnackBar={openSnackBar}
+            refresh={this.refresh}
+          /> }
         </DialogOverlay>
 
         <ConfirmDialog
@@ -1106,11 +1122,11 @@ class Home extends Base {
                     />
                     {
                       !this.state.showSearch &&
-                        <MenuItem
-                          primaryText={i18n.__('Paste')}
-                          disabled={!pastable}
-                          onClick={this.onPaste}
-                        />
+                      <MenuItem
+                        primaryText={i18n.__('Paste')}
+                        disabled={!pastable}
+                        onClick={this.onPaste}
+                      />
                     }
                     <Divider style={{ marginLeft: 10, marginTop: 2, marginBottom: 2, width: 'calc(100% - 20px)' }} />
                   </div>
@@ -1186,10 +1202,10 @@ class Home extends Base {
                   />
                   {
                     !multiSelected &&
-                      <MenuItem
-                        primaryText={i18n.__('Rename')}
-                        onClick={this.rename}
-                      />
+                    <MenuItem
+                      primaryText={i18n.__('Rename')}
+                      onClick={this.rename}
+                    />
                   }
                   <MenuItem
                     primaryText={i18n.__('Delete')}

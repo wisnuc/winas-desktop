@@ -53,7 +53,7 @@ class Search extends Button {
             <TextField
               name="search-input"
               style={{ width: 120, marginLeft: 32 }}
-              inputStyle={{ color: 'rgba(0,0,0,.38)', fontSize: 14 }}
+              inputStyle={{ color: 'rgba(0,0,0,.87)', fontSize: 14 }}
               underlineStyle={{ display: 'none' }}
               hintText={searchHint}
               hintStyle={{ color: 'var(--light-grey-text)', fontSize: 14 }}

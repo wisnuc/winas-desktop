@@ -52,7 +52,8 @@ class NavViews extends React.Component {
     this.state = {
       nav: null,
       types: [],
-      snackBar: ''
+      snackBar: '',
+      searchText: ''
     }
 
     this.views = {}
@@ -221,6 +222,33 @@ class NavViews extends React.Component {
       e.preventDefault()
       this.setState({ openDevice: true, deviceAnchorEl: e.currentTarget })
     }
+
+    this.exitSearchMode = () => {
+      if (!this.state.searchText && this.state.searchMode && !this.state.types.length) {
+        this.setState({ searchMode: false })
+      }
+    }
+
+    this.searchTimer = null
+    this.handleSearch = (searchText) => {
+      clearTimeout(this.searchTimer)
+      this.setState({ searchText })
+      if (!searchText) {
+        this.views[this.state.nav].clearSearch()
+      } else {
+        this.searchTimer = setTimeout(() => {
+          this.searchTimer = null
+          this.views[this.state.nav].search(searchText)
+        }, 500)
+      }
+    }
+
+    this.clearSearchText = () => {
+      this.setState({ searchText: '' })
+      console.log('this.clearSearchText', this.textRef, this.textRef.focus)
+      if (this.textRef) this.textRef.focus()
+      this.views[this.state.nav].clearSearch()
+    }
   }
 
   componentDidMount () {
@@ -313,9 +341,7 @@ class NavViews extends React.Component {
   }
 
   renderFileGroup () {
-    const toolBarStyle = { height: 56, marginLeft: 48, width: 'calc(100% -36px)', display: 'flex', alignItems: 'center' }
-    const titleStyle = { height: 32, display: 'flex', alignItems: 'center' }
-
+    const toolBarStyle = { height: 64, marginLeft: 32, width: 'calc(100% -36px)', display: 'flex', alignItems: 'center' }
     return (
       <div
         style={{
@@ -329,14 +355,12 @@ class NavViews extends React.Component {
       >
         <div style={{ height: '100%', width: '100%', position: 'relative' }}>
           {/* Toolbar */}
-          <div style={{ height: 4 }} />
           { this.views[this.state.nav].renderToolBar({ style: toolBarStyle, openDetail: this.openDetail }) }
-          <div style={{ height: 4 }} />
 
           {/* Title and BreadCrumbItem */}
-          { this.views[this.state.nav].renderTitle({ style: titleStyle }) }
+          {/* this.views[this.state.nav].renderTitle({ style: titleStyle }) */}
 
-          <div style={{ backgroundColor: '#e8eaed', height: 1, width: '100%', marginTop: 8 }} />
+          <div style={{ backgroundColor: '#e8eaed', height: 1, width: '100%', marginTop: 8, marginBottom: 8 }} />
 
           {/* File Content */}
           <div style={{ height: 'calc(100% - 120px)', width: '100%' }} id="content-container">
@@ -470,19 +494,23 @@ class NavViews extends React.Component {
       <div style={{ width: 192, marginLeft: 16 }}>
         {
           array.map(({ Icon, name, type, color }) => (
-            <div style={{ height: 40, width: '100%', display: 'flex', alignItems: 'center' }} key={name}>
+            <div
+              key={name}
+              style={{
+                height: 40,
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                cursor: 'pointer',
+                borderRadius: 20,
+                margin: '8px 0px',
+                backgroundColor: this.state.types === '*' || this.state.types.includes(type) ? '#eeeeee' : '#FFF'
+              }}
+              onClick={() => this.handleCheck(type)}
+            >
               <Icon style={{ color, marginLeft: 16 }} />
               <div style={{ fontWeight: 500, marginLeft: 32, opacity: 0.87 }}>
                 { name }
-              </div>
-              <div style={{ flexGrow: 1 }} />
-              <div style={{ width: 24 }}>
-                <Checkbox
-                  alt
-                  primaryColor={this.state.primaryColor}
-                  checked={this.state.types === '*' || this.state.types.includes(type)}
-                  onCheck={() => this.handleCheck(type)}
-                />
               </div>
             </div>
           ))
@@ -509,7 +537,7 @@ class NavViews extends React.Component {
           WebkitAppRegion: 'no-drag',
           overflow: 'hidden',
           transition,
-          boxShadow: (shrinked || this.state.pin) ? ''
+          boxShadow: (shrinked || this.state.pin || this.state.searchText) ? ''
             : '0px 5px 6.6px 0.4px rgba(96,125,139,.24), 0px 2px 9.8px 0.2px rgba(96,125,139,.16)'
         }}
         onMouseMove={this.onHoverLater}
@@ -525,8 +553,8 @@ class NavViews extends React.Component {
           </div>
           <div style={{ height: 34, width: this.state.pin ? 180 : 0, WebkitAppRegion: 'drag', transition }} />
         </div>
-        <div style={{ height: 72, width: 224, display: 'flex', alignItems: 'center' }}>
-          <div style={{ height: 72, width: 88 }} className="flexCenter">
+        <div style={{ height: 64, width: 224, display: 'flex', alignItems: 'center' }}>
+          <div style={{ height: 64, width: 88 }} className="flexCenter">
             <WisnucLogo style={{ width: 48, height: 48, color: this.state.primaryColor }} />
           </div>
           <div
@@ -553,7 +581,7 @@ class NavViews extends React.Component {
               }}
             >
               <div
-                style={{ height: 72, width: '100%', padding: 16, boxSizing: 'border-box' }}
+                style={{ height: 56, width: '100%', padding: 16, boxSizing: 'border-box' }}
                 onClick={() => this.setState({ searchMode: true })}
               >
                 <Search
@@ -563,6 +591,7 @@ class NavViews extends React.Component {
                   shrinked={shrinked}
                 />
               </div>
+              <div style={{ height: 16 }} />
               <div style={{ width: 224 }}>
                 <FileMenu
                   views={this.views}
@@ -625,18 +654,30 @@ class NavViews extends React.Component {
               }}
             >
               <div style={{ width: 192, marginLeft: 16, position: 'relative' }}>
-                <div style={{ marginTop: -16, height: 72 }}>
-                  <TextField
+                <div style={{ marginTop: 16, height: 40 }}>
+                  <input
+                    autoFocus
+                    ref={ref => (this.textRef = ref)}
+                    name="search"
+                    underlineShow={false}
+                    style={{
+                      height: 40,
+                      width: 128,
+                      borderRadius: 20,
+                      backgroundColor: 'rgb(248,249,250)',
+                      marginTop: 0,
+                      padding: '0 32px',
+                      fontSize: 14
+                    }}
                     type="text"
-                    hintText={i18n.__('Search')}
                     value={this.state.searchText}
-                    onChange={e => this.setState({ searchText: e.target.value })}
+                    onChange={e => this.handleSearch(e.target.value)}
                     onKeyDown={this.onKeyDown}
                   />
                 </div>
                 <div
-                  style={{ position: 'absolute', top: 40, right: 0, cursor: 'pointer' }}
-                  onClick={() => this.setState({ searchText: '' })}
+                  style={{ position: 'absolute', top: 8, right: 8, cursor: 'pointer', display: this.state.searchText ? '' : 'none' }}
+                  onClick={this.clearSearchText}
                 >
                   <CloseIcon />
                 </div>
@@ -654,47 +695,6 @@ class NavViews extends React.Component {
                 { i18n.__('Specific Type') }
               </div>
               { this.renderTypes() }
-              <div style={{ height: 8 }} />
-              <div style={{ width: 192, height: 1, backgroundColor: 'rgba(0,0,0,.08)', marginLeft: 16 }} />
-              <div
-                style={{
-                  marginTop: 12,
-                  marginLeft: 32,
-                  height: 40,
-                  fontSize: 12,
-                  color: 'rgba(0,0,0,.54)',
-                  display: 'flex',
-                  alignItems: 'center'
-                }}
-              >
-                { i18n.__('Search Range') }
-              </div>
-              <DropDownMenu
-                value={this.state.scopeValue || 1}
-                onChange={(event, index, value) => this.setState({ scopeValue: value })}
-                style={{ width: 192, marginLeft: 16 }}
-                autoWidth={false}
-              >
-                <MenuItem value={1} primaryText={i18n.__('Global')} />
-                <MenuItem value={2} primaryText={i18n.__('Current Folder')} />
-              </DropDownMenu>
-              <div
-                style={{
-                  height: 40,
-                  bottom: 12,
-                  left: 32,
-                  width: 192,
-                  position: 'absolute',
-                  display: 'flex',
-                  alignItems: 'center'
-                }}
-                onClick={() => this.setState({ searchMode: false })}
-              >
-                <div style={{ transform: 'rotate(180deg)', marginTop: -4 }}> <ExitIcon /> </div>
-                <div style={{ opacity: 0.87, marginLeft: 32, cursor: 'pointer' }}>
-                  { i18n.__('Exit Search Mode') }
-                </div>
-              </div>
             </div>
           )
         }
@@ -723,17 +723,34 @@ class NavViews extends React.Component {
         {/* Navs */}
         { this.renderNavs() }
 
+        {
+          this.state.searchMode && !this.state.searchText && (
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                height: '100%',
+                width: '100%',
+                backgroundColor: '#000000',
+                opacity: 0.13,
+                zIndex: 100
+              }}
+              onClick={this.exitSearchMode}
+            />
+          )
+        }
         {/* Views */}
         <div
           style={{
             height: '100%',
-            width: `calc(100% - ${this.state.pin || this.state.searchMode ? 224 : 88}px)`,
-            marginLeft: this.state.pin || this.state.searchMode ? 224 : 88,
+            width: `calc(100% - ${this.state.pin || this.state.searchText ? 224 : 88}px)`,
+            marginLeft: this.state.pin || this.state.searchText ? 224 : 88,
             transition: 'margin 225ms'
           }}
         >
           <div style={{ height: 34, backgroundColor: '#f8f8f8', WebkitAppRegion: 'drag' }} />
-          <div style={{ height: 'calc(100% - 38px)', width: '100%', position: 'relative' }}>
+          <div style={{ height: 'calc(100% - 38px)', width: '100%', position: 'relative' }} >
             { view }
           </div>
         </div>
