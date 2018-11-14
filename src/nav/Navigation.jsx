@@ -188,9 +188,15 @@ class NavViews extends React.Component {
     this.handleCheck = (type) => {
       const t = this.state.types
       const index = t.indexOf(type)
-      if (t === '*') this.setState({ types: [type] })
-      else if (index === -1) this.setState({ types: [...t, type] })
-      else this.setState({ types: [...t.slice(0, index), ...t.slice(index + 1)] })
+      let types = []
+      if (t === '*') types = [type]
+      else if (index === -1) types = [...t, type]
+      else types = [...t.slice(0, index), ...t.slice(index + 1)]
+      this.setState({ types })
+
+      clearTimeout(this.searchTimer)
+      this.searchTimer = null
+      this.views[this.state.nav].search(this.state.searchText, types)
     }
 
     this.onHover = () => {
@@ -246,7 +252,7 @@ class NavViews extends React.Component {
       } else {
         this.searchTimer = setTimeout(() => {
           this.searchTimer = null
-          this.views[this.state.nav].search(searchText)
+          this.views[this.state.nav].search(searchText, this.state.types)
         }, 500)
       }
     }
@@ -254,7 +260,8 @@ class NavViews extends React.Component {
     this.clearSearchText = () => {
       this.setState({ searchText: '' })
       if (this.textRef) this.textRef.focus()
-      this.views[this.state.nav].clearSearch()
+      if (!this.state.types.length) this.views[this.state.nav].clearSearch()
+      else this.views[this.state.nav].search('', this.state.types)
     }
   }
 
@@ -730,7 +737,7 @@ class NavViews extends React.Component {
         { this.renderNavs() }
 
         {
-          this.state.searchMode && !this.state.searchText && (
+          this.state.searchMode && !this.state.searchText && !this.state.types.length && (
             <div
               style={{
                 position: 'absolute',

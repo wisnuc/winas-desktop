@@ -3,6 +3,11 @@ import Home from './Home'
 import sortByType from '../common/sort'
 
 class Search extends Home {
+  constructor (ctx) {
+    super(ctx)
+    this.title = () => i18n.__('Search Results')
+  }
+
   willReceiveProps () {
   }
 
@@ -16,23 +21,44 @@ class Search extends Home {
     this.setState({ entries: [], showSearch: true })
   }
 
-  search (name) {
-    if (!name) return
+  search (name, types) {
+    if (!name && (!types || !types.length)) {
+      this.clearSearch()
+      return
+    }
     const select = this.select.reset(this.state.entries.length)
     this.setState({ showSearch: name, loading: true, select })
-    const types = this.types // photo, docs, video, audio
     const apis = this.ctx.props.apis
     const drives = apis && apis.drives && apis.drives.data
     if (!Array.isArray(drives)) {
       this.ctx.props.openSnackBar(i18n.__('Search Failed'))
       return
     }
-    const places = types ? drives.map(d => d.uuid).join('.') // media
-      : this.isPublic ? drives.filter(d => d.type === 'public').map(d => d.uuid).join('.') // public
-        : drives.find(d => d.type === 'private').uuid // home
+    console.log('search', apis)
+    const places = drives.map(d => d.uuid).join('.')
     const order = types ? 'newest' : 'find'
+    const typesString = Array.isArray(types) && types.map((t) => {
+      switch (t) {
+        case 'pdf':
+          return 'PDF'
+        case 'word':
+          return 'DOCX.DOC'
+        case 'excel':
+          return 'XLXS.XLS'
+        case 'ppt':
+          return 'PPTX.PPT'
+        case 'image':
+          return 'JPEG.PNG.JPG.GIF.BMP.RAW'
+        case 'video':
+          return 'RM.RMVB.WMV.AVI.MP4.3GP.MKV.MOV.FLV'
+        case 'audio':
+          return 'WAV.MP3.APE.WMA.FLAC'
+        default:
+          return ''
+      }
+    }).join('.')
 
-    this.ctx.props.apis.pureRequest('search', { name, places, order }, (err, res) => {
+    this.ctx.props.apis.pureRequest('search', { name, places, order, types: typesString }, (err, res) => {
       if (err || !res || !Array.isArray(res)) this.setState({ error: true, loading: false })
       else {
         const pdrives = places.split('.')

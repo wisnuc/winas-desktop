@@ -896,7 +896,7 @@ class Home extends Base {
                   alignItems: 'center'
                 }}
               >
-                { this.state.showSearch === true ? i18n.__('Search')
+                { this.state.showSearch === true ? i18n.__('Search Results')
                     : i18n.__('Search Result of %s', this.state.showSearch) }
               </div>
             )
