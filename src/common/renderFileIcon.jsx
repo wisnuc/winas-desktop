@@ -1,5 +1,5 @@
 import React from 'react'
-import { PhotoIcon, TXTIcon, WORDIcon, EXCELIcon, PPTIcon, PDFIcon, VideoIcon, AudioIcon, RARIcon, TypeUnknownIcon } from '../common/Svg'
+import { PhotoIcon, TXTIcon, WORDIcon, EXCELIcon, PPTIcon, PDFIcon, VideoIcon, AudioIcon, TypeUnknownIcon } from '../common/Svg'
 
 const renderFileIcon = (name, metadata, setSize) => {
   /* PDF, TXT, Word, Excel, PPT */
@@ -41,11 +41,11 @@ const renderFileIcon = (name, metadata, setSize) => {
     BMP: PhotoIcon,
     TIFF: PhotoIcon,
     RAW: PhotoIcon,
-    RAR: RARIcon,
-    ZIP: RARIcon,
-    TAR: RARIcon,
-    '7Z': RARIcon,
-    GZ: RARIcon,
+    RAR: TypeUnknownIcon,
+    ZIP: TypeUnknownIcon,
+    TAR: TypeUnknownIcon,
+    '7Z': TypeUnknownIcon,
+    GZ: TypeUnknownIcon,
     OTHER: TypeUnknownIcon
   }
 

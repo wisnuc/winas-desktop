@@ -90,9 +90,8 @@ class Account extends React.Component {
         <AccountIcon
           onClick={this.openPop}
           style={{
-            width: 32,
-            height: 32,
-            marginRight: 24,
+            width: 24,
+            height: 24,
             color: 'rgba(96,125,139,.26)',
             WebkitAppRegion: 'no-drag',
             cursor: 'pointer'
@@ -105,7 +104,10 @@ class Account extends React.Component {
           anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
           targetOrigin={{ horizontal: 'left', vertical: 'top' }}
           onRequestClose={() => this.setState({ open: false })}
-          style={{ boxShadow: '0px 5px 6.6px 0.4px rgba(96,125,139,.24), 0px 2px 9.8px 0.2px rgba(96,125,139,.16)' }}
+          style={{
+            opacity: this.state.show ? 1 : 0,
+            boxShadow: '0px 5px 6.6px 0.4px rgba(96,125,139,.24), 0px 2px 9.8px 0.2px rgba(96,125,139,.16)'
+          }}
         >
           { this.renderAccountPop() }
         </Popover>

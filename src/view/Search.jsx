@@ -6,6 +6,11 @@ class Search extends Home {
   constructor (ctx) {
     super(ctx)
     this.title = () => i18n.__('Search Results')
+    this.name = ''
+    this.types = []
+    this.refresh = () => {
+      this.search(this.name, this.types)
+    }
   }
 
   willReceiveProps () {
@@ -22,6 +27,8 @@ class Search extends Home {
   }
 
   search (name, types) {
+    this.name = name
+    this.types = types
     if (!name && (!types || !types.length)) {
       this.clearSearch()
       return

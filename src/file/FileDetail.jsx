@@ -171,9 +171,9 @@ class FileDetail extends React.PureComponent {
     ]
 
     return (
-      <div style={{ width: 280, margin: '0 20px 20px 20px', zIndex: 200 }}>
+      <div style={{ width: 320, zIndex: 200 }}>
         <div style={{ height: 60, display: 'flex', alignItems: 'center' }} >
-          <div style={{ marginRight: 32, marginLeft: 24 }} className="flexCenter">
+          <div style={{ marginRight: 16, marginLeft: 24 }} className="flexCenter">
             {
               entry.type === 'public' ? <PublicIcon style={{ width: 24, height: 24, color: '#ffa93e' }} />
                 : entry.type === 'file' ? renderFileIcon(entry.name, entry.metadata, 24)

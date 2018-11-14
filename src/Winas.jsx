@@ -71,7 +71,6 @@ class Winas extends React.Component {
   }
 
   deviceLogin ({ dev, user, selectedDevice, isCloud }) {
-    console.log('deviceLogin--')
     if (this.state.selectedDevice) {
       ipcRenderer.send('LOGOUT')
       this.setState({ view: '', selectedDevice: null, jump: null }, () => this.deviceLogin({ dev, user, selectedDevice, isCloud }))
@@ -184,9 +183,9 @@ class Winas extends React.Component {
             {/* Account */}
             {
               this.state.account &&
-                <div style={{ position: 'absolute', top: 12, right: 147, height: 36, WebkitAppRegion: 'no-drag' }}>
+                <div style={{ position: 'absolute', top: 2, right: 100, height: 34, WebkitAppRegion: 'no-drag', zIndex: 200 }}>
                   <Account
-                    user={this.state.account}
+                    account={this.state.account}
                     logout={() => this.logout()}
                     device={this.state.selectedDevice}
                     showUsers={() => this.setState({ showUsers: true })}
