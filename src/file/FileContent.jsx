@@ -359,7 +359,7 @@ class FileContent extends React.Component {
   }
 
   render () {
-    /* loding */
+    /* loading */
     if (this.state.loading) return this.renderLoading()
 
     /* not get list yet */

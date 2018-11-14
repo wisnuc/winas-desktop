@@ -2,7 +2,7 @@ import i18n from 'i18n'
 import React from 'react'
 import Promise from 'bluebird'
 import { ipcRenderer } from 'electron'
-import { FlatButton, DropDownMenu, MenuItem } from 'material-ui'
+import { FlatButton } from 'material-ui'
 import Popover, { PopoverAnimationVertical } from 'material-ui/Popover'
 
 import Tasks from './Tasks'
@@ -13,6 +13,7 @@ import BindEmail from './BindEmail'
 import RenderDevice from './RenderDevice'
 
 import Home from '../view/Home'
+import Search from '../view/Search'
 import Music from '../view/Music'
 import Docs from '../view/Docs'
 import Video from '../view/Video'
@@ -37,13 +38,12 @@ import Samba from '../view/Samba'
 import DLNA from '../view/DLNA'
 import ResetDevice from '../view/ResetDevice'
 import UpdateFirmDialog from '../settings/UpdateFirmDialog'
-import Search from '../common/Search'
+import SearchButton from '../common/Search'
 
 import Fruitmix from '../common/fruitmix'
 import WindowAction from '../common/WindowAction'
 import DialogOverlay from '../common/PureDialog'
-import { TextField, Checkbox } from '../common/Buttons'
-import { BackIcon, WisnucLogo, MenuIcon, DeviceIcon, ArrowDownIcon, CloseIcon, PDFIcon, WORDIcon, EXCELIcon, PPTIcon, PhotoIcon, VideoIcon, AudioIcon, ExitIcon } from '../common/Svg'
+import { BackIcon, WisnucLogo, MenuIcon, DeviceIcon, ArrowDownIcon, CloseIcon, PDFIcon, WORDIcon, EXCELIcon, PPTIcon, PhotoIcon, VideoIcon, AudioIcon } from '../common/Svg'
 
 class NavViews extends React.Component {
   constructor (props) {
@@ -66,6 +66,7 @@ class NavViews extends React.Component {
       { name: 'public', View: Public },
       { name: 'usb', View: USB },
       { name: 'backup', View: Backup },
+      { name: 'search', View: Search },
 
       { name: 'transfer', View: Transfer },
       { name: 'finished', View: Finished },
@@ -223,9 +224,16 @@ class NavViews extends React.Component {
       this.setState({ openDevice: true, deviceAnchorEl: e.currentTarget })
     }
 
+    this.enterSearchMode = () => {
+      this.preNav = this.state.nav
+      this.setState({ searchMode: true })
+      this.navTo('search')
+    }
+
     this.exitSearchMode = () => {
       if (!this.state.searchText && this.state.searchMode && !this.state.types.length) {
         this.setState({ searchMode: false })
+        this.navTo(this.preNav)
       }
     }
 
@@ -245,7 +253,6 @@ class NavViews extends React.Component {
 
     this.clearSearchText = () => {
       this.setState({ searchText: '' })
-      console.log('this.clearSearchText', this.textRef, this.textRef.focus)
       if (this.textRef) this.textRef.focus()
       this.views[this.state.nav].clearSearch()
     }
@@ -582,12 +589,12 @@ class NavViews extends React.Component {
             >
               <div
                 style={{ height: 56, width: '100%', padding: 16, boxSizing: 'border-box' }}
-                onClick={() => this.setState({ searchMode: true })}
+                onClick={this.enterSearchMode}
               >
-                <Search
-                  fire={name => this.views[this.state.nav].search(name)}
+                <SearchButton
+                  fire={() => {}}
                   hint={i18n.__('Search')}
-                  clear={() => this.views[this.state.nav].clearSearch()}
+                  clear={() => {}}
                   shrinked={shrinked}
                 />
               </div>
@@ -659,7 +666,6 @@ class NavViews extends React.Component {
                     autoFocus
                     ref={ref => (this.textRef = ref)}
                     name="search"
-                    underlineShow={false}
                     style={{
                       height: 40,
                       width: 128,
@@ -744,8 +750,8 @@ class NavViews extends React.Component {
         <div
           style={{
             height: '100%',
-            width: `calc(100% - ${this.state.pin || this.state.searchText ? 224 : 88}px)`,
-            marginLeft: this.state.pin || this.state.searchText ? 224 : 88,
+            width: `calc(100% - ${this.state.pin || this.state.searchMode ? 224 : 88}px)`,
+            marginLeft: this.state.pin || this.state.searchMode ? 224 : 88,
             transition: 'margin 225ms'
           }}
         >
