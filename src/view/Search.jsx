@@ -51,7 +51,7 @@ class Search extends Home {
         case 'word':
           return 'DOCX.DOC'
         case 'excel':
-          return 'XLXS.XLS'
+          return 'XLSX.XLS'
         case 'ppt':
           return 'PPTX.PPT'
         case 'image':

@@ -78,7 +78,7 @@ class PhiAPI extends RequestManager {
 
       case 'token':
         r = request
-          .get(`${cloudAddress}/user/token`)
+          .get(`${cloudAddress}/user/password/token`)
           .timeout({
             response: 10000, // Wait 30 seconds for the server to start sending,
             deadline: 20000 // but allow 1 minute for the file to finish loading.

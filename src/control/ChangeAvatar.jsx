@@ -108,7 +108,6 @@ class BindEmail extends React.Component {
     content.drawImage(img, dx, dy, dWidth, dHeight)
     const file = Buffer.from(canvas.toDataURL().split(',')[1], 'base64')
     this.props.phi.req('setAvatar', file, (err, res) => {
-      console.log('setAvatar', err, res)
       if (err || !res) this.setState({ status: 'failed' })
       else {
         this.setState({ status: 'success' })
@@ -255,7 +254,7 @@ class BindEmail extends React.Component {
         view = this.renderResult(true)
         break
       case 'failed':
-        view = this.renderResult(true)
+        view = this.renderResult(false)
         break
       default:
         break
