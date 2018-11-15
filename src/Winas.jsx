@@ -6,10 +6,10 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
 import Login from './login/Login'
-import Account from './common/Account'
 import PhiAPI from './common/PhiAPI'
-import Clipboard from './control/clipboard'
+import Account from './control/Account'
 import Navigation from './nav/Navigation'
+import Clipboard from './control/clipboard'
 
 const defaultTheme = getMuiTheme({
   fontFamily: 'Roboto, Noto Sans SC, Microsoft YaHei, PingFang SC, sans-serif',
@@ -29,7 +29,6 @@ class Winas extends React.Component {
       view: 'login',
       jump: null,
       account: null,
-      showUsers: false,
       phi: new PhiAPI(),
       forceUpdate: false,
       clipboard: new Clipboard(),
@@ -42,10 +41,6 @@ class Winas extends React.Component {
       jumpToLANLogin: this.jumpToLANLogin.bind(this),
       jumpToBindDevice: this.jumpToBindDevice.bind(this),
       clearForceUpdate: this.clearForceUpdate.bind(this)
-    }
-
-    this.onCloseUsers = () => {
-      this.setState({ showUsers: false, forceUpdate: true })
     }
   }
 
@@ -183,12 +178,12 @@ class Winas extends React.Component {
             {/* Account */}
             {
               this.state.account &&
-                <div style={{ position: 'absolute', top: 2, right: 100, height: 34, WebkitAppRegion: 'no-drag', zIndex: 200 }}>
+                <div style={{ position: 'absolute', top: 2, right: 100, height: 34, WebkitAppRegion: 'no-drag' }}>
                   <Account
+                    phi={this.state.phi}
                     account={this.state.account}
                     logout={() => this.logout()}
                     device={this.state.selectedDevice}
-                    showUsers={() => this.setState({ showUsers: true })}
                   />
                 </div>
             }
@@ -197,7 +192,6 @@ class Winas extends React.Component {
 
           {/* snackBar */}
           { this.renderSnackBar() }
-
         </div>
       </MuiThemeProvider>
     )

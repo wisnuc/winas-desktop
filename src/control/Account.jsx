@@ -1,7 +1,10 @@
 import i18n from 'i18n'
 import React from 'react'
 import Popover, { PopoverAnimationVertical } from 'material-ui/Popover'
+import BindEmail from '../control/BindEmail'
+import ChangeAvatar from '../control/ChangeAvatar'
 import FlatButton from '../common/FlatButton'
+import DialogOverlay from '../common/PureDialog'
 
 import { AccountIcon } from '../common/Svg'
 
@@ -18,9 +21,12 @@ class Account extends React.Component {
       this.timer = setTimeout(() => this.setState({ show: true }), 100)
     }
 
-    this.openUsers = () => {
-      this.setState({ open: false, show: false })
-      this.props.showUsers()
+    this.bindEmail = () => {
+      this.setState({ open: false, bindEmail: true })
+    }
+
+    this.changeAvatar = () => {
+      this.setState({ open: false, changeAvatar: true })
     }
   }
 
@@ -32,13 +38,15 @@ class Account extends React.Component {
     const { avatarUrl, nickName, mail, pn } = this.props.account.phi
     return (
       <div style={{ height: 188, width: 312, WebkitAppRegion: 'no-drag' }}>
-        <div style={{ height: 140, display: 'flex', alignItems: 'center' }}>
-          <div style={{ marginLeft: 32, position: 'relative' }}>
+        <div style={{ height: 144, display: 'flex', alignItems: 'center' }}>
+          <div
+            onClick={this.changeAvatar}
+            style={{ marginLeft: 32, position: 'relative', cursor: 'pointer' }}
+          >
             {
               avatarUrl ? <img src={avatarUrl} width={72} height={72} />
                 : (
                   <AccountIcon
-                    onClick={this.changeAvatar}
                     style={{ width: 72, height: 72, color: 'rgba(96,125,139,.26)' }}
                   />
                 )
@@ -61,9 +69,9 @@ class Account extends React.Component {
               {
                 mail || (
                   <FlatButton
-                    style={{ marginLeft: -16, marginTop: -6, height: 32, lineHeight: '32px' }}
+                    style={{ marginLeft: -8, height: 32, lineHeight: '32px' }}
                     label={i18n.__('Bind Email')}
-                    onClick={() => this.setState({ open: false, bindEmail: true })}
+                    onClick={this.bindEmail}
                     primary
                   />
                 )
@@ -71,12 +79,11 @@ class Account extends React.Component {
             </div>
           </div>
         </div>
-        <div style={{ height: 48, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 8 }}>
+        <div style={{ height: 36, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
           <FlatButton
             primary
             label={i18n.__('Logout')}
             onClick={this.props.logout}
-            style={{ height: 32, lineHeight: '32px' }}
           />
         </div>
       </div>
@@ -86,7 +93,7 @@ class Account extends React.Component {
   render () {
     if (!this.props.account || !this.props.account.phi) return <div />
     return (
-      <div style={{ height: 32, display: 'flex', alignItems: 'center', cursor: 'pointer', WebkitAppRegion: 'no-drag' }} >
+      <div style={{ height: 32, display: 'flex', alignItems: 'center', WebkitAppRegion: 'no-drag' }} >
         <AccountIcon
           onClick={this.openPop}
           style={{
@@ -111,6 +118,25 @@ class Account extends React.Component {
         >
           { this.renderAccountPop() }
         </Popover>
+        <DialogOverlay open={!!this.state.bindEmail} onRequestClose={() => this.setState({ bindEmail: false })} modal transparent >
+          {
+            this.state.bindEmail &&
+              <BindEmail
+                {...this.props}
+                onRequestClose={() => this.setState({ bindEmail: false })}
+              />
+          }
+        </DialogOverlay>
+
+        <DialogOverlay open={!!this.state.changeAvatar} onRequestClose={() => this.setState({ changeAvatar: false })} modal transparent >
+          {
+            this.state.changeAvatar &&
+              <ChangeAvatar
+                {...this.props}
+                onRequestClose={() => this.setState({ changeAvatar: false })}
+              />
+          }
+        </DialogOverlay>
       </div>
     )
   }

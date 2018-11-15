@@ -103,6 +103,14 @@ class PhiAPI extends RequestManager {
         r = this.apost('user/deviceInfo', { sn: args.sn })
         break
 
+      case 'setAvatar':
+        r = request
+          .put(`${cloudAddress}/user/avatar`)
+          .set('Content-Type', 'application/octet-stream')
+          .set('Authorization', this.token)
+          .send(args)
+        break
+
       case 'bindDevice':
         r = this.apost('StationManager/relation/binding', { deviceSN: args.deviceSN })
         break

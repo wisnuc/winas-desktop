@@ -9,7 +9,6 @@ import Tasks from './Tasks'
 import Policy from './Policy'
 import FileMenu from './FileMenu'
 import SettingsMenu from './SettingMenu'
-import BindEmail from './BindEmail'
 import RenderDevice from './RenderDevice'
 
 import Home from '../view/Home'
@@ -424,15 +423,6 @@ class NavViews extends React.Component {
           }
         </DialogOverlay>
 
-        <DialogOverlay open={!!this.state.bindEmail} onRequestClose={() => this.setState({ bindEmail: false })} modal transparent >
-          {
-            this.state.bindEmail &&
-              <BindEmail
-                {...this.props}
-                onRequestClose={() => this.setState({ bindEmail: false })}
-              />
-          }
-        </DialogOverlay>
       </div>
     )
   }

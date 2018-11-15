@@ -240,6 +240,8 @@ class DeviceLogin extends React.Component {
   render () {
     const username = 'WISNUC Office'
     console.log('render DeviceLogin', this.props, this.device)
+    const phi = (this.props.account && this.props.account.phi) || {}
+    const { nickName, avatarUrl } = phi
     let [total, used, percent] = ['', '', '', 0]
     try {
       const space = this.device.state.space.data
@@ -279,15 +281,15 @@ class DeviceLogin extends React.Component {
             <CircularProgress size={79} thickness={4} />
           </div>
           {
-            username ? (
+            avatarUrl ? (
               <div style={{ width: 72, height: 72, borderRadius: 36, overflow: 'hidden' }}>
-                <img src="/home/lxw/Desktop/760373812.jpg" width={72} height={72} />
+                <img src={avatarUrl} width={72} height={72} />
               </div>
             ) : <AccountIcon style={{ width: 72, height: 72, color: 'rgba(96,125,139,.26)' }} />
           }
         </div>
         <div style={{ marginTop: 12, fontSize: 14, height: 22 }} className="flexCenter">
-          { username }
+          { nickName || username }
         </div>
         <div style={{ fontSize: 12, color: 'rgba(0,0,0,.38)', height: 20 }} className="flexCenter">
           { this.loginStatus() }
