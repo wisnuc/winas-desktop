@@ -44,12 +44,11 @@ class Account extends React.Component {
             style={{ marginLeft: 32, position: 'relative', cursor: 'pointer' }}
           >
             {
-              avatarUrl ? <img src={avatarUrl} width={72} height={72} />
-                : (
-                  <AccountIcon
-                    style={{ width: 72, height: 72, color: 'rgba(96,125,139,.26)' }}
-                  />
-                )
+              avatarUrl ? (
+                <div style={{ width: 72, height: 72, borderRadius: 36, overflow: 'hidden' }}>
+                  <img src={avatarUrl} width={72} height={72} />
+                </div>
+              ) : (<AccountIcon style={{ width: 72, height: 72, color: 'rgba(96,125,139,.26)' }} />)
             }
             <div style={{ position: 'absolute', top: 55, left: 0, height: 17, width: 72, overflow: 'hidden' }}>
               <div style={{ height: 72, width: 72, marginTop: -55, borderRadius: 36, backgroundColor: 'rgba(0,0,0,.87)' }} />

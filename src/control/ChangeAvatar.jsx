@@ -1,8 +1,8 @@
 import i18n from 'i18n'
 import React from 'react'
 
-import { CloseIcon, AccountIcon } from '../common/Svg'
 import { LIButton, RSButton } from '../common/Buttons'
+import { CloseIcon, AccountIcon, CheckedIcon, FailedIcon } from '../common/Svg'
 
 class BindEmail extends React.Component {
   constructor (props) {
@@ -10,12 +10,6 @@ class BindEmail extends React.Component {
 
     this.state = {
       status: 'upload'
-    }
-
-    this.fire = () => {
-    }
-
-    this.openUpload = () => {
     }
 
     this.resetImage = () => {
@@ -115,14 +109,34 @@ class BindEmail extends React.Component {
     const file = Buffer.from(canvas.toDataURL().split(',')[1], 'base64')
     this.props.phi.req('setAvatar', file, (err, res) => {
       console.log('setAvatar', err, res)
+      if (err || !res) this.setState({ status: 'failed' })
+      else {
+        this.setState({ status: 'success' })
+        if (this.props.account && this.props.account.phi) {
+          Object.assign(this.props.account.phi, { avatarUrl: res })
+          this.props.wisnucLogin(this.props.account)
+        }
+      }
     })
   }
 
   renderUpload () {
+    console.log(this.props)
+    const avatarUrl = this.props.account.phi && this.props.account.phi && this.props.account.phi.avatarUrl
     return (
-      <div style={{ height: 320 }}>
-        <div style={{ margin: '0 auto', maxWidth: 'fit-content', padding: '32px 0px 16px 0px' }}>
-          <AccountIcon style={{ width: 72, height: 72, color: 'rgba(96,125,139,.26)' }} />
+      <div
+        style={{ height: 320 }}
+        onDrop={e => this.handleUpload(e.dataTransfer.files)}
+      >
+        <div style={{ margin: '0 auto', maxWidth: 'fit-content', padding: '48px 0px 16px 0px' }}>
+          {
+            avatarUrl ? (
+              <div style={{ width: 72, height: 72, borderRadius: 36, overflow: 'hidden' }}>
+                <img src={avatarUrl} width={72} height={72} />
+              </div>
+            )
+              : <AccountIcon style={{ width: 72, height: 72, color: 'rgba(96,125,139,.26)' }} />
+          }
         </div>
         <div style={{ margin: '0 auto', maxWidth: 'fit-content', fontSize: 32, color: 'rgba(0,0,0,.26)' }}>
           { i18n.__('Upload Avatar Text') }
@@ -137,9 +151,9 @@ class BindEmail extends React.Component {
             alignItems: 'center'
           }}
         >
-          <div style={{ width: 10, height: 2, margin: 8, backgroundColor: 'rgba(0,0,0,.38)' }} />
+          <div style={{ width: 10, height: 2, margin: 16, backgroundColor: 'rgba(0,0,0,.38)' }} />
           { i18n.__('Or') }
-          <div style={{ width: 10, height: 2, margin: 8, backgroundColor: 'rgba(0,0,0,.38)' }} />
+          <div style={{ width: 10, height: 2, margin: 16, backgroundColor: 'rgba(0,0,0,.38)' }} />
         </div>
         <div style={{ margin: '0 auto', maxWidth: 'fit-content', fontSize: 32, color: 'rgba(0,0,0,.26)' }}>
           <RSButton
@@ -209,10 +223,21 @@ class BindEmail extends React.Component {
     )
   }
 
-  renderUploading () {
+  renderResult (success) {
     return (
-      <div style={{ height: 320 }} className="flexCenter" >
-        <img ref={ref => (this.refPreview = ref)} hidden="hidden" />
+      <div style={{ height: 320 }} className="flexCenter">
+        <div>
+          <div style={{ margin: '0 auto', maxWidth: 'fit-content' }}>
+            {
+              success ? <CheckedIcon style={{ color: '#4caf50', height: 72, width: 72 }} />
+                : <FailedIcon style={{ color: '#f44336', height: 72, width: 72 }} />
+            }
+          </div>
+          <div style={{ height: 24 }} />
+          <div style={{ fontWeight: 500, color: 'rgba(0,0,0,.76)', margin: '3px auto 0 auto', maxWidth: 'fit-content' }}>
+            { success ? i18n.__('Change Avatar Success') : i18n.__('Change Avatar Failed') }
+          </div>
+        </div>
       </div>
     )
   }
@@ -226,8 +251,11 @@ class BindEmail extends React.Component {
       case 'crop':
         view = this.renderCrop()
         break
-      case 'uploading':
-        view = this.renderUploading()
+      case 'success':
+        view = this.renderResult(true)
+        break
+      case 'failed':
+        view = this.renderResult(true)
         break
       default:
         break
@@ -262,21 +290,25 @@ class BindEmail extends React.Component {
         >
           <RSButton
             label={i18n.__('Set Avatar')}
+            disabled={this.state.status !== 'crop'}
             onClick={() => this.setAvatar()}
           />
           <div style={{ width: 24 }} />
           <RSButton
             alt
             label={i18n.__('Cancel')}
+            disabled={this.state.status === 'success' || this.state.status === 'failed'}
             onClick={this.props.onRequestClose}
           />
           <div style={{ flexGrow: 1 }} />
-          <RSButton
-            alt
-            label={i18n.__('Re-upload')}
-            disabled={[1, 2, 3, 4].some(v => !this.state[`code${v}`])}
-            onClick={() => this.setState({ status: 'upload' })}
-          />
+          {
+            this.state.status !== 'upload' &&
+            <RSButton
+              alt
+              label={i18n.__('Re-upload')}
+              onClick={() => this.setState({ status: 'upload' })}
+            />
+          }
         </div>
       </div>
     )

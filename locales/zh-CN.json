@@ -239,6 +239,13 @@
   "Users Management": "用户管理",
   "Account Offline": "本地模式",
   "Account Offline With Phone Number %s": "[本地]%s",
+  "Upload Avatar Text": "可将头像图片拖至此处",
+  "Or": "或",
+  "Upload Avatar": "上传头像",
+  "Change Avatar Success": "修改头像成功",
+  "Change Avatar Failed": "修改头像失败",
+  "Set Avatar": "设置为头像",
+  "Re-upload" : "重新上传",
 
   "==== control/ResetPassword.jsx ====": "",
   "Authentication Success Text": "微信认证成功",
