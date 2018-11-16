@@ -27,6 +27,18 @@ class Transmission extends Base {
     return TransIcon
   }
 
+  renderToolBar ({ style, openDetail }) {
+    return (
+      <div style={style}>
+        <div style={{ width: 16 }} />
+        <div style={{ height: 40, display: 'flex', alignItems: 'center', fontSize: 18, color: 'rgba(0,0,0,.76)' }}>
+          { this.menuName() }
+        </div>
+        <div style={{ flexGrow: 1 }} />
+      </div>
+    )
+  }
+
   renderContent ({ navToDrive }) {
     return (
       <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>

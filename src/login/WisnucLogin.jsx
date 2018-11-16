@@ -54,9 +54,10 @@ class WisnucLogin extends React.Component {
 
     this.login = () => {
       this.setState({ loading: true })
+      const clientId = window.config && window.config.machineId && window.config.machineId.slice(0, 8)
       this.props.phi.req(
         'token',
-        { phonenumber: this.state.pn, password: this.state.pwd },
+        { phonenumber: this.state.pn, password: this.state.pwd, clientId },
         (err, res) => {
           if (err || !res) {
             if (res && res.error === '7') this.setState({ pnError: i18n.__('User Not Exist'), loading: false })

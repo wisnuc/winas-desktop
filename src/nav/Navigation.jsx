@@ -430,6 +430,7 @@ class NavViews extends React.Component {
   renderTrans () {
     return (
       <div style={{ height: '100%', width: '100%', position: 'relative' }} id="content-container">
+        {/* Toolbar */}
         { this.renderView() }
       </div>
     )
