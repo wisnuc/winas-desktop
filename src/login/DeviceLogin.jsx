@@ -276,34 +276,29 @@ class DeviceLogin extends React.Component {
             </div>
           }
         </div>
-        <div style={{ marginTop: 24, height: 80, position: 'relative' }} className="flexCenter">
-          <div style={{ position: 'absolute', top: 0, margin: '0 auto' }}>
-            <CircularProgress size={79} thickness={4} />
-          </div>
-          {
-            avatarUrl ? (
-              <div style={{ width: 72, height: 72, borderRadius: 36, overflow: 'hidden' }}>
-                <img src={avatarUrl} width={72} height={72} />
-              </div>
-            ) : <AccountIcon style={{ width: 72, height: 72, color: 'rgba(96,125,139,.26)' }} />
-          }
+
+        <div style={{ fontSize: 28, display: 'flex', alignItems: 'center', paddingLeft: 80, marginTop: 52 }} >
+          { i18n.__('Connecting to Device') }
         </div>
-        <div style={{ marginTop: 12, fontSize: 14, height: 22 }} className="flexCenter">
-          { nickName || username }
-        </div>
-        <div style={{ fontSize: 12, color: 'rgba(0,0,0,.38)', height: 20 }} className="flexCenter">
-          { this.loginStatus() }
-        </div>
-        <div style={{ marginTop: 24, height: 80, display: 'flex', alignItems: 'center', width: '100%' }}>
-          <div style={{ width: 102, marginLeft: 16 }} className="flexCenter">
+        <div style={{ marginTop: 54, height: 80, display: 'flex', alignItems: 'center', width: '100%', position: 'relative' }}>
+          <div style={{ width: 64, marginLeft: 16 }} className="flexCenter">
             <DeviceIcon style={{ width: 24, height: 24 }} />
           </div>
+          <div style={{ position: 'absolute', top: 21, left: 28 }}>
+            <CircularProgress size={40} thickness={1} />
+          </div>
           <div>
-            <div style={{ opacity: 0.87, fontWeight: 500 }}> { deviceName } </div>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <div style={{ opacity: 0.87, fontWeight: 500 }}> { deviceName } </div>
+              <div style={{ flexGrow: 1 }} />
+              <div style={{ fontSize: 12, color: 'rgba(0,0,0,.38)', height: 20 }} className="flexCenter">
+                { this.loginStatus() }
+              </div>
+            </div>
             <div
               style={{
                 height: 10,
-                width: 280,
+                width: 190,
                 borderRadius: 4,
                 backgroundColor: 'rgba(0,0,0,.08)',
                 position: 'relative',
@@ -314,7 +309,7 @@ class DeviceLogin extends React.Component {
                 style={{
                   position: 'absolute',
                   height: 10,
-                  width: percent * 280 || 0,
+                  width: percent * 190 || 0,
                   borderRadius: 4,
                   backgroundImage: 'linear-gradient(to right, #006e7b, #009688)'
                 }}

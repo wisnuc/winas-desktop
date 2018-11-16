@@ -1040,8 +1040,8 @@
   "New Client Version Detected Text": "点击下载最新的客户端。",
 
   "==== login/WisnucLogin ====": "",
-  "Account Login": "账号登陆",
-  "Wechat Login" : "微信扫码登陆",
+  "Account Login": "账号登录",
+  "Wechat Login" : "微信扫码登录",
   "Welcome Text": "欢迎使用斐讯 N2",
   "Phone Number %s": "服务热线：%s",
   "Log Out": "退出登录",

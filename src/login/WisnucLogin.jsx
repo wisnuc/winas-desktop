@@ -4,9 +4,10 @@ import { Divider, Checkbox } from 'material-ui'
 import WeChatLogin from './WeChatLogin'
 import RetrievePwd from './RetrievePwd'
 import Dialog from '../common/PureDialog'
+import FlatButton from '../common/FlatButton'
 import { isPhoneNumber } from '../common/validate'
 import { RRButton, FLButton, RSButton, TFButton, LoginTF } from '../common/Buttons'
-import { EyeOpenIcon, EyeOffIcon, WinCloseIcon, MobileIcon, LockIcon, CheckBoxOutlineIcon, WisnucLogo } from '../common/Svg'
+import { EyeOpenIcon, EyeOffIcon, WinCloseIcon, CheckBoxOutlineIcon, WisnucLogo, AccountIcon, ArrowDownIcon } from '../common/Svg'
 
 let firstLogin = true
 
@@ -24,7 +25,7 @@ class WisnucLogin extends React.Component {
       saveToken: false,
       autoLogin: false,
       showFakePwd: false,
-      status: 'account'
+      status: 'phone'
     }
 
     this.onPhoneNumber = (pn) => {
@@ -51,6 +52,14 @@ class WisnucLogin extends React.Component {
     this.clearPn = () => this.setState({ pn: '', pnError: '', showFakePwd: false })
 
     this.togglePwd = () => this.setState({ showPwd: !this.state.showPwd })
+
+    this.checkPhone = () => {
+      this.setState({ loading: true })
+      this.props.phi.req('checkUser', { phone: this.state.pn }, (err, res) => {
+        if (err) this.setState({ pnError: i18n.__('User Not Exist'), loading: false })
+        else this.setState({ status: 'password', loading: false })
+      })
+    }
 
     this.login = () => {
       this.setState({ loading: true })
@@ -135,7 +144,7 @@ class WisnucLogin extends React.Component {
       if (firstLogin && token && !!autoLogin) this.fakeLogin()
     }
     firstLogin = false
-    this.setState({ status: 'account' })
+    this.setState({ status: 'phone' })
   }
 
   shouldFire () {
@@ -163,66 +172,9 @@ class WisnucLogin extends React.Component {
     )
   }
 
-  renderWisnucLogin () {
+  tmp () {
     return (
       <div>
-        <div style={{ width: 328, margin: '0 auto', position: 'relative' }}>
-          <LoginTF
-            floatingLabelText={i18n.__('Phone Number')}
-            type="text"
-            errorText={this.state.pnError}
-            value={this.state.pn}
-            maxLength={11}
-            onChange={e => this.onPhoneNumber(e.target.value)}
-          />
-          {
-            this.state.showFakePwd
-              ? (
-                <LoginTF
-                  floatingLabelText={i18n.__('Password')}
-                  type="password"
-                  value="**********"
-                  onClick={() => this.setState({ showFakePwd: false })}
-                  errorText={this.state.pwdError}
-                />
-              ) : (
-                <LoginTF
-                  type={this.state.showPwd ? 'text' : 'password'}
-                  floatingLabelText={i18n.__('Password')}
-                  errorText={this.state.pwdError}
-                  value={this.state.pwd}
-                  onChange={e => this.onPassword(e.target.value)}
-                  onKeyDown={this.onKeyDown}
-                />
-              )
-          }
-          {/* icon of phone */}
-          <div style={{ position: 'absolute', left: 0, top: 64 }}>
-            <MobileIcon />
-          </div>
-          {/* icon of password */}
-          <div style={{ position: 'absolute', left: 0, top: 160 }}>
-            <LockIcon />
-          </div>
-
-          {/* clear password */}
-          {
-            !!this.state.pn && (
-              <div style={{ position: 'absolute', right: 0, top: 64 }}>
-                <TFButton icon={WinCloseIcon} onClick={this.clearPn} />
-              </div>
-            )
-          }
-
-          {/* password visibility */}
-          {
-            !this.state.showFakePwd && (
-              <div style={{ position: 'absolute', right: 0, top: 160 }}>
-                <TFButton icon={this.state.showPwd ? EyeOpenIcon : EyeOffIcon} onClick={this.togglePwd} />
-              </div>
-            )
-          }
-        </div>
         <div style={{ display: 'flex', height: 48, width: 328, alignItems: 'center', margin: '0 auto' }}>
           <Checkbox
             label={i18n.__('Remember Password')}
@@ -234,16 +186,6 @@ class WisnucLogin extends React.Component {
             checked={this.state.saveToken}
             onCheck={() => this.handleSaveToken()}
           />
-          <Checkbox
-            label={i18n.__('Auto Login')}
-            checkedIcon={<CheckBoxOutlineIcon style={{ color: '#009688' }} />}
-            disableTouchRipple
-            style={{ width: 108, marginLeft: -12, marginTop: 4 }}
-            iconStyle={{ height: 18, width: 18, marginTop: 1, fill: this.state.autoLogin ? '#009688' : 'rgba(0,0,0,.25)' }}
-            labelStyle={{ fontSize: 12, color: 'rgba(0,0,0,.76)', marginLeft: -9 }}
-            checked={this.state.autoLogin}
-            onCheck={() => this.handleAutologin()}
-          />
           <div style={{ flexGrow: 1 }} />
           <div style={{ marginRight: -8 }}>
             <FLButton
@@ -253,69 +195,163 @@ class WisnucLogin extends React.Component {
             />
           </div>
         </div>
-        <div style={{ height: 24 }} />
-        <div style={{ width: 328, height: 40, margin: '0 auto' }}>
-          <RRButton
-            label={this.state.loading ? i18n.__('Logging') : i18n.__('Login')}
-            onClick={() => (this.state.showFakePwd ? this.fakeLogin() : this.login())}
-            disabled={!this.shouldFire()}
-            loading={this.state.loading}
-          />
-        </div>
+        <LoginTF
+          floatingLabelText={i18n.__('Password')}
+          type="password"
+          value="**********"
+          onClick={() => this.setState({ showFakePwd: false })}
+          errorText={this.state.pwdError}
+        />
       </div>
     )
   }
 
   render () {
-    const { status } = this.state
-    const isLogin = ['account', 'wechat'].includes(status)
-    const headerStyle = {
-      width: 328,
-      height: 32,
-      fontSize: 28,
-      display: 'flex',
-      alignItems: 'center',
-      marginTop: 72,
-      paddingLeft: 176
-    }
+    const { status, pn, pnError, pwd, pwdError } = this.state
 
-    let view = null
+    let next = () => {}
+    let disabled = false
     switch (status) {
-      case 'account':
-        view = this.renderWisnucLogin()
+      case 'phone':
+        next = this.checkPhone
+        disabled = !pn || pnError
         break
-      case 'wechat':
-        view = <WeChatLogin {...this.props} />
-        break
-      case 'retrievePwd':
-        view = <RetrievePwd {...this.props} backToLogin={() => this.setState({ status: 'account' })} />
+      case 'password':
+        next = this.login
+        disabled = !pwd || pwdError
         break
       default:
         break
     }
 
     return (
-      <div style={{ width: 680, zIndex: 100, height: 510, position: 'relative' }} >
-        {
-          isLogin &&
-            <div style={headerStyle}>
+      <div style={{ width: 450, zIndex: 100, height: 380, position: 'relative' }} >
+        <div style={{ display: 'flex', alignItems: 'center', height: 32, marginTop: 120, paddingLeft: 80 }}>
+          <div style={{ fontSize: 28, display: 'flex', alignItems: 'center' }} >
+            { i18n.__('Account Login') }
+          </div>
+          {
+            status === 'password' &&
               <div
-                style={{ opacity: status === 'account' ? 0.87 : 0.12, cursor: 'pointer' }}
-                onClick={() => this.setState({ status: 'account' })}
+                style={{
+                  height: 28,
+                  display: 'flex',
+                  alignItems: 'center',
+                  borderRadius: 14,
+                  padding: '0px 8px',
+                  marginLeft: 16,
+                  cursor: 'pointer',
+                  border: 'solid 1px rgba(0,0,0,.12)'
+                }}
               >
-                { i18n.__('Account Login') }
+                <AccountIcon style={{ width: 18, height: 18 }} />
+                <div style={{ fontWeight: 500, marginLeft: 4 }}>
+                  { this.state.pn }
+                </div>
+                <ArrowDownIcon />
               </div>
-              <div
-                style={{ marginLeft: 32, opacity: this.state.status === 'wechat' ? 0.87 : 0.12, cursor: 'pointer' }}
-                onClick={() => this.setState({ status: 'wechat' })}
-              >
-                { i18n.__('Wechat Login') }
+          }
+        </div>
+        <div style={{ width: 290, margin: '36px auto', position: 'relative', height: 72 }}>
+          {
+            status === 'phone' &&
+            <LoginTF
+              floatingLabelText={i18n.__('Phone Number')}
+              type="text"
+              errorText={this.state.pnError}
+              value={this.state.pn}
+              maxLength={11}
+              onChange={e => this.onPhoneNumber(e.target.value)}
+            />
+          }
+          {
+            status === 'password' &&
+              <LoginTF
+                type={this.state.showPwd ? 'text' : 'password'}
+                floatingLabelText={i18n.__('Password')}
+                errorText={this.state.pwdError}
+                value={this.state.pwd}
+                onChange={e => this.onPassword(e.target.value)}
+                onKeyDown={this.onKeyDown}
+              />
+          }
+          {/* clear password */}
+          {
+            !!this.state.pn && status === 'phone' && (
+              <div style={{ position: 'absolute', right: 0, top: 36 }}>
+                <TFButton icon={WinCloseIcon} onClick={this.clearPn} />
               </div>
+            )
+          }
+          {/* password visibility */}
+          {
+            status === 'password' && (
+              <div style={{ position: 'absolute', right: 0, top: 36 }}>
+                <TFButton icon={this.state.showPwd ? EyeOpenIcon : EyeOffIcon} onClick={this.togglePwd} />
+              </div>
+            )
+          }
+          {
+            <div
+              style={{
+                position: 'absolute',
+                right: 0,
+                top: 68,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'flex-end'
+              }}
+            >
+              <Checkbox
+                label={i18n.__('Auto Login')}
+                checkedIcon={<CheckBoxOutlineIcon style={{ color: '#009688' }} />}
+                disableTouchRipple
+                iconStyle={{ height: 18, width: 18, marginTop: 1, fill: this.state.autoLogin ? '#009688' : 'rgba(0,0,0,.25)' }}
+                labelStyle={{ fontSize: 12, color: 'rgba(0,0,0,.76)', marginLeft: -9, width: '' }}
+                checked={this.state.autoLogin}
+                onCheck={() => this.handleAutologin()}
+              />
             </div>
-        }
-        { view }
-        <div style={{ position: 'absolute', left: 48, top: 64 }}>
-          <WisnucLogo style={{ width: 55, height: 55, color: '#00695c' }} />
+          }
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', width: 290, margin: '64px auto' }}>
+          <div style={{ width: 200, height: 32 }}>
+            {
+              status === 'password'
+                ? <FlatButton label={i18n.__('Forget Password')} primary labelStyle={{ fontSize: 14 }} />
+                : <WisnucLogo style={{ width: 32, height: 32 }} />
+            }
+          </div>
+          <div style={{ flexGrow: 1 }} />
+          <div style={{ width: 80, height: 32 }}>
+            <RRButton
+              style={{ width: 80, height: 32 }}
+              label={i18n.__('Next Step')}
+              onClick={next}
+              disabled={disabled}
+              loading={this.state.loading}
+            />
+          </div>
+        </div>
+        {/* footer */}
+        <div
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            height: 40,
+            width: '100%',
+            fontSize: 12,
+            color: 'rgba(0,0,0,.38)',
+            boxSizing: 'border-box'
+          }}
+          className="flexCenter"
+        >
+          <div>
+            { `©${new Date().getFullYear()}${i18n.__('Copyright Info')}` }
+          </div>
+          <div style={{ marginLeft: 20 }}>
+            { i18n.__('Client Version %s', global.config && global.config.appVersion) }
+          </div>
         </div>
 
         {/* Phi Login Failed */}

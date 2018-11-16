@@ -436,8 +436,8 @@ export class MenuButton extends Button {
     const { text, selected, primaryColor } = this.props
     const Icon = this.props.icon
     const backgroundColor = this.state.hover ? '#F5F5F5' : '#FFF'
-    const textColor = selected ? primaryColor : 'var(--black-87)'
-    const iconColor = selected ? primaryColor : 'var(--black-54)'
+    const textColor = selected ? primaryColor : 'rgba(0,0,0,.76)'
+    const iconColor = selected ? primaryColor : 'rgba(0,0,0,.54)'
     const zIndex = selected ? 100 : 1
     const opacity = selected ? 1 : 0.87
     const fontWeight = selected ? 'bold' : 'normal'
@@ -630,12 +630,6 @@ export class LoginTF extends React.PureComponent {
       <MTF
         fullWidth
         ref={input => input && this.props.autoFoucus && input.focus()}
-        style={{ marginTop: 32, marginBottom: -10 }}
-        floatingLabelFocusStyle={{ marginLeft: 0, marginTop: -8, fontSize: 19 }}
-        floatingLabelShrinkStyle={{ marginLeft: 0, marginTop: -8, fontSize: 19 }}
-        floatingLabelStyle={{ marginTop: -2, fontSize: 14, marginLeft: 32, color: 'rgba(0,0,0,.54)' }}
-        inputStyle={{ fontWeight: 500, fontSize: 16, marginLeft: 32, marginTop: 8, color: 'rgba(0,0,0,.76)' }}
-        errorStyle={{ position: 'absolute', left: 48, bottom: 49, fontSize: 14 }}
         underlineStyle={{ backgroundColor: '#eaeaea' }}
         underlineDisabledStyle={{ borderBottom: '1px solid #eaeaea' }}
         {...props}

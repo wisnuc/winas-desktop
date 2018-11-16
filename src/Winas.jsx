@@ -13,7 +13,7 @@ import Clipboard from './control/clipboard'
 
 const defaultTheme = getMuiTheme({
   fontFamily: 'Roboto, Noto Sans SC, Microsoft YaHei, PingFang SC, sans-serif',
-  color: 'rgba(0,0,0,.87)',
+  color: 'rgba(0,0,0,.76)',
   fontSize: 14,
   palette: { primary1Color: '#009688', accent1Color: '#ff4081' }
 })
@@ -162,8 +162,8 @@ class Winas extends React.Component {
           <div
             style={{
               position: 'relative',
-              width: isSmall ? 680 : '100%',
-              height: isSmall ? 510 : '100%',
+              width: isSmall ? 450 : '100%',
+              height: isSmall ? 500 : '100%',
               overflow: 'hidden',
               backgroundColor: '#FFF',
               transition: 'height 450ms cubic-bezier(0.0, 0.0, 0.2, 1), width 225ms cubic-bezier(0.0, 0.0, 0.2, 1) 225ms',

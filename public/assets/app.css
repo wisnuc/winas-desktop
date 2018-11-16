@@ -17,7 +17,7 @@ body {
   height:100%;
   cursor:default;
   font-size:14px;
-  color:rgba(0,0,0,0.87);
+  color:rgba(0,0,0,0.76);
 }
 
 a {
@@ -51,7 +51,7 @@ img {
 /* global css */
 :root {
   --black-54: rgba(0,0,0,0.54);
-  --black-87: rgba(0,0,0,0.87);
+  --black-87: rgba(0,0,0,0.76);
   --dark-text: #505259;
   --light-grey-text: #c4c5cc;
   --grey-text: #85868c;

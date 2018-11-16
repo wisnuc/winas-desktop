@@ -76,6 +76,12 @@ class PhiAPI extends RequestManager {
           .query({ phone: args.phone })
         break
 
+      case 'checkUser':
+        r = request
+          .get(`${cloudAddress}/user/check`)
+          .query({ phone: args.phone })
+        break
+
       case 'token':
         r = request
           .get(`${cloudAddress}/user/password/token`)

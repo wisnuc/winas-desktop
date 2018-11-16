@@ -100,26 +100,6 @@ class Login extends React.Component {
           }}
         />
 
-        {/* footer */}
-        <div
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            boxSizing: 'border-box',
-            fontSize: 12,
-            width: '100%',
-            height: 40,
-            display: this.state.status === 'wisnucLogin' ? '' : 'none'
-          }}
-          className="flexCenter"
-        >
-          <div>
-            { `©${new Date().getFullYear()}${i18n.__('Copyright Info')}` }
-          </div>
-          <div style={{ marginLeft: 20 }}>
-            { i18n.__('Client Version %s', global.config && global.config.appVersion) }
-          </div>
-        </div>
         <div style={{ width: 680, zIndex: 100, height: 510, position: 'relative', overflow: 'hidden' }} >
           <div
             style={{
