@@ -103,6 +103,14 @@ class PhiAPI extends RequestManager {
         r = this.apost('user/deviceInfo', { sn: args.sn })
         break
 
+      case 'emailCode':
+        r = this.apost('user/mailCode', { mail: args.email, type: 'bind' })
+        break
+
+      case 'bindEmail':
+        r = this.apost('user/mail', { mail: args.email, code: args.code })
+        break
+
       case 'setAvatar':
         r = request
           .put(`${cloudAddress}/user/avatar`)

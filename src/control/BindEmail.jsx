@@ -46,12 +46,21 @@ class BindEmail extends React.Component {
     }
 
     this.checkEmail = () => {
-      if (validator.isEmail(this.state.email)) this.setState({ status: 'code' })
-      else this.setState({ emailError: i18n.__('Not Email') })
+      if (!validator.isEmail(this.state.email)) this.setState({ emailError: i18n.__('Not Email') })
+      else {
+        this.props.phi.req('emailCode', { email: this.state.email }, (err, res) => {
+          if (err) this.setState({ emailError: i18n.__('Send Code To Email Error') })
+          else this.setState({ status: 'code' })
+        })
+      }
     }
 
     this.checkCode = () => {
-      this.setState({ status: 'success' })
+      const code = [1, 2, 3, 4].map(v => this.state[`code${v}`]).join('')
+      this.props.phi.req('bindEmail', { email: this.state.email, code }, (err, res) => {
+        if (err) this.setState({ status: 'failed' })
+        else this.setState({ status: 'success' })
+      })
     }
   }
 
