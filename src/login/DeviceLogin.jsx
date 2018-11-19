@@ -6,7 +6,7 @@ import { CircularProgress } from 'material-ui'
 import DeviceAPI from '../common/device'
 import FlatButton from '../common/FlatButton'
 import { RRButton, FLButton, LIButton } from '../common/Buttons'
-import { CheckOutlineIcon, CheckedIcon, BackwardIcon, AccountIcon, DeviceIcon } from '../common/Svg'
+import { CheckOutlineIcon, CheckedIcon, BackwardIcon, DeviceIcon } from '../common/Svg'
 
 class DeviceLogin extends React.Component {
   constructor (props) {
@@ -208,6 +208,8 @@ class DeviceLogin extends React.Component {
   }
 
   deviceStatus () {
+    if (this.state.status === 'error') return i18n.__('Login Error')
+
     switch (this.systemStatus()) {
       case 'probing':
         return i18n.__('Probing')
@@ -224,24 +226,8 @@ class DeviceLogin extends React.Component {
     }
   }
 
-  loginStatus () {
-    switch (this.state.status) {
-      case 'error':
-        return i18n.__('Login Error')
-      case 'logging':
-        return i18n.__('Logging')
-      case 'Logging Error':
-        return i18n.__('Logging Error')
-      default:
-        return ''
-    }
-  }
-
   render () {
-    const username = 'WISNUC Office'
     console.log('render DeviceLogin', this.props, this.device)
-    const phi = (this.props.account && this.props.account.phi) || {}
-    const { nickName, avatarUrl } = phi
     let [total, used, percent] = ['', '', '', 0]
     try {
       const space = this.device.state.space.data
@@ -255,8 +241,9 @@ class DeviceLogin extends React.Component {
     const sn = info && info.device && info.device.sn && info.device.sn.slice(-4)
     const deviceName = sn ? `Winas-${sn}` : 'Winas'
     const isLogging = this.state.status === 'logging'
+    const isFailed = this.state.status === 'error'
     return (
-      <div style={{ width: 680, zIndex: 100, height: 510, position: 'relative' }} >
+      <div style={{ width: 450, zIndex: 100, height: 500, position: 'relative' }} >
         <div style={{ marginTop: 46, height: 24, display: 'flex', alignItems: 'center' }}>
           {
             !isLogging &&
@@ -278,21 +265,22 @@ class DeviceLogin extends React.Component {
         </div>
 
         <div style={{ fontSize: 28, display: 'flex', alignItems: 'center', paddingLeft: 80, marginTop: 52 }} >
-          { i18n.__('Connecting to Device') }
+          { isFailed ? i18n.__('Connection Failed') : i18n.__('Connecting to Device') }
         </div>
         <div style={{ marginTop: 54, height: 80, display: 'flex', alignItems: 'center', width: '100%', position: 'relative' }}>
           <div style={{ width: 64, marginLeft: 16 }} className="flexCenter">
             <DeviceIcon style={{ width: 24, height: 24 }} />
           </div>
           <div style={{ position: 'absolute', top: 21, left: 28 }}>
-            <CircularProgress size={40} thickness={1} />
+            { !isFailed ? <CircularProgress size={40} thickness={1} />
+              : <div style={{ height: 40, width: 40, borderRadius: 20, border: '1px solid rgba(0,0,0,.27)' }} /> }
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <div style={{ opacity: 0.87, fontWeight: 500 }}> { deviceName } </div>
               <div style={{ flexGrow: 1 }} />
-              <div style={{ fontSize: 12, color: 'rgba(0,0,0,.38)', height: 20 }} className="flexCenter">
-                { this.loginStatus() }
+              <div style={{ fontSize: 12, color: isFailed ? '#f44336' : 'rgba(0,0,0,.38)', height: 20 }} className="flexCenter">
+                { this.deviceStatus() }
               </div>
             </div>
             <div
@@ -320,9 +308,6 @@ class DeviceLogin extends React.Component {
             </div>
           </div>
           <div style={{ flexGrow: 1 }} />
-          <div style={{ marginRight: 24 }}>
-            { this.deviceStatus() }
-          </div>
           <div style={{ marginRight: 48 }}>
             { i18n.__('Default Device') }
           </div>

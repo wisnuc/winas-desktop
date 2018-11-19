@@ -221,4 +221,6 @@ export const EyeOffIcon = f('visibility-off')
 export const CheckOutlineIcon = f('check-outline')
 export const FailedIcon = f('failed')
 export const CheckBoxOutlineIcon = f('check-box-outline')
+export const BackSearchIcon = f('back')
+export const WeChatIcon = f('wechat')
 

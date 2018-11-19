@@ -1,13 +1,16 @@
 import React from 'react'
 import i18n from 'i18n'
-import { Divider, Checkbox } from 'material-ui'
+import { Checkbox, MenuItem } from 'material-ui'
+import { AutoSizer } from 'react-virtualized'
+import ScrollBar from '../common/ScrollBar'
+import AccountIcon from '../common/AccountIcon'
 import WeChatLogin from './WeChatLogin'
 import RetrievePwd from './RetrievePwd'
 import Dialog from '../common/PureDialog'
 import FlatButton from '../common/FlatButton'
 import { isPhoneNumber } from '../common/validate'
-import { RRButton, FLButton, RSButton, TFButton, LoginTF } from '../common/Buttons'
-import { EyeOpenIcon, EyeOffIcon, WinCloseIcon, CheckBoxOutlineIcon, WisnucLogo, AccountIcon, ArrowDownIcon } from '../common/Svg'
+import { RRButton, TFButton, LoginTF } from '../common/Buttons'
+import { EyeOpenIcon, EyeOffIcon, WinCloseIcon, CheckBoxOutlineIcon, ArrowDownIcon, WeChatIcon } from '../common/Svg'
 
 let firstLogin = true
 
@@ -16,22 +19,20 @@ class WisnucLogin extends React.Component {
     super(props)
 
     this.state = {
+      accounts: [],
       pn: '',
       pwd: '',
       pnError: '',
       pwdError: '',
       error: '',
       showPwd: false,
-      saveToken: false,
       autoLogin: false,
-      showFakePwd: false,
       status: 'phone'
     }
 
     this.onPhoneNumber = (pn) => {
       this.setState({
         pn,
-        showFakePwd: false,
         pnError: pn && !isPhoneNumber(pn) ? i18n.__('Invalid Phone Number') : ''
       })
     }
@@ -40,25 +41,36 @@ class WisnucLogin extends React.Component {
       this.setState({ pwd, pwdError: '' })
     }
 
-    this.handleSaveToken = () => {
-      this.setState({ saveToken: !this.state.saveToken, autoLogin: false, showFakePwd: false })
-    }
-
     this.handleAutologin = () => {
       this.setState({ autoLogin: !this.state.autoLogin })
-      if (!this.state.autoLogin) this.setState({ saveToken: true })
     }
 
-    this.clearPn = () => this.setState({ pn: '', pnError: '', showFakePwd: false })
+    this.clearPn = () => this.setState({ pn: '', pnError: '' })
 
     this.togglePwd = () => this.setState({ showPwd: !this.state.showPwd })
 
     this.checkPhone = () => {
       this.setState({ loading: true })
       this.props.phi.req('checkUser', { phone: this.state.pn }, (err, res) => {
-        if (err) this.setState({ pnError: i18n.__('User Not Exist'), loading: false })
-        else this.setState({ status: 'password', loading: false })
+        console.log(err, res)
+        if (err || !res || !res.userExist) this.setState({ pnError: i18n.__('User Not Exist'), loading: false })
+        else {
+          const accounts = [...this.state.accounts]
+          if (this.state.accounts.every(user => user.pn !== this.state.pn)) {
+            accounts.push(Object.assign({ pn: this.state.pn }, res))
+          }
+          this.setState({ status: 'password', loading: false, accounts, avatarUrl: res.avatarUrl })
+          const newUserInfo = Object.assign({}, this.phi || {}, { accounts })
+          this.props.ipcRenderer.send('SETCONFIG', { phi: newUserInfo })
+        }
       })
+    }
+
+    this.delUser = (user) => {
+      const accounts = this.state.accounts.filter(u => u.pn !== user.pn)
+      this.setState({ accounts, confirmDelUser: false })
+      const newUserInfo = Object.assign({}, this.phi || {}, { accounts })
+      this.props.ipcRenderer.send('SETCONFIG', { phi: newUserInfo })
     }
 
     this.login = () => {
@@ -69,12 +81,13 @@ class WisnucLogin extends React.Component {
         { phonenumber: this.state.pn, password: this.state.pwd, clientId },
         (err, res) => {
           if (err || !res) {
-            if (res && res.error === '7') this.setState({ pnError: i18n.__('User Not Exist'), loading: false })
-            else if (res && res.error === '8') this.setState({ pwdError: i18n.__('Wrong Password'), loading: false })
-            else if (res && res.error === '34') this.setState({ pnError: i18n.__('Invalid Phone Number'), loading: false })
-            else if (res && res.error === '15') this.setState({ pwdError: i18n.__('Password Not Set'), loading: false })
-            else if (res && res.error && res.message) this.setState({ pwdError: res.message, loading: false })
-            else this.setState({ failed: true, loading: false })
+            const code = res && res.code
+            const msg = res && res.message
+            console.log(res)
+            if (code === 400) this.setState({ pwdError: i18n.__('Wrong Password'), loading: false })
+            else if (code === 60008) this.setState({ pwdError: i18n.__('Wrong Password'), loading: false })
+            else if (msg) this.setState({ pwdError: msg, loading: false })
+            else this.setState({ failed: true, loading: false, pwdError: i18n.__('Login Failed') })
           } else {
             this.props.phi.req('stationList', null, (e, r) => {
               console.log('stationList e r', e, r)
@@ -84,8 +97,9 @@ class WisnucLogin extends React.Component {
                 const phi = Object.assign({}, res, {
                   pn: this.state.pn,
                   winasUserId: res.id,
+                  accounts: this.state.accounts,
                   autoLogin: !!this.state.autoLogin,
-                  token: this.state.saveToken ? res.token : null
+                  token: this.state.autoLogin ? res.token : null
                 })
                 this.setState({ loading: false })
                 const list = r.ownStations
@@ -103,105 +117,104 @@ class WisnucLogin extends React.Component {
       Object.assign(this.props.phi, { token: this.phi.token })
       this.props.phi.req('stationList', null, (e, r) => {
         if (e || !r) {
-          if (r && r.error === '5') this.setState({ showFakePwd: false, pwdError: i18n.__('Token Expired'), loading: false })
+          if (r && r.error === '5') this.setState({ pwdError: i18n.__('Token Expired'), loading: false })
           else this.setState({ failed: true, loading: false })
         } else {
-          const phi = Object.assign({}, this.phi, {
-            pn: this.state.pn,
-            winasUserId: this.phi.winasUserId,
-            autoLogin: !!this.state.autoLogin,
-            token: this.state.saveToken ? this.phi.token : null
-          })
           this.setState({ loading: false })
           const list = r.ownStations
-          this.props.onSuccess({ list, phonenumber: this.state.pn, winasUserId: this.phi.winasUserId, phi })
+          this.props.onSuccess({ list, phonenumber: this.state.pn, winasUserId: this.phi.winasUserId, phi: this.phi })
         }
       })
-    }
-
-    this.reset = () => {
-      this.setState({ failed: false, pnError: '', pwdError: '' })
-    }
-
-    this.enterLAN = () => {
-      this.setState({ failed: false })
-      this.props.enterLANLoginList()
-    }
-
-    this.onKeyDown = (e) => {
-      if (e.which === 13 && this.shouldFire()) {
-        if (this.state.showFakePwd) this.fakeLogin()
-        else this.login()
-      }
     }
   }
 
   componentDidMount () {
     this.phi = window.config && window.config.global && window.config.global.phi
     if (this.phi) {
-      const { autoLogin, pn, token } = this.phi
-      this.setState({ saveToken: !!token, autoLogin: !!autoLogin, pn: pn || '', showFakePwd: !!token })
-      if (firstLogin && token && !!autoLogin) this.fakeLogin()
+      const { autoLogin, pn, token, accounts, avatarUrl } = this.phi
+      /* no accounts, last login account, another account */
+      if (!accounts || !accounts.length || !pn) this.setState({ status: 'phone', pn: '', accounts: [], autoLogin: false })
+      else if (accounts.find(u => u.pn !== pn)) this.setState({ status: 'password', pn: accounts[0].pn, autoLogin: false })
+      else this.setState({ avatarUrl, pn, autoLogin: !!token, accounts, status: 'password' })
+
+      if (firstLogin && autoLogin) this.fakeLogin()
     }
     firstLogin = false
-    this.setState({ status: 'phone' })
   }
 
-  shouldFire () {
-    return (!this.state.loading && !this.state.pnError && this.state.pn &&
-      !this.state.pwdError && (this.state.pwd || this.state.showFakePwd))
-  }
-
-  renderFailed () {
+  renderConfirmDelUser () {
     return (
-      <div style={{ width: 300, zIndex: 100 }} className="paper" >
-        <div style={{ height: 59, display: 'flex', alignItems: 'center', paddingLeft: 20 }} className="title">
-          { i18n.__('Phi Login Failed Title') }
+      <div style={{ width: 280, height: 240, zIndex: 100 }} className="paper" >
+        <div
+          style={{
+            height: 72,
+            display: 'flex',
+            alignItems: 'center',
+            paddingLeft: 24,
+            color: '#f44336',
+            fontSize: 18,
+            fontWeight: 500
+          }}
+        >
+          { i18n.__('Remove Cached Account Title') }
         </div>
-        <Divider style={{ marginLeft: 20, width: 260 }} />
-        <div style={{ padding: 20, width: 'calc(100% - 40px)', color: '#888a8c' }}>
-          { i18n.__('Phi Login Failed Text') }
+        <div style={{ padding: 24, width: 232, height: 68 }}>
+          { i18n.__('Remove Cached Account Text', this.state.confirmDelUser.pn) }
         </div>
-        <div style={{ height: 31, display: 'flex', alignItems: 'center', padding: '0 20px 20px 0' }}>
+        <div style={{ display: 'flex', alignItems: 'center', padding: 8, marginRight: -8 }}>
           <div style={{ flexGrow: 1 }} />
-          <RSButton label={i18n.__('Cancel')} onClick={this.reset} alt />
-          <div style={{ width: 10 }} />
-          <RSButton label={i18n.__('OK')} onClick={this.enterLAN} />
+          <FlatButton label={i18n.__('Cancel')} onClick={() => this.setState({ confirmDelUser: false })} primary />
+          <FlatButton label={i18n.__('OK')} onClick={() => this.delUser(this.state.confirmDelUser)} primary />
         </div>
       </div>
     )
   }
 
-  tmp () {
+  renderRow ({ style, key, user }) {
+    const { avatarUrl, nickName, type, pn } = user
+    const isDelUser = this.state.switchAccount === 'delete'
     return (
-      <div>
-        <div style={{ display: 'flex', height: 48, width: 328, alignItems: 'center', margin: '0 auto' }}>
-          <Checkbox
-            label={i18n.__('Remember Password')}
-            checkedIcon={<CheckBoxOutlineIcon style={{ color: '#009688' }} />}
-            disableTouchRipple
-            style={{ width: 108, marginTop: 4 }}
-            iconStyle={{ height: 18, width: 18, marginTop: 1, fill: this.state.saveToken ? '#009688' : 'rgba(0,0,0,.25)' }}
-            labelStyle={{ fontSize: 12, color: 'rgba(0,0,0,.76)', marginLeft: -9 }}
-            checked={this.state.saveToken}
-            onCheck={() => this.handleSaveToken()}
-          />
-          <div style={{ flexGrow: 1 }} />
-          <div style={{ marginRight: -8 }}>
-            <FLButton
-              labelStyle={{ fontSize: 12 }}
-              label={i18n.__('Forget Password')}
-              onClick={() => this.setState({ status: 'retrievePwd' })}
-            />
+      <div style={style} key={key}>
+        <MenuItem
+          onClick={() => (isDelUser ? this.setState({ confirmDelUser: user }) : type === 'add'
+            ? this.setState({ status: 'phone', pn: '', switchAccount: false })
+            : this.setState({ pn, avatarUrl, switchAccount: false }))}
+        >
+          <div style={{ height: 72, display: 'flex', alignItems: 'center', paddingLeft: 24, cursor: 'pointer' }}>
+            <AccountIcon size={32} avatarUrl={avatarUrl} />
+            <div style={{ marginLeft: 24, lineHeight: 'normal', fontSize: 14 }}>
+              <div>
+                { type === 'add' ? i18n.__('Login Another Account') : (nickName || i18n.__('Default User Name')) }
+              </div>
+              <div style={{ fontWeight: 500, display: type === 'add' ? 'none' : '' }}>
+                { this.state.pn }
+              </div>
+            </div>
           </div>
-        </div>
-        <LoginTF
-          floatingLabelText={i18n.__('Password')}
-          type="password"
-          value="**********"
-          onClick={() => this.setState({ showFakePwd: false })}
-          errorText={this.state.pwdError}
-        />
+        </MenuItem>
+      </div>
+    )
+  }
+
+  renderUsers (users) {
+    const rowCount = users.length
+    const rowHeight = 72
+    return (
+      <div style={{ width: 450, height: 240 }}>
+        <AutoSizer>
+          {({ height, width }) => (
+            <ScrollBar
+              allHeight={rowHeight * rowCount}
+              height={height}
+              width={width}
+              rowHeight={rowHeight}
+              rowRenderer={({ style, key, index }) => this.renderRow({ style, key, user: users[index] })}
+              rowCount={rowCount}
+              overscanRowCount={3}
+              style={{ outline: 'none' }}
+            />
+          )}
+        </AutoSizer>
       </div>
     )
   }
@@ -214,7 +227,7 @@ class WisnucLogin extends React.Component {
     switch (status) {
       case 'phone':
         next = this.checkPhone
-        disabled = !pn || pnError
+        disabled = !pn || pn.length !== 11 || pnError
         break
       case 'password':
         next = this.login
@@ -223,6 +236,9 @@ class WisnucLogin extends React.Component {
       default:
         break
     }
+
+    const isDelUser = this.state.switchAccount === 'delete'
+    const users = isDelUser ? this.state.accounts : [...this.state.accounts, { type: 'add' }]
 
     return (
       <div style={{ width: 450, zIndex: 100, height: 380, position: 'relative' }} >
@@ -243,8 +259,9 @@ class WisnucLogin extends React.Component {
                   cursor: 'pointer',
                   border: 'solid 1px rgba(0,0,0,.12)'
                 }}
+                onClick={() => this.setState({ switchAccount: true })}
               >
-                <AccountIcon style={{ width: 18, height: 18 }} />
+                <AccountIcon size={18} avatarUrl={this.state.avatarUrl} />
                 <div style={{ fontWeight: 500, marginLeft: 4 }}>
                   { this.state.pn }
                 </div>
@@ -256,23 +273,26 @@ class WisnucLogin extends React.Component {
           {
             status === 'phone' &&
             <LoginTF
+              autoFoucus
               floatingLabelText={i18n.__('Phone Number')}
               type="text"
               errorText={this.state.pnError}
               value={this.state.pn}
               maxLength={11}
               onChange={e => this.onPhoneNumber(e.target.value)}
+              onKeyDown={e => e.which === 13 && !disabled && next()}
             />
           }
           {
             status === 'password' &&
               <LoginTF
+                autoFoucus
                 type={this.state.showPwd ? 'text' : 'password'}
                 floatingLabelText={i18n.__('Password')}
                 errorText={this.state.pwdError}
                 value={this.state.pwd}
                 onChange={e => this.onPassword(e.target.value)}
-                onKeyDown={this.onKeyDown}
+                onKeyDown={e => e.which === 13 && !disabled && next()}
               />
           }
           {/* clear password */}
@@ -303,6 +323,7 @@ class WisnucLogin extends React.Component {
               }}
             >
               <Checkbox
+                style={{ display: this.state.status === 'password' ? '' : 'none' }}
                 label={i18n.__('Auto Login')}
                 checkedIcon={<CheckBoxOutlineIcon style={{ color: '#009688' }} />}
                 disableTouchRipple
@@ -319,7 +340,7 @@ class WisnucLogin extends React.Component {
             {
               status === 'password'
                 ? <FlatButton label={i18n.__('Forget Password')} primary labelStyle={{ fontSize: 14 }} />
-                : <WisnucLogo style={{ width: 32, height: 32 }} />
+                : <WeChatIcon style={{ width: 32, height: 32 }} />
             }
           </div>
           <div style={{ flexGrow: 1 }} />
@@ -333,6 +354,7 @@ class WisnucLogin extends React.Component {
             />
           </div>
         </div>
+
         {/* footer */}
         <div
           style={{
@@ -354,9 +376,45 @@ class WisnucLogin extends React.Component {
           </div>
         </div>
 
+        {/* switch account */}
+        {
+          this.state.switchAccount &&
+            (
+              <div style={{ width: 450, height: 380, position: 'absolute', top: 0, left: 0, backgroundColor: '#FFF', zIndex: 10 }}>
+                <div style={{ display: 'flex', alignItems: 'center', height: 32, paddingLeft: 80, marginBottom: 32 }}>
+                  <div style={{ fontSize: 28, display: 'flex', alignItems: 'center' }} >
+                    { i18n.__('Switch Account') }
+                  </div>
+                  {
+                    isDelUser &&
+                      <div style={{ height: 28, display: 'flex', alignItems: 'center', marginLeft: 8 }} >
+                        { i18n.__('Clean Saved Account') }
+                      </div>
+                  }
+                </div>
+
+                {/* user list */}
+                { this.renderUsers(users) }
+
+                <div style={{ height: 1, width: 290, backgroundColor: 'rgba(0,0,0,.12)', margin: '0 auto' }} />
+                <div style={{ marginLeft: 80 }}>
+                  <FlatButton
+                    primary
+                    label={isDelUser ? i18n.__('Finish') : i18n.__('Remove Account')}
+                    onClick={() => (
+                      isDelUser ? (this.state.accounts.length ? this.setState({ switchAccount: true })
+                        : this.setState({ switchAccount: false, status: 'phone', pn: '' })
+                      ) : this.setState({ switchAccount: 'delete' })
+                    )}
+                  />
+                </div>
+              </div>
+            )
+        }
+
         {/* Phi Login Failed */}
-        <Dialog open={!!this.state.failed} onRequestClose={() => this.setState({ failed: false })} modal >
-          { !!this.state.failed && this.renderFailed() }
+        <Dialog open={!!this.state.confirmDelUser} onRequestClose={() => this.setState({ confirmDelUser: false })} modal >
+          { !!this.state.confirmDelUser && this.renderConfirmDelUser() }
         </Dialog>
       </div>
     )

@@ -1,10 +1,8 @@
 const parseRes = (err, res) => {
   if (process.env.NODE_ENV === 'dev') console.log('handleReq req raw', err, res)
   let error = err
-  let body
+  let body = (res && res.body) || {}
   if (!error) {
-    body = (res && res.body) || {}
-
     /* handle response in res.text */
     if (!Object.keys(body).length && res.text) {
       try {
