@@ -1,6 +1,6 @@
-appId: com.phicomm.app
-copyright: "Phicomm (SiChuan) Co., Ltd."
-productName: PhiNAS
+appId: com.wisnuc.app
+copyright: "Shanghai Wisnuc Technology Co., Ltd."
+productName: Winas
 
 asar: true
 compression: normal
