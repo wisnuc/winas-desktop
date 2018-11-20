@@ -44,6 +44,7 @@ class DeviceLogin extends React.Component {
         this.once = true
         if (status === 'ready') this.getLANToken()
         else if (status === 'offline') this.remoteLogin()
+        else if (status === 'systemError') this.setState({ status: 'error' })
         else this.once = false
       })
     }
@@ -243,7 +244,7 @@ class DeviceLogin extends React.Component {
     const isLogging = this.state.status === 'logging'
     const isFailed = this.state.status === 'error'
     return (
-      <div style={{ width: 450, zIndex: 100, height: 500, position: 'relative' }} >
+      <div style={{ width: '100%', zIndex: 100, height: '100%', position: 'relative' }} >
         <div style={{ marginTop: 46, height: 24, display: 'flex', alignItems: 'center' }}>
           {
             !isLogging &&

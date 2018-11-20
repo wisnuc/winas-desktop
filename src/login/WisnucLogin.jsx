@@ -241,8 +241,8 @@ class WisnucLogin extends React.Component {
     const users = isDelUser ? this.state.accounts : [...this.state.accounts, { type: 'add' }]
 
     return (
-      <div style={{ width: 450, zIndex: 100, height: 380, position: 'relative' }} >
-        <div style={{ display: 'flex', alignItems: 'center', height: 32, marginTop: 120, paddingLeft: 80 }}>
+      <div style={{ width: '100%', zIndex: 100, height: 380, position: 'relative' }} >
+        <div style={{ display: 'flex', alignItems: 'center', height: 32, width: 290, margin: '120px auto 0px auto' }}>
           <div style={{ fontSize: 28, display: 'flex', alignItems: 'center' }} >
             { i18n.__('Account Login') }
           </div>

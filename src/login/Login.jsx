@@ -100,14 +100,14 @@ class Login extends React.Component {
           }}
         />
 
-        <div style={{ width: 450, zIndex: 100, height: 500, position: 'relative', overflow: 'hidden' }} >
+        <div style={{ width: '100%', zIndex: 100, height: '100%', position: 'relative', overflow: 'hidden' }} >
           <div
             style={{
-              width: 450,
+              width: '100%',
               zIndex: 100,
-              height: 500,
+              height: '100%',
               position: 'absolute',
-              left: beforeLogin ? 0 : -450,
+              left: beforeLogin ? 0 : -2000,
               transition: 'all 450ms'
             }}
           >
@@ -121,11 +121,11 @@ class Login extends React.Component {
           </div>
           <div
             style={{
-              width: 450,
+              width: '100%',
               zIndex: 100,
-              height: 500,
+              height: '100%',
               position: 'absolute',
-              left: beforeLogin ? 450 : 0,
+              left: beforeLogin ? 2000 : 0,
               transition: 'all 450ms'
             }}
           >
