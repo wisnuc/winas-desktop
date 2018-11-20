@@ -6,7 +6,7 @@ import ChangeAvatar from '../control/ChangeAvatar'
 import FlatButton from '../common/FlatButton'
 import DialogOverlay from '../common/PureDialog'
 
-import { AccountIcon } from '../common/Svg'
+import AccountIcon from '../common/AccountIcon'
 
 class Account extends React.Component {
   constructor (props) {
@@ -43,13 +43,7 @@ class Account extends React.Component {
             onClick={this.changeAvatar}
             style={{ marginLeft: 32, position: 'relative', cursor: 'pointer' }}
           >
-            {
-              avatarUrl ? (
-                <div style={{ width: 72, height: 72, borderRadius: 36, overflow: 'hidden' }}>
-                  <img src={avatarUrl} width={72} height={72} />
-                </div>
-              ) : (<AccountIcon style={{ width: 72, height: 72, color: 'rgba(96,125,139,.26)' }} />)
-            }
+            <AccountIcon avatarUrl={avatarUrl} size={72} />
             <div style={{ position: 'absolute', top: 55, left: 0, height: 17, width: 72, overflow: 'hidden' }}>
               <div style={{ height: 72, width: 72, marginTop: -55, borderRadius: 36, backgroundColor: 'rgba(0,0,0,.87)' }} />
               <div style={{ color: '#FFF', marginTop: -17, height: 17 }} className="flexCenter">
@@ -91,18 +85,12 @@ class Account extends React.Component {
 
   render () {
     if (!this.props.account || !this.props.account.phi) return <div />
+    const { avatarUrl } = this.props.account.phi
     return (
       <div style={{ height: 32, display: 'flex', alignItems: 'center', WebkitAppRegion: 'no-drag' }} >
-        <AccountIcon
-          onClick={this.openPop}
-          style={{
-            width: 24,
-            height: 24,
-            color: 'rgba(96,125,139,.26)',
-            WebkitAppRegion: 'no-drag',
-            cursor: 'pointer'
-          }}
-        />
+        <div onClick={this.openPop} style={{ WebkitAppRegion: 'no-drag', cursor: 'pointer' }} >
+          <AccountIcon avatarUrl={avatarUrl} size={24} />
+        </div>
         <Popover
           open={this.state.open}
           animation={PopoverAnimationVertical}

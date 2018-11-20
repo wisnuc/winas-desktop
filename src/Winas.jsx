@@ -175,7 +175,7 @@ class Winas extends React.Component {
             <div style={Object.assign({ right: 0, height: 110, width: 5 }, nodrag)} />
             {/* Account */}
             {
-              this.state.account &&
+              this.state.account && this.state.view === 'device' &&
                 <div style={{ position: 'absolute', top: 2, right: 100, height: 34, WebkitAppRegion: 'no-drag' }}>
                   <Account
                     phi={this.state.phi}

@@ -42,7 +42,7 @@ import SearchButton from '../common/Search'
 import Fruitmix from '../common/fruitmix'
 import WindowAction from '../common/WindowAction'
 import DialogOverlay from '../common/PureDialog'
-import { BackIcon, WisnucLogo, MenuIcon, DeviceIcon, ArrowDownIcon, CloseIcon, PDFIcon, WORDIcon, EXCELIcon, PPTIcon, PhotoIcon, VideoIcon, AudioIcon } from '../common/Svg'
+import { BackIcon, WisnucLogo, MenuIcon, DeviceIcon, ArrowDownIcon, CloseIcon, PDFIcon, WORDIcon, EXCELIcon, PPTIcon, PhotoIcon, VideoIcon, AudioIcon, ExitSearchIcon } from '../common/Svg'
 
 class NavViews extends React.Component {
   constructor (props) {
@@ -236,10 +236,8 @@ class NavViews extends React.Component {
     }
 
     this.exitSearchMode = () => {
-      if (!this.state.searchText && this.state.searchMode && !this.state.types.length) {
-        this.setState({ searchMode: false })
-        this.navTo(this.preNav)
-      }
+      this.setState({ searchMode: false, searchText: '', types: [], hoverNav: false })
+      this.navTo(this.preNav)
     }
 
     this.searchTimer = null
@@ -560,7 +558,15 @@ class NavViews extends React.Component {
         </div>
         <div style={{ height: 64, width: 224, display: 'flex', alignItems: 'center' }}>
           <div style={{ height: 64, width: 88 }} className="flexCenter">
-            <WisnucLogo style={{ width: 48, height: 48, color: this.state.primaryColor }} />
+            {
+              ((this.state.types && this.state.types.length) || (this.state.searchText))
+                ? (
+                  <ExitSearchIcon
+                    style={{ width: 40, height: 40, cursor: 'pointer', marginTop: -8 }}
+                    onClick={this.exitSearchMode}
+                  />
+                ) : <WisnucLogo style={{ width: 48, height: 48, color: this.state.primaryColor }} />
+            }
           </div>
           <div
             style={{
