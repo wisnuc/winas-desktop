@@ -4,7 +4,7 @@ import request from 'superagent'
 import parseRes from './parseRes'
 import RequestManager from './reqman'
 
-const cloudAddress = 'https://abel.nodetribe.com/c/v1'
+const cloudAddress = 'http://test.nodetribe.com/c/v1'
 
 class PhiAPI extends RequestManager {
   constructor () {
@@ -18,7 +18,7 @@ class PhiAPI extends RequestManager {
       const { error, body } = parseRes(err, res)
 
       /* save phi token */
-      if (name === 'token' && !error && body) this.token = body.token
+      if ((name === 'token' || name === 'wechatToken') && !error && body) this.token = body.token
 
       /* callback next */
       if (typeof next === 'function') next(error, body)
@@ -94,6 +94,21 @@ class PhiAPI extends RequestManager {
             type: 'pc',
             username: args.phonenumber,
             password: args.password
+          })
+        break
+
+      case 'wechatToken':
+        r = request
+          .get(`${cloudAddress}/wechat/token`)
+          .timeout({
+            response: 10000, // Wait 30 seconds for the server to start sending,
+            deadline: 20000 // but allow 1 minute for the file to finish loading.
+          })
+          .query({
+            type: 'pc',
+            code: args.code,
+            loginType: 'web',
+            clientId: args.clientId || 'qwert',
           })
         break
 

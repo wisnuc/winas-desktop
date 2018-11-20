@@ -6,7 +6,7 @@ import { CircularProgress } from 'material-ui'
 import DeviceAPI from '../common/device'
 import FlatButton from '../common/FlatButton'
 import { RRButton, FLButton, LIButton } from '../common/Buttons'
-import { CheckOutlineIcon, CheckedIcon, BackwardIcon, DeviceIcon } from '../common/Svg'
+import { CheckOutlineIcon, CheckedIcon, BackwardIcon, DeviceIcon, FailedIcon } from '../common/Svg'
 
 class DeviceLogin extends React.Component {
   constructor (props) {
@@ -20,17 +20,21 @@ class DeviceLogin extends React.Component {
     this.initDevice = () => {
       const { list } = this.props
       console.log('this.onSuccess', list)
-      const cdev = list.find(l => !!l.online)
-      if (!cdev) {
-        this.setState({ status: 'error' })
+      if (!list || !list.length) {
+        this.setState({ status: 'noDevice' })
       } else {
-        const dev = Object.assign(
-          { address: cdev.LANIP, domain: 'phiToLoacl', deviceSN: cdev.sn, stationName: 'test station' },
-          cdev
-        )
-        this.device = new DeviceAPI(dev)
-        this.device.on('updated', this.onUpdate)
-        this.device.start()
+        const cdev = list.find(l => !!l.online)
+        if (!cdev) {
+          this.setState({ status: 'error' })
+        } else {
+          const dev = Object.assign(
+            { address: cdev.LANIP, domain: 'phiToLoacl', deviceSN: cdev.sn, stationName: 'test station' },
+            cdev
+          )
+          this.device = new DeviceAPI(dev)
+          this.device.on('updated', this.onUpdate)
+          this.device.start()
+        }
       }
     }
 
@@ -154,7 +158,7 @@ class DeviceLogin extends React.Component {
   }
 
   componentDidUpdate (prevProps, prevState) {
-    if (prevProps && prevProps.status === 'wisnucLogin' && this.props && this.props.status === 'deviceList') {
+    if (prevProps && ['wisnucLogin', 'wechatLogin'].includes(prevProps.status) && this.props && this.props.status === 'deviceList') {
       this.initDevice()
     }
   }
@@ -227,8 +231,22 @@ class DeviceLogin extends React.Component {
     }
   }
 
-  render () {
-    console.log('render DeviceLogin', this.props, this.device)
+  renderFailed () {
+    return (
+      <div style={{ width: 380, height: 360, backgroundColor: '#FFF', zIndex: 100, margin: '0 auto' }} key="failed">
+        <div style={{ height: 80, paddingTop: 32 }} className="flexCenter">
+          <FailedIcon style={{ color: '#f44336', height: 58, width: 58 }} />
+        </div>
+
+        <div style={{ fontSize: 14, color: '#f44336' }} className="flexCenter">
+          { i18n.__('No Bind Device Text') }
+        </div>
+      </div>
+    )
+  }
+
+  renderDefaultDevice () {
+    const isFailed = this.state.status === 'error'
     let [total, used, percent] = ['', '', '', 0]
     try {
       const space = this.device.state.space.data
@@ -241,8 +259,59 @@ class DeviceLogin extends React.Component {
     const info = this.device && this.device.state && this.device.state.info && this.device.state.info.data
     const sn = info && info.device && info.device.sn && info.device.sn.slice(-4)
     const deviceName = sn ? `Winas-${sn}` : 'Winas'
-    const isLogging = this.state.status === 'logging'
+    return (
+      <div style={{ marginTop: 54, height: 80, display: 'flex', alignItems: 'center', width: '100%', position: 'relative' }}>
+        <div style={{ width: 64, marginLeft: 16 }} className="flexCenter">
+          <DeviceIcon style={{ width: 24, height: 24 }} />
+        </div>
+        <div style={{ position: 'absolute', top: 21, left: 28 }}>
+          { !isFailed ? <CircularProgress size={40} thickness={1} />
+            : <div style={{ height: 40, width: 40, borderRadius: 20, border: '1px solid rgba(0,0,0,.27)' }} /> }
+        </div>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{ opacity: 0.87, fontWeight: 500 }}> { deviceName } </div>
+            <div style={{ flexGrow: 1 }} />
+            <div style={{ fontSize: 12, color: isFailed ? '#f44336' : 'rgba(0,0,0,.38)', height: 20 }} className="flexCenter">
+              { this.deviceStatus() }
+            </div>
+          </div>
+          <div
+            style={{
+              height: 10,
+              width: 190,
+              borderRadius: 4,
+              backgroundColor: 'rgba(0,0,0,.08)',
+              position: 'relative',
+              margin: '8px 0px'
+            }}
+          >
+            <div
+              style={{
+                position: 'absolute',
+                height: 10,
+                width: percent * 190 || 0,
+                borderRadius: 4,
+                backgroundImage: 'linear-gradient(to right, #006e7b, #009688)'
+              }}
+            />
+          </div>
+          <div style={{ opacity: 0.54, color: 'rgba(0,0,0,.54)', fontSize: 12, fontWeight: 500 }}>
+            { (used && total) ? `${used} / ${total}` : '-- / --' }
+          </div>
+        </div>
+        <div style={{ flexGrow: 1 }} />
+        <div style={{ marginRight: 48 }}>
+          { i18n.__('Default Device') }
+        </div>
+      </div>
+    )
+  }
+
+  render () {
     const isFailed = this.state.status === 'error'
+    const isLogging = this.state.status === 'logging'
+    const isNoDevice = this.state.status === 'noDevice'
     return (
       <div style={{ width: '100%', zIndex: 100, height: '100%', position: 'relative' }} >
         <div style={{ marginTop: 46, height: 24, display: 'flex', alignItems: 'center' }}>
@@ -254,7 +323,7 @@ class DeviceLogin extends React.Component {
           }
           <div style={{ flexGrow: 1 }} />
           {
-            !isLogging &&
+            !isLogging && !isNoDevice &&
             <div style={{ marginRight: 32 }}>
               <FlatButton
                 primary
@@ -266,53 +335,9 @@ class DeviceLogin extends React.Component {
         </div>
 
         <div style={{ fontSize: 28, display: 'flex', alignItems: 'center', paddingLeft: 80, marginTop: 52 }} >
-          { isFailed ? i18n.__('Connection Failed') : i18n.__('Connecting to Device') }
+          { isFailed ? i18n.__('Connection Failed') : isNoDevice ? i18n.__('No Bind Device Title') : i18n.__('Connecting to Device') }
         </div>
-        <div style={{ marginTop: 54, height: 80, display: 'flex', alignItems: 'center', width: '100%', position: 'relative' }}>
-          <div style={{ width: 64, marginLeft: 16 }} className="flexCenter">
-            <DeviceIcon style={{ width: 24, height: 24 }} />
-          </div>
-          <div style={{ position: 'absolute', top: 21, left: 28 }}>
-            { !isFailed ? <CircularProgress size={40} thickness={1} />
-              : <div style={{ height: 40, width: 40, borderRadius: 20, border: '1px solid rgba(0,0,0,.27)' }} /> }
-          </div>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div style={{ opacity: 0.87, fontWeight: 500 }}> { deviceName } </div>
-              <div style={{ flexGrow: 1 }} />
-              <div style={{ fontSize: 12, color: isFailed ? '#f44336' : 'rgba(0,0,0,.38)', height: 20 }} className="flexCenter">
-                { this.deviceStatus() }
-              </div>
-            </div>
-            <div
-              style={{
-                height: 10,
-                width: 190,
-                borderRadius: 4,
-                backgroundColor: 'rgba(0,0,0,.08)',
-                position: 'relative',
-                margin: '8px 0px'
-              }}
-            >
-              <div
-                style={{
-                  position: 'absolute',
-                  height: 10,
-                  width: percent * 190 || 0,
-                  borderRadius: 4,
-                  backgroundImage: 'linear-gradient(to right, #006e7b, #009688)'
-                }}
-              />
-            </div>
-            <div style={{ opacity: 0.54, color: 'rgba(0,0,0,.54)', fontSize: 12, fontWeight: 500 }}>
-              { (used && total) ? `${used} / ${total}` : '-- / --' }
-            </div>
-          </div>
-          <div style={{ flexGrow: 1 }} />
-          <div style={{ marginRight: 48 }}>
-            { i18n.__('Default Device') }
-          </div>
-        </div>
+        { isNoDevice ? this.renderFailed() : this.renderDefaultDevice() }
       </div>
     )
   }

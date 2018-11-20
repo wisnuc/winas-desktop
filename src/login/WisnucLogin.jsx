@@ -4,8 +4,6 @@ import { Checkbox, MenuItem } from 'material-ui'
 import { AutoSizer } from 'react-virtualized'
 import ScrollBar from '../common/ScrollBar'
 import AccountIcon from '../common/AccountIcon'
-import WeChatLogin from './WeChatLogin'
-import RetrievePwd from './RetrievePwd'
 import Dialog from '../common/PureDialog'
 import FlatButton from '../common/FlatButton'
 import { isPhoneNumber } from '../common/validate'
@@ -159,7 +157,7 @@ class WisnucLogin extends React.Component {
           { i18n.__('Remove Cached Account Title') }
         </div>
         <div style={{ padding: 24, width: 232, height: 68 }}>
-          { i18n.__('Remove Cached Account Text', this.state.confirmDelUser.pn) }
+          { i18n.__('Remove Cached Account Text %s', this.state.confirmDelUser.pn) }
         </div>
         <div style={{ display: 'flex', alignItems: 'center', padding: 8, marginRight: -8 }}>
           <div style={{ flexGrow: 1 }} />
@@ -340,7 +338,7 @@ class WisnucLogin extends React.Component {
             {
               status === 'password'
                 ? <FlatButton label={i18n.__('Forget Password')} primary labelStyle={{ fontSize: 14 }} />
-                : <WeChatIcon style={{ width: 32, height: 32 }} />
+                : <WeChatIcon style={{ width: 32, height: 32, cursor: 'pointer' }} onClick={this.props.openWeChat} />
             }
           </div>
           <div style={{ flexGrow: 1 }} />

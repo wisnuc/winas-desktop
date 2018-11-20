@@ -166,6 +166,11 @@
   "Select Device to Login": "请选择登录设备",
   "Login to Device": "登录设备",
   "Avaliable Device List": "可登录设备列表",
+  "WeChat Login Error Text": "微信登录失败",
+  "WeChat Login Token Error Text" : "微信授权验证失败",
+  "WeChat Login NetWork Error Text" : "网络错误，请检查网络设置",
+  "WeChat Login No User Error Text": "未注册用户，请通过手机端注册再登录",
+  "WeChat Get Station List Error Text": "获取设备列表失败",
 
   "==== common/Policy.jsx ====": "",
   "Name Conflict": "命名冲突",
@@ -1088,6 +1093,8 @@
   "Login Error": "登录失败",
   "Logging Error": "登录失败",
   "Default Device": "默认设备",
+  "No Bind Device Text": "请先通过手机端绑定设备",
+  "No Bind Device Title" : "无绑定设备",
 
   "==== login/DeviceSelect.jsx====": "",
   "Add Device": "添加设备",

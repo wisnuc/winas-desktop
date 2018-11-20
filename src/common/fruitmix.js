@@ -6,7 +6,7 @@ import querystring from 'querystring'
 import parseRes from './parseRes'
 import Request from './Request'
 
-const cloudAddress = 'https://abel.nodetribe.com/c/v1'
+const cloudAddress = 'http://test.nodetribe.com/c/v1'
 
 /* this module encapsulate most fruitmix apis */
 class Fruitmix extends EventEmitter {
