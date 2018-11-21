@@ -62,7 +62,7 @@ class Winas extends React.Component {
   wisnucLogin (user) {
     this.setState({ account: user })
     /* save phi login data */
-    if (user && user.phi) ipcRenderer.send('SETCONFIG', { phi: user.phi })
+    if (user && user.phi) setTimeout(() => ipcRenderer.send('SETCONFIG', { phi: user.phi }), 450)
   }
 
   deviceLogin ({ dev, user, selectedDevice, isCloud }) {

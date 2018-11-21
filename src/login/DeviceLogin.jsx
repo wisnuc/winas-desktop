@@ -14,7 +14,8 @@ class DeviceLogin extends React.Component {
 
     this.state = {
       failed: false,
-      status: 'logging'
+      status: 'logging',
+      view: 'connecting'
     }
 
     this.initDevice = () => {

@@ -285,7 +285,7 @@ class WisnucLogin extends React.Component {
                 type={this.state.showPwd ? 'text' : 'password'}
                 floatingLabelText={i18n.__('Password')}
                 errorText={this.state.pwdError}
-                value={this.state.loading ? '********' : this.state.pwd}
+                value={(this.state.loading && !this.state.pwd) ? '********' : this.state.pwd}
                 onChange={e => this.onPassword(e.target.value)}
                 onKeyDown={e => e.which === 13 && !disabled && next()}
               />
