@@ -23,11 +23,11 @@ class Disk extends React.PureComponent {
     if (!space || !stats || !stats.data || !space.data) return this.renderLoading()
 
     const { audio, document, image, video } = stats.data
-    const other = stats.other || { totalSize: 0 }
+    const other = stats.data.others || { totalSize: 0 }
     if (!audio || !document || !image || !video) return (<div />)
     const { available, used } = space.data
-    const usedPercent = used / (available + used) * 100
-    const countTotal = (video.totalSize + image.totalSize + audio.totalSize + document.totalSize + 0) / usedPercent
+    const usedPercent = used / (available + used)
+    const countTotal = (video.totalSize + image.totalSize + audio.totalSize + document.totalSize + other.totalSize) / usedPercent
 
     const videoSize = video.totalSize / countTotal
     const imageSize = image.totalSize / countTotal
@@ -40,7 +40,7 @@ class Disk extends React.PureComponent {
       { color: '#aa00ff', progress: imageSize, title: i18n.__('Picture'), size: image.totalSize },
       { color: '#f2497d', progress: audioSize, title: i18n.__('Music'), size: audio.totalSize },
       { color: '#ffb300', progress: documentSize, title: i18n.__('Document'), size: document.totalSize },
-      { color: '#00c853', progress: otherSize, title: i18n.__('Others'), size: 0 }
+      { color: '#00c853', progress: otherSize, title: i18n.__('Others'), size: other.totalSize }
     ]
 
     return (

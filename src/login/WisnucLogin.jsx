@@ -50,7 +50,6 @@ class WisnucLogin extends React.Component {
     this.checkPhone = () => {
       this.setState({ loading: true })
       this.props.phi.req('checkUser', { phone: this.state.pn }, (err, res) => {
-        console.log(err, res)
         if (err || !res || !res.userExist) this.setState({ pnError: i18n.__('User Not Exist'), loading: false })
         else {
           const accounts = [...this.state.accounts]
@@ -81,14 +80,12 @@ class WisnucLogin extends React.Component {
           if (err || !res) {
             const code = res && res.code
             const msg = res && res.message
-            console.log(res)
             if (code === 400) this.setState({ pwdError: i18n.__('Wrong Password'), loading: false })
             else if (code === 60008) this.setState({ pwdError: i18n.__('Wrong Password'), loading: false })
             else if (msg) this.setState({ pwdError: msg, loading: false })
             else this.setState({ failed: true, loading: false, pwdError: i18n.__('Login Failed') })
           } else {
             this.props.phi.req('stationList', null, (e, r) => {
-              console.log('stationList e r', e, r)
               if (e || !r) {
                 this.setState({ failed: true, loading: false })
               } else {
@@ -132,7 +129,7 @@ class WisnucLogin extends React.Component {
       const { autoLogin, pn, token, accounts, avatarUrl } = this.phi
       /* no accounts, last login account, another account */
       if (!accounts || !accounts.length || !pn) this.setState({ status: 'phone', pn: '', accounts: [], autoLogin: false })
-      else if (accounts.find(u => u.pn !== pn)) this.setState({ status: 'password', pn: accounts[0].pn, autoLogin: false })
+      else if (accounts.find(u => u.pn !== pn)) this.setState({ status: 'password', pn: accounts[0].pn, autoLogin: false, accounts })
       else this.setState({ avatarUrl, pn, autoLogin: !!token, accounts, status: 'password' })
 
       if (firstLogin && autoLogin) this.fakeLogin()
@@ -185,7 +182,7 @@ class WisnucLogin extends React.Component {
                 { type === 'add' ? i18n.__('Login Another Account') : (nickName || i18n.__('Default User Name')) }
               </div>
               <div style={{ fontWeight: 500, display: type === 'add' ? 'none' : '' }}>
-                { this.state.pn }
+                { pn }
               </div>
             </div>
           </div>
@@ -284,11 +281,11 @@ class WisnucLogin extends React.Component {
           {
             status === 'password' &&
               <LoginTF
-                autoFoucus
+                autoFoucus={!this.state.pwd && !this.state.loading}
                 type={this.state.showPwd ? 'text' : 'password'}
                 floatingLabelText={i18n.__('Password')}
                 errorText={this.state.pwdError}
-                value={this.state.pwd}
+                value={this.state.loading ? '********' : this.state.pwd}
                 onChange={e => this.onPassword(e.target.value)}
                 onKeyDown={e => e.which === 13 && !disabled && next()}
               />

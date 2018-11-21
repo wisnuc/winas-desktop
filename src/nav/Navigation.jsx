@@ -1,6 +1,7 @@
 import i18n from 'i18n'
 import React from 'react'
 import Promise from 'bluebird'
+import prettysize from 'prettysize'
 import { ipcRenderer } from 'electron'
 import { FlatButton } from 'material-ui'
 import Popover, { PopoverAnimationVertical } from 'material-ui/Popover'
@@ -525,6 +526,19 @@ class NavViews extends React.Component {
   renderNavs () {
     const shrinked = ['pin', 'hoverNav', 'searchMode'].every(v => !this.state[v])
     const transition = 'width 225ms'
+    let [total, used, percent] = ['--', '--', 0]
+    try {
+      const space = this.props.selectedDevice.space.data
+      total = prettysize(space.total * 1024)
+      used = prettysize(space.used * 1024)
+      percent = space.used / space.total
+    } catch (e) {
+      // console.error('parse error')
+    }
+    const usage = `${used}/${total}`
+    const info = this.props.selectedDevice && this.props.selectedDevice.info && this.props.selectedDevice.info.data
+    const sn = info && info.device && info.device.sn && info.device.sn.slice(-4)
+    const deviceName = sn ? `Winas-${sn}` : 'Winas'
     return (
       <div
         style={{
@@ -627,19 +641,19 @@ class NavViews extends React.Component {
                   <DeviceIcon style={{ width: 24, height: 24 }} />
                 </div>
                 <div style={{ height: 72, marginTop: 16 }}>
-                  <div style={{ opacity: 0.87, fontWeight: 500 }}> winsun office </div>
+                  <div style={{ opacity: 0.87, fontWeight: 500 }}> { deviceName } </div>
                   <div style={{ height: 4, width: 92, backgroundColor: 'rgba(0,0,0,.08)', position: 'relative', margin: '8px 0px' }} >
                     <div
                       style={{
                         position: 'absolute',
                         height: 4,
-                        width: 31,
+                        width: 92 * percent,
                         backgroundColor: this.state.primaryColor,
                         borderRadius: 2
                       }}
                     />
                   </div>
-                  <div style={{ opacity: 0.54, color: 'rgba(0,0,0,.54)', fontSize: 12, fontWeight: 500 }}> 125.45GB / 4TB </div>
+                  <div style={{ opacity: 0.54, color: 'rgba(0,0,0,.54)', fontSize: 12, fontWeight: 500 }}> { usage } </div>
                 </div>
                 <div style={{ position: 'absolute', right: 12, top: 24, opacity: 0.38, height: 18, width: 18 }}>
                   <ArrowDownIcon />
