@@ -9,8 +9,8 @@ import GridView from './GridView'
 import CircularLoading from '../common/CircularLoading'
 
 /* Draw Select Box */
-const TOP = 206
-const LEFT = 72
+const TOP = 114
+const LEFT = 88
 const LEFTPIN = 224
 
 class FileContent extends React.Component {
@@ -250,7 +250,7 @@ class FileContent extends React.Component {
     /* calc rows should be selected */
     this.calcGrid = (data) => {
       if (!data) return
-      const { scrollTop, allHeight, mapData } = data
+      const { scrollTop, allHeight, mapData, indexHeightSum } = data
       const s = this.refSelectBox.style
       const top = parseInt(s.top, 10)
       const height = parseInt(s.height, 10)
@@ -258,17 +258,18 @@ class FileContent extends React.Component {
       const width = parseInt(s.width, 10)
       const length = this.props.entries.length
 
+      console.log('allHeight', allHeight)
       const array = Array
         .from({ length }, (v, i) => i)
         .filter((v, i) => {
           if (!mapData) return false
           const lineNum = mapData[i]
-          const lineHeight = allHeight[lineNum] // 150
-          const head = lineNum * lineHeight - scrollTop
-          const tail = head + 140
+          const lineHeight = allHeight[lineNum] // 112, 64, 248, 200
+          const head = (lineNum > 0 ? indexHeightSum[lineNum - 1] + ((lineHeight === 248) && 48) : 48) + 24 - scrollTop
+          const tail = head + (lineHeight < 200 ? 48 : 184)
           if (!(tail > top) || !(head < top + height)) return false
-          const start = (i - mapData.findIndex(va => va === lineNum)) * 144 + 10
-          const end = start + 140
+          const start = (i - mapData.findIndex(va => va === lineNum)) * 200 + 48
+          const end = start + 180
           /* grid.tail > top && grid.head < top + height && grid.end > left && grid.start < left + width */
           return ((end > left) && (start < left + width))
         })

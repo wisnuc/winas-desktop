@@ -136,7 +136,13 @@ class Row extends React.Component {
                     {/* direction icon */}
                     <IconButton
                       style={{ height: 36, width: 36, padding: 9, borderRadius: '18px' }}
-                      iconStyle={{ height: 18, width: 18, color: 'rgba(0,0,0,0.54)' }}
+                      iconStyle={{
+                        height: 18,
+                        width: 18,
+                        color: 'rgba(0,0,0,0.54)',
+                        transition: 'transform 0ms',
+                        transform: (sortType === h.up || !sortType) ? 'rotate(180deg)' : ''
+                      }}
                       hoveredStyle={{ backgroundColor: 'rgba(0,0,0,0.18)' }}
                       onClick={() => { sortType === h.up || !sortType ? changeSortType(h.down) : changeSortType(h.up) }}
                     >
@@ -169,11 +175,12 @@ class Row extends React.Component {
                     <div
                       style={{
                         position: 'relative',
-                        width: 196,
-                        height: entry.type === 'file' ? 196 : 48,
+                        width: 180,
+                        height: entry.type === 'file' ? 184 : 48,
                         marginRight: 20,
-                        marginBottom: 10,
+                        marginBottom: 16,
                         backgroundColor,
+                        overflow: 'hidden',
                         borderRadius: 6,
                         boxSizing: 'border-box',
                         border: `1px solid ${borderColor}`,
@@ -189,8 +196,8 @@ class Row extends React.Component {
                             draggable={false}
                             className="flexCenter"
                             style={{
-                              height: 148,
-                              width: 196,
+                              height: 136,
+                              width: 180,
                               margin: 0,
                               overflow: 'hidden',
                               backgroundColor: '#f0f0f0'
@@ -200,7 +207,7 @@ class Row extends React.Component {
 
                       {/* file name */}
                       <div
-                        style={{ height: 48, width: 196, position: 'relative', display: 'flex', alignItems: 'center' }}
+                        style={{ height: 48, width: 180, position: 'relative', display: 'flex', alignItems: 'center' }}
                       >
                         <div style={{ width: 24, margin: '0px 16px' }}>
                           { entry.type === 'directory' ? <AllFileIcon style={{ width: 24, height: 24, color: '#ffa93e' }} />
@@ -232,9 +239,7 @@ class Row extends React.Component {
                   const selected = select.selected.findIndex(s => s === index) > -1
                   const isOnModify = select.modify === index && !inPublicRoot
                   const hover = select.hover === index && !selected
-                  const focus = select.specified === index
                   const backgroundColor = selected ? '#f4fafe' : hover ? '#f9fcfe' : '#FFF'
-                  const borderColor = selected ? '#a3d3f8' : hover ? '#d1e9fb' : focus ? '#a3d3f8' : 'transparent'
                   // const onDropping = entry.type === 'directory' && select.rowDrop(index)
                   if (entry.type === 'addDrive') {
                     return (
@@ -250,10 +255,10 @@ class Row extends React.Component {
                     <div
                       style={{
                         position: 'relative',
-                        width: 196,
-                        height: entry.type === 'file' ? 196 : 48,
+                        width: 180,
+                        height: entry.type === 'file' ? 184 : 48,
                         marginRight: 20,
-                        marginBottom: 10,
+                        marginBottom: 16,
                         backgroundColor,
                         boxSizing: 'border-box',
                         // border: `1px solid ${borderColor}`,
@@ -276,7 +281,7 @@ class Row extends React.Component {
                           <div
                             draggable={false}
                             className="flexCenter"
-                            style={{ height: 148, width: 196, margin: 0, overflow: 'hidden' }}
+                            style={{ height: 136, width: 180, margin: 0, overflow: 'hidden' }}
                           >
                             {
                               entry.isUSB ? <PartitionIcon style={{ width: 50, height: 50 }} />
@@ -292,8 +297,8 @@ class Row extends React.Component {
                                           bgColor="#FFFFFF"
                                           digest={entry.hash}
                                           ipcRenderer={this.props.ipcRenderer}
-                                          height={148}
-                                          width={196}
+                                          height={136}
+                                          width={180}
                                         />
                                       ) : renderFileIcon(entry.name, entry.metadata, 50)
                                     )
@@ -303,7 +308,7 @@ class Row extends React.Component {
 
                       {/* file name */}
                       <div
-                        style={{ height: 48, width: 196, position: 'relative', display: 'flex', alignItems: 'center' }}
+                        style={{ height: 48, width: 180, position: 'relative', display: 'flex', alignItems: 'center' }}
                       >
                         <div style={{ width: 24, margin: '0px 16px' }}>
                           { entry.type === 'directory' ? <AllFileIcon style={{ width: 24, height: 24, color: '#ffa93e' }} />
@@ -436,7 +441,7 @@ class GridView extends React.Component {
 
   calcGridInfo (height, width, entries) {
     if (height !== this.preHeight || width !== this.preWidth || entries !== this.preEntries || !this.preData) { // singleton
-      const MAX = Math.floor((width - 0) / 216) - 1
+      const MAX = Math.floor((width - 52) / 200) - 1
       let MaxItem = 0
       let lineIndex = 0
       let lastType = 'diriectory'
@@ -471,7 +476,7 @@ class GridView extends React.Component {
       }
       /* calculate each row's heigth and their sum */
       this.mapData.forEach((list) => {
-        const tmp = 80 + !!list.first * 48 + (list.entries[0].entry.type === 'file') * 148
+        const tmp = 64 + !!list.first * 48 + (list.entries[0].entry.type === 'file') * 136
         this.allHeight.push(tmp)
         this.rowHeightSum += tmp
         this.indexHeightSum.push(this.rowHeightSum)

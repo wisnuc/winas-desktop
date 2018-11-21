@@ -5,7 +5,7 @@ import { AutoSizer } from 'react-virtualized'
 import Name from './Name'
 import ScrollBar from '../common/ScrollBar'
 import renderFileIcon from '../common/renderFileIcon'
-import { ArrowIcon, FolderIcon, PublicIcon } from '../common/Svg'
+import { BackwardIcon, FolderIcon, PublicIcon } from '../common/Svg'
 import { formatDate, formatMtime } from '../common/datetime'
 
 class Row extends React.PureComponent {
@@ -214,7 +214,6 @@ class RenderListByRow extends React.Component {
         style={{
           width: h.width,
           flexGrow: h.flexGrow,
-          justifyContent: h.flexGrow ? 'flex-start' : 'flex-end',
           display: 'flex',
           alignItems: 'center',
           cursor: this.state.type === h.title ? 'pointer' : 'default'
@@ -236,8 +235,10 @@ class RenderListByRow extends React.Component {
           { h.title }
         </div>
         <div style={{ display: 'flex', alignItems: 'center', height: '100%', marginTop: 2 }}>
-          { this.props.sortType === h.up && <ArrowIcon style={{ color: '#505259', transform: 'rotate(180deg)' }} /> }
-          { this.props.sortType === h.down && <ArrowIcon style={{ height: 30, width: 30, color: '#505259' }} /> }
+          { this.props.sortType === h.up &&
+            <BackwardIcon style={{ width: 18, height: 18, color: 'rgba(0,0,0,.27)', transform: 'rotate(-90deg)' }} /> }
+          { this.props.sortType === h.down &&
+            <BackwardIcon style={{ width: 18, height: 18, color: 'rgba(0,0,0,.27)', transform: 'rotate(90deg)' }} /> }
         </div>
       </div>
     )
@@ -276,9 +277,9 @@ class RenderListByRow extends React.Component {
           }}
         >
           { this.renderHeader({ title: i18n.__('File Name'), flexGrow: 1, up: 'nameUp', down: 'nameDown' }) }
-          { this.renderHeader({ title: i18n.__('Date Modified'), width: 80, up: 'timeUp', down: 'timeDown' }) }
-          { this.renderHeader({ title: i18n.__('Size'), width: 200, up: 'sizeUp', down: 'sizeDown' }) }
-          <div style={{ width: 32 }} />
+          { this.renderHeader({ title: i18n.__('Date Modified'), width: 232, up: 'timeUp', down: 'timeDown' }) }
+          { this.renderHeader({ title: i18n.__('Size'), width: 48, up: 'sizeUp', down: 'sizeDown' }) }
+          <div style={{ width: 8 }} />
         </div>
 
         {/* list content */}

@@ -226,7 +226,7 @@ class NavViews extends React.Component {
 
     this.openDevicePop = (e) => {
       e.preventDefault()
-      this.setState({ openDevice: true, deviceAnchorEl: e.currentTarget })
+      this.setState({ openDevice: true, deviceAnchorEl: e.currentTarget, hoverNav: false })
     }
 
     this.enterSearchMode = () => {
@@ -523,7 +523,7 @@ class NavViews extends React.Component {
   }
 
   renderNavs () {
-    const shrinked = ['pin', 'hoverNav', 'searchMode', 'openDevice'].every(v => !this.state[v])
+    const shrinked = ['pin', 'hoverNav', 'searchMode'].every(v => !this.state[v])
     const transition = 'width 225ms'
     return (
       <div
@@ -621,7 +621,7 @@ class NavViews extends React.Component {
               <div style={{ flexGrow: 1 }} />
               <div
                 onClick={this.openDevicePop}
-                style={{ height: 72, width: 224, display: 'flex', alignItems: 'center', position: 'relative' }}
+                style={{ height: 72, width: 224, display: 'flex', alignItems: 'center', position: 'relative', cursor: 'pointer' }}
               >
                 <div style={{ height: 72, width: 88 }} className="flexCenter">
                   <DeviceIcon style={{ width: 24, height: 24 }} />
