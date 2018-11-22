@@ -19,6 +19,9 @@ class PhiAPI extends RequestManager {
 
       /* save phi token */
       if ((name === 'token' || name === 'wechatToken') && !error && body) this.token = body.token
+      if ((name === 'stationList') && !error && body) {
+        this.cookie = res && res.header && res.header['set-cookie'] && res.header['set-cookie'][0]
+      }
 
       /* callback next */
       if (typeof next === 'function') next(error, body)
@@ -64,6 +67,7 @@ class PhiAPI extends RequestManager {
       .post(`${cloudAddress}/station/${deviceSN}/json`)
       .set('Content-Type', 'application/json')
       .set('Authorization', this.token)
+      .set('set-cookie', this.cookie)
       .send(data)
   }
 
@@ -108,7 +112,7 @@ class PhiAPI extends RequestManager {
             type: 'pc',
             code: args.code,
             loginType: 'web',
-            clientId: args.clientId || 'qwert',
+            clientId: args.clientId || 'qwert'
           })
         break
 
