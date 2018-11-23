@@ -19,12 +19,17 @@ class PhiAPI extends RequestManager {
 
       /* save phi token */
       if ((name === 'token' || name === 'wechatToken') && !error && body) this.token = body.token
-      if ((name === 'stationList') && !error && body) {
+      const isGetList = (name === 'stationList') && !error && body
+      if (isGetList) {
         this.cookie = res && res.header && res.header['set-cookie'] && res.header['set-cookie'][0]
       }
 
+      if (typeof next !== 'function') return
+
       /* callback next */
-      if (typeof next === 'function') next(error, body)
+      if (isGetList) {
+        next(error, body, this.cookie)
+      } else next(error, body)
     }
   }
 

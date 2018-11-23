@@ -18,8 +18,8 @@ class Login extends React.Component {
       status: 'wisnucLogin'
     }
 
-    this.wisnucLoginSuccess = ({ list, phonenumber, winasUserId, phi }) => {
-      const dev = list.find(l => !!l.online)
+    this.wisnucLoginSuccess = ({ lastSN, list, phonenumber, winasUserId, phi }) => {
+      const dev = list.find(l => l.sn === lastSN) || (list && list[0])
       this.setState({ dev, list, status: 'connectDev' })
       this.props.wisnucLogin({ phonenumber, winasUserId, phi, name: phonenumber }, list)
     }

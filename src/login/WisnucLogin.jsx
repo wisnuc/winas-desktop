@@ -98,7 +98,8 @@ class WisnucLogin extends React.Component {
                 })
                 this.setState({ loading: false })
                 const list = r.ownStations
-                this.props.onSuccess({ list, phonenumber: this.state.pn, winasUserId: res.id, phi })
+                const lastSN = r.lastUseDeviceSn
+                this.props.onSuccess({ lastSN, list, phonenumber: this.state.pn, winasUserId: res.id, phi })
               }
             })
           }
@@ -117,7 +118,8 @@ class WisnucLogin extends React.Component {
         } else {
           this.setState({ loading: false })
           const list = r.ownStations
-          this.props.onSuccess({ list, phonenumber: this.state.pn, winasUserId: this.phi.winasUserId, phi: this.phi })
+          const lastSN = r.lastUseDeviceSn
+          this.props.onSuccess({ lastSN, list, phonenumber: this.state.pn, winasUserId: this.phi.winasUserId, phi: this.phi })
         }
       })
     }
