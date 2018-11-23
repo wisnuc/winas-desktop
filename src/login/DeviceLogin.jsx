@@ -14,28 +14,25 @@ class DeviceLogin extends React.Component {
 
     this.state = {
       failed: false,
-      status: 'logging',
-      view: 'connecting'
+      status: 'connecting'
     }
 
     this.initDevice = () => {
-      const { list } = this.props
+      const { cdev, list } = this.props
       console.log('this.onSuccess', list)
       if (!list || !list.length) {
         this.setState({ status: 'noDevice' })
+      } else if (!cdev) {
+        this.setState({ status: 'error' })
       } else {
-        const cdev = list.find(l => !!l.online)
-        if (!cdev) {
-          this.setState({ status: 'error' })
-        } else {
-          const dev = Object.assign(
-            { address: cdev.LANIP, domain: 'phiToLoacl', deviceSN: cdev.sn, stationName: 'test station' },
-            cdev
-          )
-          this.device = new DeviceAPI(dev)
-          this.device.on('updated', this.onUpdate)
-          this.device.start()
-        }
+        const dev = Object.assign(
+          { address: cdev.LANIP, domain: 'phiToLoacl', deviceSN: cdev.sn, stationName: 'test station' },
+          cdev
+        )
+        this.device = new DeviceAPI(dev)
+        this.device.on('updated', this.onUpdate)
+        this.device.start()
+        this.setState({ status: 'connecting' })
       }
     }
 
@@ -155,11 +152,11 @@ class DeviceLogin extends React.Component {
   }
 
   componentDidMount () {
-    if (this.props.status === 'deviceList') this.initDevice()
+    if (this.props.status === 'connectDev') this.initDevice()
   }
 
   componentDidUpdate (prevProps, prevState) {
-    if (prevProps && ['wisnucLogin', 'wechatLogin'].includes(prevProps.status) && this.props && this.props.status === 'deviceList') {
+    if (prevProps && prevProps.status !== 'connectDev' && this.props && this.props.status === 'connectDev') {
       this.initDevice()
     }
   }
@@ -311,7 +308,7 @@ class DeviceLogin extends React.Component {
 
   render () {
     const isFailed = this.state.status === 'error'
-    const isLogging = this.state.status === 'logging'
+    const isLogging = this.state.status === 'connecting'
     const isNoDevice = this.state.status === 'noDevice'
     return (
       <div style={{ width: '100%', zIndex: 100, height: '100%', position: 'relative' }} >
@@ -329,7 +326,7 @@ class DeviceLogin extends React.Component {
               <FlatButton
                 primary
                 label={i18n.__('Change Device')}
-                onClick={() => this.setState({ view: 'list' })}
+                onClick={this.props.changeDevice}
               />
             </div>
           }

@@ -3,6 +3,7 @@ import React from 'react'
 import WisnucLogin from './WisnucLogin'
 import DeviceLogin from './DeviceLogin'
 import WeChatLogin from './WeChatLogin'
+import ChangeDevice from './ChangeDevice'
 
 import WindowAction from '../common/WindowAction'
 
@@ -11,20 +12,24 @@ class Login extends React.Component {
     super(props)
     this.state = {
       list: [],
+      dev: null,
       hello: true,
       loading: true,
       status: 'wisnucLogin'
     }
 
     this.wisnucLoginSuccess = ({ list, phonenumber, winasUserId, phi }) => {
-      this.setState({ list, status: 'deviceList' })
-      this.props.wisnucLogin({ phonenumber, winasUserId, phi, name: phonenumber })
+      const dev = list.find(l => !!l.online)
+      this.setState({ dev, list, status: 'connectDev' })
+      this.props.wisnucLogin({ phonenumber, winasUserId, phi, name: phonenumber }, list)
     }
   }
 
   componentDidMount () {
     document.getElementById('start-bg').style.display = 'none'
     setTimeout(() => this.setState({ hello: false }), 300)
+    /* jump to some status */
+    if (this.props.jump) this.setState(this.props.jump)
   }
 
   /* make sure log out phi account success */
@@ -34,16 +39,19 @@ class Login extends React.Component {
 
   render () {
     const baseStyle = { width: '100%', zIndex: 100, height: '100%', position: 'absolute', transition: 'all 450ms' }
-    let [wisnucL, deviceL, wechatL] = [0, 0, 0]
+    let [wisnucL, deviceL, wechatL, changeDevL] = [0, 0, 0, 0]
     switch (this.state.status) {
       case 'wisnucLogin':
-        [wisnucL, deviceL, wechatL] = [0, 450, 450]
+        [wisnucL, deviceL, wechatL, changeDevL] = [0, 450, 450, 450]
         break
-      case 'deviceList':
-        [wisnucL, deviceL, wechatL] = [-450, 0, -450]
+      case 'connectDev':
+        [wisnucL, deviceL, wechatL, changeDevL] = [-450, 0, -450, 450]
+        break
+      case 'changeDevice':
+        [wisnucL, deviceL, wechatL, changeDevL] = [-450, -450, -450, 0]
         break
       case 'wechatLogin':
-        [wisnucL, deviceL, wechatL] = [-450, 450, 0]
+        [wisnucL, deviceL, wechatL, changeDevL] = [-450, 450, 0, 450]
         break
       default:
         break
@@ -87,9 +95,23 @@ class Login extends React.Component {
             {
               <DeviceLogin
                 {...this.props}
+                cdev={this.state.dev}
                 list={this.state.list}
                 status={this.state.status}
+                changeDevice={() => this.setState({ status: 'changeDevice' })}
                 backToLogin={() => this.setState({ status: 'wisnucLogin' })}
+              />
+            }
+          </div>
+          <div style={Object.assign({ left: changeDevL }, baseStyle)} >
+            {
+              this.state.status === 'changeDevice' &&
+              <ChangeDevice
+                {...this.props}
+                list={this.state.list}
+                status={this.state.status}
+                slDevice={dev => this.setState({ dev, status: 'connectDev' })}
+                back={() => this.setState({ status: 'connectDev' })}
               />
             }
           </div>

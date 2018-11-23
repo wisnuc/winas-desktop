@@ -2,6 +2,7 @@ import i18n from 'i18n'
 import React from 'react'
 import prettysize from 'prettysize'
 import DeviceAPI from '../common/device'
+import { DeviceIcon } from '../common/Svg'
 
 class Device extends React.Component {
   constructor (props) {
@@ -21,25 +22,18 @@ class Device extends React.Component {
   }
 
   componentDidMount () {
-    /* cloud dev or mdns dev */
-    const { mdev, cdev } = this.props
-    if (cdev) {
-      const dev = Object.assign(
-        { address: cdev.localIp, domain: 'phiToLoacl', deviceSN: cdev.deviceSN, stationName: cdev.bindingName },
-        cdev
-      )
-      if (cdev.onlineStatus !== 'online') {
-        this.onUpdate(null, { mdev: dev })
-      } else {
-        this.device = new DeviceAPI(dev)
-        this.device.on('updated', this.onUpdate)
-        this.device.start()
-      }
-    } else if (mdev) {
-      this.device = new DeviceAPI(mdev)
+    const { cdev } = this.props
+    const dev = Object.assign(
+      { address: cdev.LANIP, domain: 'cloudToLocal', deviceSN: cdev.sn, stationName: cdev.name },
+      cdev
+    )
+    if (!cdev.online) {
+      this.onUpdate(null, { mdev: dev })
+    } else {
+      this.device = new DeviceAPI(dev)
       this.device.on('updated', this.onUpdate)
       this.device.start()
-    } else console.error('Device Error: No mdev or cdev')
+    }
   }
 
   componentWillUnmount () {
@@ -154,111 +148,56 @@ class Device extends React.Component {
   }
 
   render () {
-    const status = this.systemStatus()
-    const isEnabled = this.isEnabled()
-
-    const stationName = this.getStationName()
-    const address = (this.state.dev && this.state.dev.mdev && this.state.dev.mdev.address) || '--'
-
-    let devStorage = '--'
-
+    const isFailed = this.state.status === 'error'
+    let [total, used, percent] = ['', '', '', 0]
     try {
-      const space = this.isCurrent() ? this.props.selectedDevice.space.data : this.state.dev.space.data
-      const { used, available } = space
-      devStorage = i18n.__('Storage Usage %s %s', prettysize(used * 1024), prettysize((available + used) * 1024))
+      const space = this.device.state.space.data
+      total = prettysize(space.total * 1024)
+      used = prettysize(space.used * 1024)
+      percent = space.used / space.total
     } catch (e) {
-      devStorage = '--'
+      // console.error('parse error')
     }
-
-    const data = [
-      { des: i18n.__('Device Storage'), val: devStorage },
-      { des: i18n.__('IP Address'), val: address }
-    ]
-
+    const info = this.device && this.device.state && this.device.state.info && this.device.state.info.data
+    const sn = info && info.device && info.device.sn && info.device.sn.slice(-4)
+    const deviceName = sn ? `Winas-${sn}` : 'Winas'
     return (
-      <div
-        style={{
-          width: 210,
-          cursor: isEnabled && !this.isCurrent() ? 'pointer' : 'not-allowed',
-          padding: '0 20px',
-          margin: '30px 7px 0 7px'
-        }}
-        className="paper"
-        onClick={() => isEnabled && !this.isCurrent() && this.select()}
-      >
-        <div style={{ height: 20, width: '100%', paddingTop: 20, display: 'flex', alignItems: 'center' }}>
-          <div
-            style={{ width: 170, fontSize: 16, color: '#525a60' }}
-            className="text"
-          >
-            { stationName }
+      <div style={{ height: 80, display: 'flex', alignItems: 'center', width: '100%', position: 'relative', lineHeight: 'normal' }}>
+        <div style={{ width: 56, marginLeft: 8, display: 'flex', alignItems: 'center' }}>
+          <DeviceIcon style={{ width: 24, height: 24 }} />
+        </div>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{ opacity: 0.87, fontWeight: 500 }}> { deviceName } </div>
+            <div style={{ flexGrow: 1 }} />
+            <div style={{ fontSize: 12, color: isFailed ? '#f44336' : 'rgba(0,0,0,.38)', height: 20 }} className="flexCenter">
+              { this.renderStatus() }
+            </div>
           </div>
-          {
-            !!this.onlineStatus() &&
-              <div
-                style={{
-                  width: 40,
-                  height: 20,
-                  fontSize: 12,
-                  color: '#FFF',
-                  borderRadius: 20,
-                  backgroundColor: this.onlineStatus() === i18n.__('Offline Mode') ? '#666666' : '#31a0f5'
-                }}
-                className="flexCenter"
-              >
-                { this.onlineStatus() }
-              </div>
-          }
-        </div>
-        <div style={{ height: 20, width: '100%', display: 'flex', alignItems: 'center' }}>
-          {
-            !!this.renderIsOwner() &&
-            <div style={{ fontSize: 14, color: '#31a0f5' }}>
-              { this.renderIsOwner() }
-            </div>
-          }
-          {
-            !!this.renderIsOwner() && !!this.renderStatus() &&
-              <div style={{ margin: 5, width: 1, backgroundColor: '#d3d3d3', height: 10 }} />
-          }
-          {
-            !!this.renderStatus() &&
-              <div
-                style={{
-                  fontSize: 14,
-                  color: ['noBoundUser', 'ready'].includes(status) ||
-                  (this.renderStatus() === i18n.__('Current Logged Device')) ? '#44c468' : '#fa5353'
-                }}
-              >
-                { this.renderStatus() }
-              </div>
-          }
-        </div>
-        <div style={{ height: 230 }} className="flexCenter">
-          <img
+          <div
             style={{
-              width: 51,
-              height: 104,
-              filter: !isEnabled ? 'grayscale(100%)' : status === 'noBoundUser' ? 'hue-rotate(290deg)' : ''
+              height: 10,
+              width: 240,
+              borderRadius: 4,
+              backgroundColor: 'rgba(0,0,0,.08)',
+              position: 'relative',
+              margin: '8px 0px'
             }}
-            src="./assets/images/ic-n-2.png"
-            alt=""
-          />
+          >
+            <div
+              style={{
+                position: 'absolute',
+                height: 10,
+                width: percent * 240 || 0,
+                borderRadius: 4,
+                backgroundImage: 'linear-gradient(to right, #006e7b, #009688)'
+              }}
+            />
+          </div>
+          <div style={{ opacity: 0.54, color: 'rgba(0,0,0,.54)', fontSize: 12, fontWeight: 500 }}>
+            { (used && total) ? `${used} / ${total}` : '-- / --' }
+          </div>
         </div>
-        {
-          data.map(({ des, val }) => (
-            <div style={{ height: 40, display: 'flex', alignItems: 'center' }} key={des}>
-              <div style={{ color: '#525a60' }}>
-                { des }
-              </div>
-              <div style={{ flexGrow: 1 }} />
-              <div style={{ color: '#888a8c' }}>
-                { val }
-              </div>
-            </div>
-          ))
-        }
-        <div style={{ height: 10 }} />
       </div>
     )
   }

@@ -67,7 +67,7 @@ class PhiAPI extends RequestManager {
       .post(`${cloudAddress}/station/${deviceSN}/json`)
       .set('Content-Type', 'application/json')
       .set('Authorization', this.token)
-      .set('set-cookie', this.cookie)
+      .set('cookie', this.cookie)
       .send(data)
   }
 

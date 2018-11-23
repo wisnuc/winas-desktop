@@ -59,8 +59,8 @@ class Winas extends React.Component {
     this.setState({ forceUpdate: false })
   }
 
-  wisnucLogin (user) {
-    this.setState({ account: user })
+  wisnucLogin (user, list) {
+    this.setState({ account: user, list })
     /* save phi login data */
     if (user && user.phi) setTimeout(() => ipcRenderer.send('SETCONFIG', { phi: user.phi }), 450)
   }
@@ -86,8 +86,7 @@ class Winas extends React.Component {
     this.setState({
       view: 'login',
       selectedDevice: null,
-      account: this.state.account && this.state.account.lan ? { lan: true, name: i18n.__('Account Offline') } : this.state.account,
-      jump: { status: 'deviceSelect', type: this.state.account && this.state.account.lan ? 'LANTOLOGIN' : 'BOUNDLIST' }
+      jump: { status: 'changeDevice', list: this.state.list }
     })
   }
 
