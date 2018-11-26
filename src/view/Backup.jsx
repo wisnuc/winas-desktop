@@ -1,13 +1,45 @@
 import i18n from 'i18n'
 import React from 'react'
+import { remote, ipcRenderer } from 'electron'
 import Base from './Base'
-import { LIButton } from '../common/Buttons'
+import { LIButton, RSButton } from '../common/Buttons'
 import { BackupIcon, SettingsIcon, InfoIcon, PCIcon, MobileIcon } from '../common/Svg'
 
 class Backup extends Base {
   constructor (ctx) {
     super(ctx)
     this.title = () => i18n.__('Backup')
+
+    this.state = {
+      drives: null,
+      localPath: ''
+    }
+
+    this.openDialog = () => {
+      remote.dialog.showOpenDialog({ properties: ['openDirectory'] }, (filePaths) => {
+        if (!filePaths || !filePaths.length) return
+        const localPath = filePaths[0]
+        const id = 'test123'
+        ipcRenderer.send('BACKUP', { id, localPath })
+        this.setState({ localPath })
+      })
+    }
+
+    ipcRenderer.on('BACKUP_STAT', (event, data) => {
+      console.log('BACKUP_STAT', data)
+    })
+  }
+
+  willReceiveProps (nextProps) {
+    this.handleProps(nextProps.apis, ['drives'])
+  }
+
+  navEnter () {
+    this.refresh()
+  }
+
+  navLeave () {
+    this.setState({ drives: null })
   }
 
   navGroup () {
@@ -100,11 +132,27 @@ class Backup extends Base {
           </div>
           <div style={{ flexGrow: 1 }} />
           <div style={{ marginRight: 24, color: '#009688' }}>
+            {/*
             <div style={{ height: 16 }}>
               2018-10-17 15:34
             </div>
             <div style={{ height: 16 }}>
               备份完成
+            </div>
+            */}
+            <div style={{ display: 'flex', alignItems: 'center', height: 40 }}>
+              <input
+                value={this.state.localPath || ''}
+                onChange={() => {}}
+                style={{ width: 300, color: '#444' }}
+              />
+              <RSButton
+                alt
+                label={i18n.__('Browse')}
+                onClick={this.openDialog}
+                style={{ height: 30, padding: '0 24px' }}
+                labelStyle={{ height: 30 }}
+              />
             </div>
           </div>
         </div>

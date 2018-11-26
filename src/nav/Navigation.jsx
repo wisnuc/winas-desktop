@@ -375,7 +375,7 @@ class NavViews extends React.Component {
           <div style={{ backgroundColor: '#e8eaed', height: 1, width: '100%', marginTop: 8, marginBottom: 8 }} />
 
           {/* File Content */}
-          <div style={{ height: 'calc(100% - 120px)', width: '100%' }} id="content-container">
+          <div style={{ height: 'calc(100% - 88px)', width: '100%' }} id="content-container">
             { this.renderView() }
           </div>
         </div>

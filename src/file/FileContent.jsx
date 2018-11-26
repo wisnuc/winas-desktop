@@ -258,7 +258,6 @@ class FileContent extends React.Component {
       const width = parseInt(s.width, 10)
       const length = this.props.entries.length
 
-      console.log('allHeight', allHeight)
       const array = Array
         .from({ length }, (v, i) => i)
         .filter((v, i) => {
