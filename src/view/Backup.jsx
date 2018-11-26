@@ -20,8 +20,13 @@ class Backup extends Base {
         if (!filePaths || !filePaths.length) return
         const localPath = filePaths[0]
         const id = 'test123'
-        ipcRenderer.send('BACKUP', { id, localPath })
-        this.setState({ localPath })
+        const apis = this.ctx.props && this.ctx.props.apis
+        const drives = apis && apis.drives && apis.drives.data
+        const backupDrive = drives.find(d => d.type === 'backup')
+        if (backupDrive) {
+          ipcRenderer.send('BACKUP', { id, localPath, dirUUID: backupDrive.uuid, driveUUID: backupDrive.uuid })
+          this.setState({ localPath })
+        }
       })
     }
 
