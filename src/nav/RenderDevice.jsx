@@ -73,8 +73,15 @@ class Disk extends React.PureComponent {
           }}
         >
           {
-            data.map(v => (
-              <div style={{ backgroundColor: v.color, width: v.progress * 200, height: 16, marginRight: 3 }} key={v.color} />
+            data.map(v => !!v.progress && (
+              <div
+                style={{
+                  backgroundColor: v.color,
+                  width: Math.max(Math.ceil(v.progress * 200), 3),
+                  height: 16,
+                  marginRight: Math.min(Math.ceil(v.progress * 200), 3)
+                }}
+                key={v.color} />
             ))
           }
         </div>
