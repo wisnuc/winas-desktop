@@ -6,11 +6,10 @@ import { Popover, Menu, MenuItem, IconButton } from 'material-ui'
 
 import Name from './Name'
 import Thumb from './Thumb'
-import AddDrive from './AddDrive'
 import HoverTip from './HoverTip'
 import ScrollBar from '../common/ScrollBar'
 import renderFileIcon from '../common/renderFileIcon'
-import { AllFileIcon, PublicIcon, PartitionIcon, ArrowDownIcon, CheckedIcon } from '../common/Svg'
+import { AllFileIcon, ArrowDownIcon, CheckedIcon } from '../common/Svg'
 import { formatMtime } from '../common/datetime'
 import FlatButton from '../common/FlatButton'
 
@@ -71,22 +70,16 @@ class Row extends React.Component {
   }
 
   render () {
-    const { select, list, isScrolling, rowSum, inPublicRoot, sortType, changeSortType } = this.props
-
+    const { select, list, isScrolling, rowSum, inPublicRoot, sortType, changeSortType, size } = this.props
     const h = this.headers.find(header => header.title === this.state.type) || this.headers[0]
-
     return (
-      <div style={{ height: '100%', width: '100%', marginLeft: 10 }} >
+      <div style={{ height: '100%', width: '100%' }} >
         {/* header */}
         {
           list.first &&
-            <div style={{ height: 48, display: 'flex', alignItems: 'center ', marginBottom: 8 }}>
+            <div style={{ height: 48, display: 'flex', alignItems: 'center ' }}>
               <div style={{ fontSize: 14, color: 'rgba(0,0,0,0.54)', width: 64 }}>
-                {
-                  list.entries[0].entry.type === 'file'
-                    ? i18n.__('File') : list.entries[0].entry.type === 'public'
-                      ? i18n.__('Public Drive') : i18n.__('Directory')
-                }
+                { list.entries[0].entry.type === 'file' ? i18n.__('File') : i18n.__('Directory') }
               </div>
               <div style={{ flexGrow: 1 }} />
               {
@@ -160,30 +153,18 @@ class Row extends React.Component {
                 list.entries.map((item) => {
                   const { index, entry } = item
                   const backgroundColor = '#FFF'
-                  const borderColor = 'transparent'
-                  if (entry.type === 'addDrive') {
-                    return (
-                      <AddDrive
-                        {...this.props}
-                        item={item}
-                        key={index}
-                        onClick={this.props.openNewDrive}
-                      />
-                    )
-                  }
                   return (
                     <div
                       style={{
                         position: 'relative',
-                        width: 180,
-                        height: entry.type === 'file' ? 184 : 48,
-                        marginRight: 20,
+                        width: size,
+                        height: entry.type === 'file' ? size : 48,
+                        marginRight: 16,
                         marginBottom: 16,
                         backgroundColor,
                         overflow: 'hidden',
                         borderRadius: 6,
                         boxSizing: 'border-box',
-                        border: `1px solid ${borderColor}`,
                         boxShadow: 'rgba(0, 0, 0, 0.118) 0px 1px 6px, rgba(0, 0, 0, 0.118) 0px 1px 4px'
                       }}
                       role="presentation"
@@ -196,8 +177,8 @@ class Row extends React.Component {
                             draggable={false}
                             className="flexCenter"
                             style={{
-                              height: 136,
-                              width: 180,
+                              height: size - 48,
+                              width: size,
                               margin: 0,
                               overflow: 'hidden',
                               backgroundColor: '#f0f0f0'
@@ -206,22 +187,12 @@ class Row extends React.Component {
                       }
 
                       {/* file name */}
-                      <div
-                        style={{ height: 48, width: 180, position: 'relative', display: 'flex', alignItems: 'center' }}
-                      >
+                      <div style={{ height: 48, width: size, position: 'relative', display: 'flex', alignItems: 'center' }} >
                         <div style={{ width: 24, margin: '0px 16px' }}>
                           { entry.type === 'directory' ? <AllFileIcon style={{ width: 24, height: 24, color: '#ffa93e' }} />
                             : renderFileIcon(entry.name, entry.metadata, 24) }
                         </div>
-                        <div
-                          style={{
-                            overflow: 'hidden',
-                            whiteSpace: 'nowrap',
-                            textOverflow: 'ellipsis',
-                            color: '#525a60',
-                            letterSpacing: 1.4
-                          }}
-                        >
+                        <div style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', color: '#525a60' }} >
                           { entry.name }
                         </div>
                         <div style={{ width: 8 }} />
@@ -240,29 +211,17 @@ class Row extends React.Component {
                   const isOnModify = select.modify === index && !inPublicRoot
                   const hover = select.hover === index && !selected
                   const backgroundColor = selected ? '#f4fafe' : hover ? '#f9fcfe' : '#FFF'
-                  // const onDropping = entry.type === 'directory' && select.rowDrop(index)
-                  if (entry.type === 'addDrive') {
-                    return (
-                      <AddDrive
-                        {...this.props}
-                        item={item}
-                        key={index}
-                        onClick={this.props.openNewDrive}
-                      />
-                    )
-                  }
                   return (
                     <div
                       style={{
                         position: 'relative',
-                        width: 180,
-                        height: entry.type === 'file' ? 184 : 48,
-                        marginRight: 20,
+                        width: size,
+                        height: entry.type === 'file' ? size : 48,
+                        marginRight: 16,
                         marginBottom: 16,
                         backgroundColor,
                         boxSizing: 'border-box',
-                        // border: `1px solid ${borderColor}`,
-                        boxShadow: selected ? 'rgba(0, 0, 0, 0.19) 0px 10px 30px, rgba(0, 0, 0, 0.227) 0px 6px 10px'
+                        boxShadow: selected ? 'rgba(0, 0, 0, 0.19) 0px 10px 16px, rgba(0, 0, 0, 0.227) 0px 6px 10px'
                           : 'rgba(0, 0, 0, 0.118) 0px 1px 6px, rgba(0, 0, 0, 0.118) 0px 1px 4px'
                       }}
                       role="presentation"
@@ -281,34 +240,32 @@ class Row extends React.Component {
                           <div
                             draggable={false}
                             className="flexCenter"
-                            style={{ height: 136, width: 180, margin: 0, overflow: 'hidden' }}
+                            style={{ height: size - 48, width: size, margin: 0, overflow: 'hidden' }}
                           >
                             {
-                              entry.isUSB ? <PartitionIcon style={{ width: 50, height: 50 }} />
-                                : entry.type === 'public' ? <PublicIcon style={{ width: 50, height: 50, color: '#ffa93e' }} />
-                                  : entry.type === 'directory'
-                                    ? <AllFileIcon style={{ width: 50, height: 50, color: '#ffa93e' }} />
-                                    : ((rowSum < 500 || !isScrolling) && entry.hash && hasThumb(entry.metadata)
-                                      ? (
-                                        <Thumb
-                                          full
-                                          name={entry.name}
-                                          metadata={entry.metadata}
-                                          bgColor="#FFFFFF"
-                                          digest={entry.hash}
-                                          ipcRenderer={this.props.ipcRenderer}
-                                          height={136}
-                                          width={180}
-                                        />
-                                      ) : renderFileIcon(entry.name, entry.metadata, 50)
-                                    )
+                              entry.type === 'directory'
+                                ? <AllFileIcon style={{ width: 48, height: 48, color: '#ffa93e' }} />
+                                : ((rowSum < 500 || !isScrolling) && entry.hash && hasThumb(entry.metadata)
+                                  ? (
+                                    <Thumb
+                                      full={false}
+                                      name={entry.name}
+                                      metadata={entry.metadata}
+                                      bgColor="#FFFFFF"
+                                      digest={entry.hash}
+                                      ipcRenderer={this.props.ipcRenderer}
+                                      height={size - 48}
+                                      width={size}
+                                    />
+                                  ) : renderFileIcon(entry.name, entry.metadata, 48)
+                                )
                             }
                           </div>
                       }
 
                       {/* file name */}
                       <div
-                        style={{ height: 48, width: 180, position: 'relative', display: 'flex', alignItems: 'center' }}
+                        style={{ height: 48, width: size, position: 'relative', display: 'flex', alignItems: 'center' }}
                       >
                         <div style={{ width: 24, margin: '0px 16px' }}>
                           { entry.type === 'directory' ? <AllFileIcon style={{ width: 24, height: 24, color: '#ffa93e' }} />
@@ -354,7 +311,7 @@ class GridView extends React.Component {
         allHeight: this.allHeight, // const rowHeight = ({ index }) => allHeight[index]
         indexHeightSum: this.indexHeightSum,
         scrollTop: this.getScrollToPosition(),
-        cellWidth: 144
+        cellWidth: this.size
       }
 
       this.props.setGridData(this.gridData)
@@ -441,7 +398,8 @@ class GridView extends React.Component {
 
   calcGridInfo (height, width, entries) {
     if (height !== this.preHeight || width !== this.preWidth || entries !== this.preEntries || !this.preData) { // singleton
-      const MAX = Math.floor((width - 52) / 200) - 1
+      const MAX = Math.floor((width - (24 - 16)) / (180 + 16)) // Min Size: 180, margin-between: 16, margin-right: 24
+      const size = Math.floor((width - (24 - 16)) / MAX - 16)
       let MaxItem = 0
       let lineIndex = 0
       let lastType = 'diriectory'
@@ -461,7 +419,7 @@ class GridView extends React.Component {
             entries: [{ entry, index }]
           })
 
-          MaxItem = MAX
+          MaxItem = MAX - 1
           lastType = entry.type
           lineIndex += 1
         } else {
@@ -476,7 +434,7 @@ class GridView extends React.Component {
       }
       /* calculate each row's heigth and their sum */
       this.mapData.forEach((list) => {
-        const tmp = 64 + !!list.first * 48 + (list.entries[0].entry.type === 'file') * 136
+        const tmp = 64 + !!list.first * 48 + (list.entries[0].entry.type === 'file') * (size + 16 - 64)
         this.allHeight.push(tmp)
         this.rowHeightSum += tmp
         this.indexHeightSum.push(this.rowHeightSum)
@@ -493,6 +451,7 @@ class GridView extends React.Component {
       this.preWidth = width
       this.preEntries = entries
       this.preData = {
+        size,
         mapData: this.mapData,
         allHeight: this.allHeight,
         rowHeightSum: this.rowHeightSum,
@@ -513,14 +472,15 @@ class GridView extends React.Component {
         onMouseMove={this.onMouseMove}
         onMouseDown={e => this.props.onRowClick(e, -1) || this.props.selectStart(e)}
       >
-        <AutoSizer key={this.props.entries && this.props.entries[0] && this.props.entries[0].uuid}>
+        <AutoSizer>
           {({ height, width }) => {
             const gridInfo = this.calcGridInfo(height, width, this.props.entries)
-            const { mapData, allHeight, rowHeightSum } = gridInfo
+            const { mapData, allHeight, rowHeightSum, size } = gridInfo
 
             /* To get row index of scrollToRow */
             this.mapData = mapData
             this.allHeight = allHeight
+            this.size = size
 
             const estimatedRowSize = rowHeightSum / allHeight.length
             const rowHeight = ({ index }) => allHeight[index]
@@ -529,6 +489,7 @@ class GridView extends React.Component {
               <div key={key} style={style} >
                 <Row
                   {...this.props}
+                  size={size}
                   rowSum={mapData.length}
                   isScrolling={isScrolling}
                   list={mapData[index]}

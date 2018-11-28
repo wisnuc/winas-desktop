@@ -30,6 +30,19 @@ class ScrollBar extends React.PureComponent {
       this.onHover()
     }
 
+    this.timer = null
+    this.onResize = (e) => {
+      if (this.refList) {
+        e.preventDefault()
+        e.stopPropagation()
+        clearTimeout(this.timer)
+        this.timer = setTimeout(() => {
+          this.refList.recomputeRowHeights()
+          this.timer = null
+        }, 10)
+      }
+    }
+
     this.onScroll = (top, scrollTop) => {
       this.scrollTop = scrollTop
       if (!this.refBar) return
@@ -50,6 +63,7 @@ class ScrollBar extends React.PureComponent {
   componentDidMount () {
     document.addEventListener('mousemove', this.onMouseMove)
     document.addEventListener('mouseup', this.onMouseUp)
+    window.addEventListener('resize', this.onResize)
   }
 
   componentWillReceiveProps (nextProps) {
@@ -65,6 +79,7 @@ class ScrollBar extends React.PureComponent {
     clearTimeout(this.timer)
     document.removeEventListener('mousemove', this.onMouseMove)
     document.removeEventListener('mouseup', this.onMouseUp)
+    window.removeEventListener('resize', this.onResize)
   }
 
   scrollToPosition (scrollTop) {
