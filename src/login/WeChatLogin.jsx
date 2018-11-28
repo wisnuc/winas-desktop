@@ -83,11 +83,12 @@ class WeChatLogin extends React.Component {
           if (accounts.every(user => user.pn !== username)) {
             accounts.push({ pn: username, avatarUrl, nickName })
           }
-          this.props.phi.req('stationList', null, (e, r) => {
+          this.props.phi.req('stationList', null, (e, r, cookie) => {
             if (e || !r) {
               this.setState({ error: i18n.__('WeChat Get Station List Error Text') })
             } else {
               const user = {
+                cookie,
                 accounts,
                 pn: username,
                 winasUserId: id,

@@ -10,7 +10,7 @@ const cloudAddress = 'http://test.nodetribe.com/c/v1'
 
 /* this module encapsulate most fruitmix apis */
 class Fruitmix extends EventEmitter {
-  constructor (address, userUUID, token, isCloud, deviceSN) {
+  constructor (address, userUUID, token, isCloud, deviceSN, cookie) {
     super()
 
     this.address = address
@@ -18,6 +18,7 @@ class Fruitmix extends EventEmitter {
     this.token = token // local token to access station resource
     this.isCloud = isCloud
     this.deviceSN = deviceSN
+    this.cookie = cookie
 
     this.update = (name, data, next) => { // update state, not emit
       this[name] = data
@@ -53,11 +54,11 @@ class Fruitmix extends EventEmitter {
         params: type === 'GET' ? (qsOrData || {}) : {},
         body: type === 'GET' ? {} : (qsOrData || {})
       }
-      if (!isFormdata) return request.post(url).set('Authorization', this.token).send(data)
+      if (!isFormdata) return request.post(url).set('Authorization', this.token).set('cookie', this.cookie).send(data)
 
       /* mkdir, delete file */
       const qs = querystring.stringify({ data: JSON.stringify(data) })
-      return request.post(`${url2}?${qs}`).set('Authorization', token)
+      return request.post(`${url2}?${qs}`).set('Authorization', token).set('cookie', this.cookie)
     }
   }
 

@@ -800,9 +800,9 @@ class Navigation extends React.Component {
     const { mdev, token } = selectedDevice
     if (!token.isFulfilled()) throw new Error('token not fulfilled')
 
-    const userUUID = token.ctx.uuid
+    const { uuid, cookie } = token.ctx // userUUID, cookie for cloud
     const { address, deviceSN } = mdev
-    this.fruitmix = new Fruitmix(address, userUUID, token.data.token, isCloud, deviceSN)
+    this.fruitmix = new Fruitmix(address, uuid, token.data.token, isCloud, deviceSN, cookie)
     this.fruitmix.on('updated', (prev, next) => this.setState({ apis: next }))
 
     this.state = { apis: null }

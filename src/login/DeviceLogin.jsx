@@ -85,6 +85,7 @@ class DeviceLogin extends React.Component {
     this.getLANTokenAsync = async () => {
       const { account } = this.props
       const { dev } = this.state
+      const { cookie }  = this.props.phi
       const args = { deviceSN: dev.mdev.deviceSN }
       const [tokenRes, users] = await Promise.all([
         this.props.phi.reqAsync('LANToken', args),
@@ -95,6 +96,7 @@ class DeviceLogin extends React.Component {
       const user = Array.isArray(users) && users.find(u => u.winasUserId === account.winasUserId)
 
       if (!token || !user) throw Error('get LANToken or user error')
+      Object.assign(user, { cookie })
 
       return ({ dev, user, token })
     }
@@ -116,7 +118,7 @@ class DeviceLogin extends React.Component {
       const { account } = this.props
       const { dev } = this.state
       const args = { deviceSN: dev.mdev.deviceSN }
-      const token = this.props.phi.token
+      const { token, cookie }  = this.props.phi
       const [boot, users] = await Promise.all([
         this.props.phi.reqAsync('boot', args),
         this.props.phi.reqAsync('localUsers', args),
@@ -126,6 +128,7 @@ class DeviceLogin extends React.Component {
 
       if (!token || !user || !boot) throw Error('get LANToken or user error')
       if (boot.state !== 'STARTED') throw Error('station not started')
+      Object.assign(user, { cookie })
       return ({ dev, user, token, boot })
     }
 

@@ -85,11 +85,12 @@ class WisnucLogin extends React.Component {
             else if (msg) this.setState({ pwdError: msg, loading: false })
             else this.setState({ failed: true, loading: false, pwdError: i18n.__('Login Failed') })
           } else {
-            this.props.phi.req('stationList', null, (e, r) => {
+            this.props.phi.req('stationList', null, (e, r, cookie) => {
               if (e || !r) {
                 this.setState({ failed: true, loading: false })
               } else {
                 const phi = Object.assign({}, res, {
+                  cookie,
                   pn: this.state.pn,
                   winasUserId: res.id,
                   accounts: this.state.accounts,
@@ -111,11 +112,12 @@ class WisnucLogin extends React.Component {
       this.setState({ loading: true })
       /* assign token to PhiAPI */
       Object.assign(this.props.phi, { token: this.phi.token })
-      this.props.phi.req('stationList', null, (e, r) => {
+      this.props.phi.req('stationList', null, (e, r, cookie) => {
         if (e || !r) {
           if (r && r.error === '5') this.setState({ pwdError: i18n.__('Token Expired'), loading: false })
           else this.setState({ failed: true, loading: false })
         } else {
+          Object.assign(this.props.phi, { cookie })
           this.setState({ loading: false })
           const list = r.ownStations
           const lastSN = r.lastUseDeviceSn
