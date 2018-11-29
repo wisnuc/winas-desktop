@@ -15,11 +15,11 @@ import DialogOverlay from '../common/PureDialog'
 import MenuItem from '../common/MenuItem'
 import sortByType from '../common/sort'
 import { BreadCrumbItem, BreadCrumbSeparator } from '../common/BreadCrumb'
-import { BackwardIcon, RefreshAltIcon, DeleteIcon, MoreIcon, ListIcon, GridIcon, InfoIcon, ArrowIcon, FolderIcon, FolderOutlineIcon, AddIcon } from '../common/Svg'
+import { RefreshAltIcon, DeleteIcon, MoreIcon, ListIcon, GridIcon, InfoIcon, ArrowIcon, FolderIcon, FolderOutlineIcon, AddIcon } from '../common/Svg'
 import renderFileIcon from '../common/renderFileIcon'
 import { xcopyMsg } from '../common/msg'
 import History from '../common/history'
-import { SIButton, LIButton, ActButton } from '../common/Buttons'
+import { LIButton, ActButton } from '../common/Buttons'
 import ConfirmDialog from '../common/ConfirmDialog'
 
 /* increase limit of listeners of EventEmitter */
@@ -70,6 +70,25 @@ class Home extends Base {
 
     this.toggleDialog = (type) => {
       this.setState({ [type]: !this.state[type] })
+    }
+
+    /* op: scrollTo file */
+    this.refresh = (op) => {
+      if (!this.state.path) return
+      const rUUID = this.state.path[0] && this.state.path[0].uuid
+      const dUUID = this.state.path[0] && this.state.path[this.state.path.length - 1].uuid
+      if (!rUUID || !dUUID) {
+        this.setState({ loading: true, showSearch: false })
+        const drives = this.ctx.props.apis && this.ctx.props.apis.drives && this.ctx.props.apis.drives.data
+        const drive = drives.find(d => d.tag === 'built-in')
+        this.ctx.props.apis.request('listNavDir', { driveUUID: drive.uuid, dirUUID: drive.uuid })
+      } else {
+        this.ctx.props.apis.request('listNavDir', { driveUUID: rUUID, dirUUID: dUUID })
+      }
+      this.resetScrollTo()
+
+      if (op) this.setState({ scrollTo: op.fileName || op.uuid, loading: !op.noloading }) // fileName for files, uuid for drives
+      else this.setState({ loading: true, showSearch: false })
     }
 
     /* file or dir operations */
@@ -365,7 +384,7 @@ class Home extends Base {
       this.resetScrollTo()
 
       const entry = this.state.entries[selected[0]]
-      if (entry.type === 'directory') {
+      if (entry.type === 'directory' || (entry.type === 'backup')) {
         const pos = { driveUUID: this.state.path[0].uuid, dirUUID: entry.uuid }
         this.enter(pos, err => err && console.error('listNavBySelect error', err))
         this.history.add(pos)
@@ -381,25 +400,6 @@ class Home extends Base {
     this.forward = () => {
       const pos = this.history.forward()
       this.enter(pos, err => err && console.error('forward error', err))
-    }
-
-    /* op: scrollTo file */
-    this.refresh = (op) => {
-      if (!this.state.path) return
-      const rUUID = this.state.path[0] && this.state.path[0].uuid
-      const dUUID = this.state.path[0] && this.state.path[this.state.path.length - 1].uuid
-      if (!rUUID || !dUUID) {
-        this.setState({ loading: true, showSearch: false })
-        const drives = this.ctx.props.apis && this.ctx.props.apis.drives && this.ctx.props.apis.drives.data
-        const drive = drives.find(d => d.tag === 'built-in')
-        this.ctx.props.apis.request('listNavDir', { driveUUID: drive.uuid, dirUUID: drive.uuid })
-      } else {
-        this.ctx.props.apis.request('listNavDir', { driveUUID: rUUID, dirUUID: dUUID })
-      }
-      this.resetScrollTo()
-
-      if (op) this.setState({ scrollTo: op.fileName || op.uuid, loading: !op.noloading }) // fileName for files, uuid for drives
-      else this.setState({ loading: true, showSearch: false })
     }
 
     this.resetScrollTo = () => Object.assign(this.state, { scrollTo: null })
@@ -658,6 +658,7 @@ class Home extends Base {
     if (target && target.driveUUID) { // jump to specific dir
       const { driveUUID, dirUUID } = target
       apis.request('listNavDir', { driveUUID, dirUUID })
+      if (this.isBackup) this.rootDrive = { uuid: driveUUID }
       this.setState({ loading: true, showSearch: false })
     } else this.refresh()
   }
@@ -785,7 +786,7 @@ class Home extends Base {
         this.refresh()
       } else {
         this.setState({ loading: true })
-        if (node.type === 'publicRoot') { // public drives
+        if (node.type === 'backupRoot') { // public drives
           this.rootDrive = null
           this.ctx.props.apis.request('users')
           this.ctx.props.apis.request('drives')
@@ -846,28 +847,24 @@ class Home extends Base {
     )
   }
 
-  renderTitle ({ style }) {
-    const breadCrumbStyle = { height: 40, fontSize: 18, color: 'rgba(0,0,0,.54)', display: 'flex', alignItems: 'center', flexWrap: 'wrap' }
-    return (
-      <div style={style}>
-        <div style={{ width: 28 }} />
-        <div style={{ height: 40, display: 'flex', alignItems: 'center' }}>
-        </div>
-      </div>
-    )
-  }
-
   renderToolBar ({ style, openDetail }) {
     const color = 'rgba(0,0,0,.54)'
-    const { curr, queue } = this.history.get()
-    const noBack = curr < 1
-    const noForward = curr > queue.length - 2
+    // const { curr, queue } = this.history.get()
+    // const noBack = curr < 1
+    // const noForward = curr > queue.length - 2
     const { select } = this.state
     const itemSelected = select && select.selected && select.selected.length
 
     const iconStyle = disabled => ({ color: disabled ? 'rgba(0,0,0,.54)' : color, width: 24, height: 24 })
     const inRoot = this.state.inRoot || (this.hasRoot && !this.phyDrive)
     const breadCrumbStyle = { height: 40, fontSize: 18, color: 'rgba(0,0,0,.54)', display: 'flex', alignItems: 'center', flexWrap: 'wrap' }
+    if (inRoot) {
+      return (
+        <div style={style}>
+          { this.renderBreadCrumbItem({ style: breadCrumbStyle }) }
+        </div>
+      )
+    }
     return (
       <div style={style}>
         {/*
@@ -897,7 +894,7 @@ class Home extends Base {
                 }}
               >
                 { this.state.showSearch === true ? i18n.__('Search Results')
-                    : i18n.__('Search Result of %s', this.state.showSearch) }
+                  : i18n.__('Search Result of %s', this.state.showSearch) }
               </div>
             )
         }
@@ -1231,6 +1228,7 @@ class Home extends Base {
           onCopy={this.onCopy}
           onCut={this.onCut}
           inPublicRoot={this.hasRoot && !this.phyDrive}
+          addBackupDir={this.addBackupDir}
         />
 
         { this.renderMenu({ open: this.state.contextMenuOpen, openDetail }) }

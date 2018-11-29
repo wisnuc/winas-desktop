@@ -381,7 +381,7 @@ class FileContent extends React.Component {
         <EventListener target="window" onResize={this.handleResize} />
         {/* render list */}
         {
-          this.props.gridView || this.props.inPublicRoot
+          this.props.gridView || this.props.inRoot
             ? <GridView
               {...this.props}
               onRowClick={this.onRowClick}

@@ -9,7 +9,7 @@ import Thumb from './Thumb'
 import HoverTip from './HoverTip'
 import ScrollBar from '../common/ScrollBar'
 import renderFileIcon from '../common/renderFileIcon'
-import { AllFileIcon, ArrowDownIcon, CheckedIcon } from '../common/Svg'
+import { AllFileIcon, ArrowDownIcon, CheckedIcon, PCIcon, MobileIcon, SettingsIcon, FailedIcon } from '../common/Svg'
 import { formatMtime } from '../common/datetime'
 import FlatButton from '../common/FlatButton'
 
@@ -63,10 +63,132 @@ class Row extends React.Component {
       if (!this.state.open && event && event.preventDefault) event.preventDefault()
       this.setState({ open: event !== 'clickAway' && !this.state.open, anchorEl: event.currentTarget })
     }
+
+    this.openSettings = (e, drive) => {
+      e.stopPropagation()
+      e.preventDefault()
+      console.log('this.openSettings', drive)
+    }
+
+    this.handleClickAdd = (e, drive) => {
+      e.stopPropagation()
+      e.preventDefault()
+      this.props.addBackupDir()
+    }
   }
 
   shouldComponentUpdate (nextProps) {
     return (!nextProps.isScrolling)
+  }
+
+  calcTime (time) {
+    if (!time) return ''
+    const date = new Date(time)
+    return `${date.toLocaleDateString('zh-CN')} ${date.toLocaleTimeString('zh-CN', { hour12: false })}`
+  }
+
+  renderCurrentBackup (drive) {
+    const { label, client } = drive
+    const { lastBackupTime } = client
+    return (
+      <div
+        style={{
+          backgroundColor: '#009688',
+          height: '100%',
+          width: '100%',
+          boxSizing: 'border-box',
+          padding: 16,
+          position: 'relative'
+        }}
+      >
+        <div style={{ height: 32, width: '100%', display: 'flex', alignItems: 'center' }}>
+          <div style={{ color: '#FFF' }}>
+            <div style={{ fontSize: 16, fontWeight: 500 }}>
+              { label }
+            </div>
+            <div style={{ fontSize: 12 }}>
+              { i18n.__('Current Device') }
+            </div>
+          </div>
+          <div style={{ flexGrow: 1 }} />
+          <div style={{ width: 24, height: 24 }}>
+            <SettingsIcon style={{ color: '#FFF' }} onClick={e => this.openSettings(e, drive)} />
+          </div>
+        </div>
+        <div style={{ fontSize: 12, fontWeight: 500, color: '#FFF', margin: '8px 0 4px 0' }}>
+          { this.calcTime(lastBackupTime) }
+        </div>
+        <div style={{ fontSize: 12, fontWeight: 500, color: '#FFF' }}>
+          { lastBackupTime ? i18n.__('Backup Success') : i18n.__('Backup Not Finished') }
+        </div>
+        <div
+          style={{
+            height: 40,
+            position: 'absolute',
+            left: 16,
+            bottom: 0,
+            display: 'flex',
+            alignItems: 'center',
+            cursor: 'pointer'
+          }}
+          onClick={e => this.handleClickAdd(e, drive)}
+        >
+          <div style={{ transform: 'rotate(45deg)' }}>
+            <FailedIcon style={{ color: '#FFF', height: 24, width: 24 }} />
+          </div>
+          <div style={{ fontSize: 12, fontWeight: 500, color: '#FFF', marginLeft: 16 }}>
+            { i18n.__('Add Backup Directroy') }
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  renderBackupCard (drive, index) {
+    if (!index) return this.renderCurrentBackup(drive)
+    const { client, label } = drive
+    const { type, lastBackupTime } = client
+    let backgroundColor = '#039be5'
+    let Icon = PCIcon
+    switch (type) {
+      case 'Win-PC':
+        backgroundColor = '#039be5'
+        Icon = PCIcon
+        break
+      case 'Mac-PC':
+        backgroundColor = '#000000'
+        Icon = PCIcon
+        break
+      case 'Android-Mobile':
+        backgroundColor = '#43a047'
+        Icon = MobileIcon
+        break
+      case 'IOS-Mobile':
+        backgroundColor = '#000000'
+        Icon = MobileIcon
+        break
+      default:
+        break
+    }
+    return (
+      <div style={{ height: 108, width: 'calc(100% - 64px)' }} >
+        <div
+          className="flexCenter"
+          style={{ height: 40, width: 40, marginBottom: 16, backgroundColor, borderRadius: 20, overflow: 'hidden' }}
+        >
+          <Icon style={{ color: '#FFF' }} />
+        </div>
+        <div style={{ fontSize: 16, fontWeight: 500 }}>
+          { label }
+        </div>
+        <div style={{ fontSize: 12, fontWeight: 500, color: 'rgba(0,0,0,.54)', margin: '8px 0 4px 0' }}>
+          { this.calcTime(lastBackupTime) }
+        </div>
+        <div style={{ fontSize: 12, fontWeight: 500, color: 'rgba(0,0,0,.54)' }}>
+          { i18n.__('Backup Success') }
+        </div>
+      </div>
+    )
   }
 
   render () {
@@ -76,10 +198,10 @@ class Row extends React.Component {
       <div style={{ height: '100%', width: '100%' }} >
         {/* header */}
         {
-          list.first &&
+          list.first && list.entries[0].entry.type !== 'backup' &&
             <div style={{ height: 48, display: 'flex', alignItems: 'center ' }}>
               <div style={{ fontSize: 14, color: 'rgba(0,0,0,0.54)', width: 64 }}>
-                { list.entries[0].entry.type === 'file' ? i18n.__('File') : i18n.__('Directory') }
+                { list.entries[0].entry.type === 'directory' ? i18n.__('Directory') : i18n.__('File') }
               </div>
               <div style={{ flexGrow: 1 }} />
               {
@@ -145,6 +267,9 @@ class Row extends React.Component {
               }
             </div>
         }
+        {
+          list.first && list.entries[0].entry.type === 'backup' && <div style={{ height: 24 }} />
+        }
         {/* onMouseDown: clear select and start grid select */}
         {
           isScrolling ? (
@@ -158,7 +283,7 @@ class Row extends React.Component {
                       style={{
                         position: 'relative',
                         width: size,
-                        height: entry.type === 'file' ? size : 48,
+                        height: entry.type !== 'directory' ? size : 48,
                         marginRight: 16,
                         marginBottom: 16,
                         backgroundColor,
@@ -172,7 +297,7 @@ class Row extends React.Component {
                     >
                       {/* preview or icon */}
                       {
-                        entry.type === 'file' &&
+                        entry.type !== 'directory' &&
                           <div
                             draggable={false}
                             className="flexCenter"
@@ -211,12 +336,32 @@ class Row extends React.Component {
                   const isOnModify = select.modify === index && !inPublicRoot
                   const hover = select.hover === index && !selected
                   const backgroundColor = selected ? '#f4fafe' : hover ? '#f9fcfe' : '#FFF'
+                  if (entry.type === 'backup') {
+                    return (
+                      <div
+                        key={entry.uuid}
+                        className="flexCenter"
+                        onClick={e => this.props.onRowClick(e, index)}
+                        onDoubleClick={e => this.props.onRowDoubleClick(e, index)}
+                        style={{
+                          height: size,
+                          width: size,
+                          borderRadius: 4,
+                          marginRight: 16,
+                          marginBottom: 16,
+                          boxShadow: '0px 1px 0.9px 0.1px rgba(0, 0, 0, 0.24), 0 0 1px 0px rgba(0, 0, 0, 0.16)'
+                        }}
+                      >
+                        { this.renderBackupCard(entry, index) }
+                      </div>
+                    )
+                  }
                   return (
                     <div
                       style={{
                         position: 'relative',
                         width: size,
-                        height: entry.type === 'file' ? size : 48,
+                        height: entry.type !== 'directory' ? size : 48,
                         marginRight: 16,
                         marginBottom: 16,
                         backgroundColor,
@@ -236,7 +381,7 @@ class Row extends React.Component {
                     >
                       {/* preview or icon */}
                       {
-                        entry.type === 'file' &&
+                        entry.type !== 'directory' &&
                           <div
                             draggable={false}
                             className="flexCenter"
@@ -379,7 +524,7 @@ class GridView extends React.Component {
           { `${i18n.__('Name')}: ${entry.name}` }
         </div>
         {
-          entry.type === 'file' && (
+          entry.type !== 'directory' && (
             <div>
               { `${i18n.__('Size')}: ${prettysize(entry.size, false, true, 2).toUpperCase()}` }
             </div>
@@ -408,7 +553,7 @@ class GridView extends React.Component {
       this.indexHeightSum = []
       this.maxScrollTop = 0
 
-      const firstFileIndex = entries.findIndex(item => item.type === 'file')
+      const firstFileIndex = entries.findIndex(item => item.type !== 'directory')
       this.mapData = []
       entries.forEach((entry, index) => {
         if (MaxItem === 0 || lastType !== entry.type) {
@@ -434,7 +579,7 @@ class GridView extends React.Component {
       }
       /* calculate each row's heigth and their sum */
       this.mapData.forEach((list) => {
-        const tmp = 64 + !!list.first * 48 + (list.entries[0].entry.type === 'file') * (size + 16 - 64)
+        const tmp = 64 + !!list.first * 48 + (list.entries[0].entry.type !== 'directory') * (size + 16 - 64)
         this.allHeight.push(tmp)
         this.rowHeightSum += tmp
         this.indexHeightSum.push(this.rowHeightSum)
