@@ -16,6 +16,12 @@ class Backup extends Home {
       remote.dialog.showOpenDialog({ properties: ['openDirectory'] }, (filePaths) => {
         if (!filePaths || !filePaths.length) return
         const localPath = filePaths[0]
+
+        /* only new Dir */
+        const newDirName = remote.require('path').parse(localPath).base
+        const dirs = [{ localPath, name: newDirName }]
+        ipcRenderer.send('BACKUP_DIR', { dirs, drive })
+        /*
         const args = { driveUUID: drive.uuid, dirUUID: drive.uuid }
         this.ctx.props.apis.pureRequest('listNavDir', args, (err, listNav) => {
           if (err || !listNav || !Array.isArray(listNav.entries)) this.ctx.props.openSnackBar(i18n.__('Get Backup Dirs Failed'))
@@ -29,6 +35,7 @@ class Backup extends Home {
             }
           }
         })
+        */
       })
     }
 
