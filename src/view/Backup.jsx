@@ -17,25 +17,21 @@ class Backup extends Home {
         if (!filePaths || !filePaths.length) return
         const localPath = filePaths[0]
 
-        /* only new Dir */
-        const newDirName = remote.require('path').parse(localPath).base
-        const dirs = [{ localPath, name: newDirName }]
-        ipcRenderer.send('BACKUP_DIR', { dirs, drive })
-        /*
         const args = { driveUUID: drive.uuid, dirUUID: drive.uuid }
         this.ctx.props.apis.pureRequest('listNavDir', args, (err, listNav) => {
           if (err || !listNav || !Array.isArray(listNav.entries)) this.ctx.props.openSnackBar(i18n.__('Get Backup Dirs Failed'))
           else {
             const { entries } = listNav
-            if (entries.find(e => e.localPath === localPath)) this.ctx.props.openSnackBar(i18n.__('Duplicated Backup Dir'))
-            else { // new backup dir
+            if (entries.find(e => e.metadata && e.metadata.localPath === localPath)) {
+              this.ctx.props.openSnackBar(i18n.__('Duplicated Backup Dir'))
+            } else { // new backup dir
               const newDirName = remote.require('path').parse(localPath).base
-              const dirs = [...entries, { localPath, name: newDirName }]
+              const dirs = entries.filter(e => e.metadata && e.metadata.localPath)
+              dirs.push({ metadata: { localPath }, name: newDirName })
               ipcRenderer.send('BACKUP_DIR', { dirs, drive })
             }
           }
         })
-        */
       })
     }
 

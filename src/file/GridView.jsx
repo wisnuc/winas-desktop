@@ -111,7 +111,11 @@ class Row extends React.Component {
             </div>
           </div>
           <div style={{ flexGrow: 1 }} />
-          <div style={{ width: 24, height: 24 }}>
+          <div
+            style={{ width: 24, height: 24, cursor: 'pointer' }}
+            onClick={() => {}}
+            onDoubleClick={(e) => { e.stopPropagation(); e.preventDefault() }}
+          >
             <SettingsIcon style={{ color: '#FFF' }} onClick={e => this.openSettings(e, drive)} />
           </div>
         </div>
@@ -132,6 +136,7 @@ class Row extends React.Component {
             cursor: 'pointer'
           }}
           onClick={e => this.handleClickAdd(e, drive)}
+          onDoubleClick={(e) => { e.stopPropagation(); e.preventDefault() }}
         >
           <div style={{ transform: 'rotate(45deg)' }}>
             <FailedIcon style={{ color: '#FFF', height: 24, width: 24 }} />
