@@ -223,4 +223,4 @@ export const FailedIcon = f('failed')
 export const CheckBoxOutlineIcon = f('check-box-outline')
 export const ExitSearchIcon = f('back')
 export const WeChatIcon = f('wechat')
-
+export const ChevronRightIcon = f('chevron-right')

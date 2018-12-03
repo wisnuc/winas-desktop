@@ -2,16 +2,18 @@ import i18n from 'i18n'
 import React from 'react'
 import prettysize from 'prettysize'
 import { AutoSizer } from 'react-virtualized'
-import { Popover, Menu, MenuItem, IconButton } from 'material-ui'
+import { Menu, MenuItem, IconButton, Toggle, Popover, Checkbox } from 'material-ui'
 
 import Name from './Name'
 import Thumb from './Thumb'
 import HoverTip from './HoverTip'
 import ScrollBar from '../common/ScrollBar'
 import renderFileIcon from '../common/renderFileIcon'
-import { AllFileIcon, ArrowDownIcon, CheckedIcon, PCIcon, MobileIcon, SettingsIcon, FailedIcon } from '../common/Svg'
+import { AllFileIcon, ArrowDownIcon, CheckedIcon, PCIcon, MobileIcon, SettingsIcon, FailedIcon, ChevronRightIcon, BackwardIcon } from '../common/Svg'
 import { formatMtime } from '../common/datetime'
 import FlatButton from '../common/FlatButton'
+import { LIButton } from '../common/Buttons'
+import SimpleScrollBar from '../common/SimpleScrollBar'
 
 const hasThumb = (metadata) => {
   if (!metadata) return false
@@ -23,6 +25,9 @@ const hasThumb = (metadata) => {
 class Row extends React.Component {
   constructor (props) {
     super(props)
+    this.state = {
+      open: false
+    }
 
     this.headers = [
       { title: i18n.__('Name'), up: 'nameUp', down: 'nameDown' },
@@ -75,6 +80,12 @@ class Row extends React.Component {
       e.preventDefault()
       this.props.addBackupDir()
     }
+
+    this.openSettings = (e) => {
+      e.stopPropagation()
+      e.preventDefault()
+      this.setState({ openBS: true, anchorSetting: e.currentTarget })
+    }
   }
 
   shouldComponentUpdate (nextProps) {
@@ -90,6 +101,8 @@ class Row extends React.Component {
   renderCurrentBackup (drive) {
     const { label, client } = drive
     const { lastBackupTime } = client
+    const { showDirs } = this.state
+    const transition = 'left 450ms'
     return (
       <div
         style={{
@@ -113,11 +126,102 @@ class Row extends React.Component {
           <div style={{ flexGrow: 1 }} />
           <div
             style={{ width: 24, height: 24, cursor: 'pointer' }}
-            onClick={() => {}}
+            onClick={this.openSettings}
             onDoubleClick={(e) => { e.stopPropagation(); e.preventDefault() }}
           >
             <SettingsIcon style={{ color: '#FFF' }} onClick={e => this.openSettings(e, drive)} />
           </div>
+          <Popover
+            open={this.state.openBS}
+            anchorEl={this.state.anchorSetting}
+            anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
+            targetOrigin={{ horizontal: 'left', vertical: 'top' }}
+            onRequestClose={() => this.setState({ openBS: false, showDirs: false })}
+          >
+            <Menu style={{ maxWidth: 306, fontSize: 14, marginTop: -8 }} >
+              <div style={{ position: 'relative', height: 354, width: 306, backgroundColor: '#FFF', overflow: 'hidden' }}>
+                <div style={{ position: 'absolute', height: '100%', width: '100%', left: showDirs ? '-100%' : 0, top: 0, transition }}>
+                  <div style={{ height: 56, display: 'flex', alignItems: 'center', borderBottom: '1px solid #e8eaed' }}>
+                    <div style={{ marginLeft: 16 }}> { i18n.__('Current Device Backup') } </div>
+                    <div style={{ flexGrow: 1 }} />
+                    <Toggle
+                      defaultToggled
+                      label={i18n.__('Enable')}
+                      labelStyle={{ maxWidth: 'fit-content' }}
+                      style={{ marginRight: 16, maxWidth: 'fit-content' }}
+                    />
+                  </div>
+                  <div style={{ height: 8 }} />
+                  <div style={{ height: 40, display: 'flex', alignItems: 'center', marginLeft: 16, color: 'rgba(0,0,0,.54)' }}>
+                    { i18n.__('Settings') }
+                  </div>
+                  <MenuItem style={{ height: 48, fontSize: 14 }} onClick={() => this.setState({ showDirs: true })}>
+                    { i18n.__('Manage Backup Dir') }
+                    <div style={{ position: 'absolute', right: 16, top: 2 }}>
+                      <ChevronRightIcon style={{ color: 'rgba(0,0,0,.38)', height: 16, width: 16 }} />
+                    </div>
+                  </MenuItem>
+                  <MenuItem style={{ height: 48, fontSize: 14 }}>
+                    { i18n.__('Backup Policy') }
+                    <div style={{ position: 'absolute', right: 16, top: 2 }}>
+                      <ChevronRightIcon style={{ color: 'rgba(0,0,0,.38)', height: 16, width: 16 }} />
+                    </div>
+                  </MenuItem>
+                  <div style={{ height: 48, display: 'flex', alignItems: 'center', marginBottom: 8, borderBottom: '1px solid #e8eaed' }}>
+                    <div style={{ marginLeft: 16 }}> { i18n.__('Running Backup On Startup') } </div>
+                    <div style={{ flexGrow: 1 }} />
+                    <Toggle
+                      defaultToggled
+                      label={i18n.__('Enable')}
+                      labelStyle={{ maxWidth: 'fit-content' }}
+                      style={{ marginRight: 16, maxWidth: 'fit-content' }}
+                    />
+                  </div>
+                  <div style={{ height: 8 }} />
+                  <div style={{ height: 40, display: 'flex', alignItems: 'center', marginLeft: 16, color: 'rgba(0,0,0,.54)' }}>
+                    { i18n.__('Notification') }
+                  </div>
+                  <div style={{ height: 48, display: 'flex', alignItems: 'center' }}>
+                    <div style={{ marginLeft: 16 }}> { i18n.__('Enable Remove Backup Warnings') } </div>
+                    <div style={{ flexGrow: 1 }} />
+                    <Checkbox
+                      defaultChecked
+                      style={{ maxWidth: 'fit-content' }}
+                    />
+                  </div>
+                </div>
+                <div style={{ position: 'absolute', height: '100%', width: '100%', left: showDirs ? 0 : '100%', top: 0, transition }}>
+                  <div style={{ height: 56, display: 'flex', alignItems: 'center', borderBottom: '1px solid #e8eaed' }}>
+                    <LIButton
+                      style={{ marginLeft: 8, zIndex: 10000 }}
+                      onClick={() => this.setState({ showDirs: false })}
+                    >
+                      <BackwardIcon />
+                    </LIButton>
+                    <div style={{ marginLeft: 8 }}> { i18n.__('Manage Backup Dir') } </div>
+                    <div style={{ flexGrow: 1 }} />
+                    <div style={{ marginRight: 24 }}> { i18n.__('%s Items', 5) } </div>
+                  </div>
+                  <div style={{ height: 8 }} />
+                  <SimpleScrollBar height={300} width={306} >
+                    {
+                      [1, 2, 3, 4, 5].map(v => (
+                        <MenuItem style={{ height: 44, fontSize: 14 }} key={v}>
+                          <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <AllFileIcon style={{ width: 24, height: 24, color: '#ffa93e', marginRight: 16 }} />
+                            { `${i18n.__('备份文件夹')}-${v}` }
+                            <div style={{ position: 'absolute', right: 24, top: 2 }}>
+                              <ChevronRightIcon style={{ color: 'rgba(0,0,0,.38)', height: 16, width: 16 }} />
+                            </div>
+                          </div>
+                        </MenuItem>
+                      ))
+                    }
+                  </SimpleScrollBar>
+                </div>
+              </div>
+            </Menu>
+          </Popover>
         </div>
         <div style={{ fontSize: 12, fontWeight: 500, color: '#FFF', margin: '8px 0 4px 0' }}>
           { this.calcTime(lastBackupTime) }

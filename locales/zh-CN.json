@@ -659,6 +659,13 @@
   "Duplicated Backup Dir": "该文件夹已经被设为备份文件夹",
   "Create Backup Drive Failed": "创建备份失败",
   "Backup Devices" : "备份",
+  "Current Device Backup": "本机备份",
+  "Manage Backup Dir": "管理备份文件夹",
+  "Backup Policy": "备份策略",
+  "Running Backup On Startup": "系统启动时自动开启备份",
+  "Enable": "开启",
+  "Notification": "通知",
+  "Enable Remove Backup Warnings" : "当您从备份中移除内容时显示警告",
 
   "==== view/Photo.jsx ====": "",
   "New Album": "新建相簿",
