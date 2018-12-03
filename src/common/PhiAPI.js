@@ -4,7 +4,7 @@ import request from 'superagent'
 import parseRes from './parseRes'
 import RequestManager from './reqman'
 
-const cloudAddress = 'http://test.nodetribe.com/c/v1'
+const cloudAddress = 'https://test.nodetribe.com/c/v1'
 
 class PhiAPI extends RequestManager {
   constructor () {
