@@ -666,6 +666,12 @@
   "Enable": "开启",
   "Notification": "通知",
   "Enable Remove Backup Warnings" : "当您从备份中移除内容时显示警告",
+  "Local Path": "路径",
+  "Remove Dir And Backup Data" : "移除此文件夹与备份内容",
+  "Confirm Delete Backup Dir Title %s": "移除“%s”？",
+  "Confirm Delete Backup Dir Text" : "备份文件夹移除，此文件夹下的备份内容也将移除",
+  "Starting Once Dir Changed": "有变动即备份",
+  "Starting When Computer Is Free" : "电脑空闲时备份",
 
   "==== view/Photo.jsx ====": "",
   "New Album": "新建相簿",
