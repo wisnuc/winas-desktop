@@ -3,8 +3,7 @@ import React from 'react'
 import Promise from 'bluebird'
 import prettysize from 'prettysize'
 import { ipcRenderer } from 'electron'
-import { FlatButton } from 'material-ui'
-import Popover, { PopoverAnimationVertical } from 'material-ui/Popover'
+import { FlatButton, Menu, Popover } from 'material-ui'
 
 import Tasks from './Tasks'
 import Policy from './Policy'
@@ -199,27 +198,6 @@ class NavViews extends React.Component {
       this.views[this.state.nav].search(this.state.searchText, types)
     }
 
-    this.onHover = () => {
-      this.setState({ hoverNav: true })
-    }
-
-    this.timer = null
-    this.onHoverLater = () => {
-      if (this.state.hoverNav || this.timer) return
-      this.timer = setTimeout(() => {
-        this.timer = null
-        this.setState({ hoverNav: true })
-      }, 225)
-    }
-
-    this.offHover = () => {
-      if (this.timer) {
-        clearTimeout(this.timer)
-        this.timer = null
-      }
-      this.setState({ hoverNav: false })
-    }
-
     this.openPop = (e) => {
       e.preventDefault()
       this.setState({ open: true, anchorEl: e.currentTarget })
@@ -227,7 +205,7 @@ class NavViews extends React.Component {
 
     this.openDevicePop = (e) => {
       e.preventDefault()
-      this.setState({ openDevice: true, deviceAnchorEl: e.currentTarget, hoverNav: false })
+      this.setState({ openDevice: true, deviceAnchorEl: e.currentTarget })
     }
 
     this.enterSearchMode = () => {
@@ -237,7 +215,7 @@ class NavViews extends React.Component {
     }
 
     this.exitSearchMode = () => {
-      this.setState({ searchMode: false, searchText: '', types: [], hoverNav: false })
+      this.setState({ searchMode: false, searchText: '', types: [] })
       this.navTo(this.preNav)
     }
 
@@ -524,7 +502,7 @@ class NavViews extends React.Component {
   }
 
   renderNavs () {
-    const shrinked = ['pin', 'hoverNav', 'searchMode'].every(v => !this.state[v])
+    const shrinked = ['pin', 'searchMode'].every(v => !this.state[v])
     const transition = 'width 225ms'
     let [total, used, percent] = ['--', '--', 0]
     try {
@@ -557,15 +535,12 @@ class NavViews extends React.Component {
           boxShadow: (shrinked || this.state.pin || this.state.searchText) ? ''
             : '0px 5px 6.6px 0.4px rgba(96,125,139,.24), 0px 2px 9.8px 0.2px rgba(96,125,139,.16)'
         }}
-        onMouseMove={this.onHoverLater}
-        onMouseLeave={this.offHover}
-        onMouseEnter={this.onHoverLater}
       >
         <div style={{ height: 34, width: '100%', display: 'flex', alignItems: 'center' }}>
           <div style={{ height: 34, width: 34, margin: 4 }} className="flexCenter">
             <MenuIcon
               style={{ height: 18, width: 18, cursor: 'pointer' }}
-              onClick={() => this.setState({ pin: !this.state.pin, hoverNav: false })}
+              onClick={() => this.setState({ pin: !this.state.pin })}
             />
           </div>
           <div style={{ height: 34, width: this.state.pin ? 180 : 0, WebkitAppRegion: 'drag', transition }} />
@@ -628,9 +603,7 @@ class NavViews extends React.Component {
               </div>
               {
                 ['home', 'public'].includes(this.state.nav) &&
-                  this.views[this.state.nav].renderCreateNewButton({
-                    shrinked, primaryColor: this.state.primaryColor, onHover: this.onHover, offHover: this.offHover
-                  })
+                  this.views[this.state.nav].renderCreateNewButton({ shrinked, primaryColor: this.state.primaryColor })
               }
               <div style={{ flexGrow: 1 }} />
               <div
@@ -661,14 +634,15 @@ class NavViews extends React.Component {
               </div>
               <Popover
                 open={this.state.openDevice}
-                animation={PopoverAnimationVertical}
                 anchorEl={this.state.deviceAnchorEl}
                 anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
                 targetOrigin={{ horizontal: 'left', vertical: 'top' }}
-                onRequestClose={() => this.setState({ openDevice: false, hoverNav: false })}
-                style={{ boxShadow: '0px 5px 6.6px 0.4px rgba(96,125,139,.24), 0px 2px 9.8px 0.2px rgba(96,125,139,.16)' }}
+                onRequestClose={() => this.setState({ openDevice: false })}
+                style={{ boxShadow: '0px 5px 6.6px 0.4px rgba(96,125,139,.24), 0px 2px 9.8px 0.2px rgba(96,125,139,.16)', marginTop: 8 }}
               >
-                <RenderDevice {...this.props} />
+                <Menu style={{ maxWidth: 260 }}>
+                  <RenderDevice {...this.props} />
+                </Menu>
               </Popover>
             </div>
           ) : (

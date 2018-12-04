@@ -212,14 +212,12 @@ export class ActButton extends Button {
 
     this.upload = (type) => {
       this.setState({ open: false }, () => {
-        this.props.offHover()
         this.props.upload(type)
       })
     }
 
     this.newFolder = () => {
       this.setState({ open: false }, () => {
-        this.props.offHover()
         this.props.newFolder()
       })
     }
