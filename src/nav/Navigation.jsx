@@ -548,28 +548,21 @@ class NavViews extends React.Component {
         <div style={{ height: 64, width: 224, display: 'flex', alignItems: 'center' }}>
           <div style={{ height: 64, width: 88 }} className="flexCenter">
             {
-              ((this.state.types && this.state.types.length) || (this.state.searchText))
+              this.state.searchMode
                 ? (
                   <ExitSearchIcon
-                    style={{ width: 40, height: 40, cursor: 'pointer', marginTop: -8 }}
+                    style={{ width: 40, height: 40, cursor: 'pointer', marginTop: -8, opacity: 0.7 }}
                     onClick={this.exitSearchMode}
                   />
                 ) : <WisnucLogo style={{ width: 48, height: 48, color: this.state.primaryColor }} />
             }
           </div>
-          <div
-            style={{
-              height: 72,
-              fontSize: 24,
-              fontWeight: 500,
-              color: 'rgba(0,0,0,0.87)',
-              alignItems: 'center',
-              opacity: 0.87,
-              display: 'flex'
-            }}
-          >
-            WISNUC
-          </div>
+          {
+            !this.state.searchMode &&
+              <div style={{ height: 72, fontSize: 24, fontWeight: 500, alignItems: 'center', display: 'flex' }} >
+                Winas
+              </div>
+          }
         </div>
         {
           !this.state.searchMode ? (

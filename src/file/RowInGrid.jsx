@@ -153,47 +153,94 @@ class Row extends React.Component {
               <div style={{ position: 'relative', height: 354, width: 306, backgroundColor: '#FFF', overflow: 'hidden' }}>
                 <div style={{ position: 'absolute', height: '100%', width: '100%', left: showDirs ? '-100%' : 0, top: 0, transition }}>
                   <div style={{ height: 56, display: 'flex', alignItems: 'center', borderBottom: '1px solid #e8eaed' }}>
-                    <div style={{ marginLeft: 16 }}> { i18n.__('Current Device Backup') } </div>
+                    <div style={{ marginLeft: 24 }}> { i18n.__('Current Device Backup') } </div>
                     <div style={{ flexGrow: 1 }} />
                     <Toggle
                       defaultToggled
-                      label={i18n.__('Enable')}
                       labelStyle={{ maxWidth: 'fit-content' }}
                       style={{ marginRight: 16, maxWidth: 'fit-content' }}
                     />
                   </div>
                   <div style={{ height: 8 }} />
-                  <div style={{ height: 40, display: 'flex', alignItems: 'center', marginLeft: 16, color: 'rgba(0,0,0,.54)' }}>
+                  <div
+                    style={{
+                      height: 40,
+                      display: 'flex',
+                      alignItems: 'center',
+                      marginLeft: 24,
+                      color: 'rgba(0,0,0,.54)',
+                      fontSize: 12
+                    }}
+                  >
                     { i18n.__('Settings') }
                   </div>
-                  <MenuItem style={{ height: 48, fontSize: 14 }} onClick={() => this.setState({ showDirs: true })}>
+
+                  <MenuItem primaryText="." style={{ opacity: 0.44, color: '#FFF' }} onClick={() => this.setState({ showDirs: true })} />
+                  <div
+                    style={{
+                      position: 'absolute',
+                      width: 'calc(100% - 40px)',
+                      left: 24,
+                      top: 120,
+                      display: 'flex',
+                      alignItems: 'center',
+                      pointerEvents: 'none'
+                    }}
+                  >
                     { i18n.__('Manage Backup Dir') }
-                    <div style={{ position: 'absolute', right: 16, top: 2 }}>
-                      <ChevronRightIcon style={{ color: 'rgba(0,0,0,.38)', height: 16, width: 16 }} />
+                    <div style={{ flexGrow: 1 }} />
+                    <div style={{ color: 'rgba(0,0,0,.38)', marginRight: 16 }}>
+                      { i18n.__('%s Items', 5) }
                     </div>
-                  </MenuItem>
-                  <MenuItem style={{ height: 48, fontSize: 14 }} onClick={this.openPolicy}>
+                    <ChevronRightIcon style={{ color: 'rgba(0,0,0,.38)', height: 16, width: 16 }} />
+                  </div>
+
+                  <MenuItem primaryText="." style={{ opacity: 0.44, color: '#FFF' }} onClick={this.openPolicy} />
+                  <div
+                    style={{
+                      position: 'absolute',
+                      width: 'calc(100% - 40px)',
+                      left: 24,
+                      top: 168,
+                      display: 'flex',
+                      alignItems: 'center',
+                      pointerEvents: 'none'
+                    }}
+                  >
                     { i18n.__('Backup Policy') }
-                    <div style={{ position: 'absolute', right: 16, top: 2 }}>
+                    <div style={{ flexGrow: 1 }} />
+                    <div style={{ color: 'rgba(0,0,0,.38)', marginRight: 16 }}>
+                      { i18n.__('Starting Once Dir Changed') }
+                    </div>
+                    <div>
                       <ChevronRightIcon style={{ color: 'rgba(0,0,0,.38)', height: 16, width: 16 }} />
                     </div>
-                  </MenuItem>
+                  </div>
+
                   <div style={{ height: 48, display: 'flex', alignItems: 'center', marginBottom: 8, borderBottom: '1px solid #e8eaed' }}>
-                    <div style={{ marginLeft: 16 }}> { i18n.__('Running Backup On Startup') } </div>
+                    <div style={{ marginLeft: 24 }}> { i18n.__('Running Backup On Startup') } </div>
                     <div style={{ flexGrow: 1 }} />
                     <Toggle
                       defaultToggled
-                      label={i18n.__('Enable')}
                       labelStyle={{ maxWidth: 'fit-content' }}
                       style={{ marginRight: 16, maxWidth: 'fit-content' }}
                     />
                   </div>
                   <div style={{ height: 8 }} />
-                  <div style={{ height: 40, display: 'flex', alignItems: 'center', marginLeft: 16, color: 'rgba(0,0,0,.54)' }}>
+                  <div
+                    style={{
+                      height: 40,
+                      display: 'flex',
+                      alignItems: 'center',
+                      marginLeft: 24,
+                      color: 'rgba(0,0,0,.54)',
+                      fontSize: 12
+                    }}
+                  >
                     { i18n.__('Notification') }
                   </div>
                   <div style={{ height: 48, display: 'flex', alignItems: 'center' }}>
-                    <div style={{ marginLeft: 16 }}> { i18n.__('Enable Remove Backup Warnings') } </div>
+                    <div style={{ marginLeft: 24 }}> { i18n.__('Enable Remove Backup Warnings') } </div>
                     <div style={{ flexGrow: 1 }} />
                     <Checkbox
                       defaultChecked
@@ -326,7 +373,7 @@ class Row extends React.Component {
             </Menu>
           </Popover>
         </div>
-        <div style={{ fontSize: 12, fontWeight: 500, color: '#FFF', margin: '8px 0 4px 0' }}>
+        <div style={{ fontSize: 12, fontWeight: 500, color: '#FFF', margin: '16px 0 0 0' }}>
           { this.calcTime(lastBackupTime) }
         </div>
         <div style={{ fontSize: 12, fontWeight: 500, color: '#FFF' }}>
@@ -390,14 +437,14 @@ class Row extends React.Component {
         >
           <Icon style={{ color: '#FFF' }} />
         </div>
-        <div style={{ fontSize: 16, fontWeight: 500 }}>
+        <div style={{ fontSize: 14, fontWeight: 500 }}>
           { label }
         </div>
-        <div style={{ fontSize: 12, fontWeight: 500, color: 'rgba(0,0,0,.54)', margin: '8px 0 4px 0' }}>
+        <div style={{ fontSize: 12, fontWeight: 500, color: 'rgba(0,0,0,.54)', margin: '16px 0 0 0' }}>
           { this.calcTime(lastBackupTime) }
         </div>
         <div style={{ fontSize: 12, fontWeight: 500, color: 'rgba(0,0,0,.54)' }}>
-          { i18n.__('Backup Success') }
+          { lastBackupTime ? i18n.__('Backup Success') : i18n.__('Backup Not Finished') }
         </div>
       </div>
     )
