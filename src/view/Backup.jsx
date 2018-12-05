@@ -19,14 +19,15 @@ class Backup extends Home {
 
         const args = { driveUUID: drive.uuid, dirUUID: drive.uuid }
         this.ctx.props.apis.pureRequest('listNavDir', args, (err, listNav) => {
-          if (err || !listNav || !Array.isArray(listNav.entries)) this.ctx.props.openSnackBar(i18n.__('Get Backup Dirs Failed'))
+          if (err || !listNav) this.ctx.props.openSnackBar(i18n.__('Get Backup Dirs Failed'))
           else {
             const { entries } = listNav
-            if (entries.find(e => e.metadata && e.metadata.localPath === localPath)) {
+            if (0 && entries && entries.find(e => e.metadata && e.metadata.localPath === localPath)) { // TODO
               this.ctx.props.openSnackBar(i18n.__('Duplicated Backup Dir'))
             } else { // new backup dir
               const newDirName = remote.require('path').parse(localPath).base
-              const dirs = entries.filter(e => e.metadata && e.metadata.localPath)
+              const dirs = entries ? entries.filter(e => e.metadata && e.metadata.localPath) : []
+              dirs.length = 0 // ignore previous top dirs TODO
               dirs.push({ metadata: { localPath }, name: newDirName })
               ipcRenderer.send('BACKUP_DIR', { dirs, drive })
             }
@@ -148,7 +149,10 @@ class Backup extends Home {
       const drives = this.state.drives || this.ctx.props.apis.drives.value()
       path[1].name = this.rootDrive.name || drives.find(d => d.uuid === this.rootDrive.uuid).label
 
-      const entries = [...this.state.listNavDir.entries].sort((a, b) => sortByType(a, b, this.state.sortType))
+      let entries = [...this.state.listNavDir.entries]
+      if (!this.state.showArchive) entries = entries.filter(e => !e.archived)
+      entries.sort((a, b) => sortByType(a, b, this.state.sortType))
+
       const select = this.select.reset(entries.length)
       const { counter } = this.state.listNavDir
 

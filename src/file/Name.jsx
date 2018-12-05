@@ -6,7 +6,7 @@ class Name extends React.PureComponent {
   constructor (props) {
     super(props)
 
-    this.value = this.props.entry && this.props.entry.name
+    this.value = this.props.entry && (this.props.entry.bname ? this.props.entry.bname : this.props.entry.name)
 
     this.state = {
       value: this.value,
@@ -91,7 +91,7 @@ class Name extends React.PureComponent {
 
   render () {
     const { entry, modify, onMouseDown, center } = this.props
-    const { name } = entry
+    const name = entry.bname || entry.name // for backup top directory
     if (!modify) {
       this.reset()
       return (

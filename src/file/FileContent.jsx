@@ -86,7 +86,7 @@ class FileContent extends React.Component {
       if (index === -1) return
       const entry = this.props.entries[index]
       this.props.listNavBySelect(entry)
-      if (entry.type === 'file' || entry.metadata) {
+      if (entry.type === 'file') {
         this.setState({ seqIndex: index, preview: true })
       } else {
         this.setState({ loading: true })

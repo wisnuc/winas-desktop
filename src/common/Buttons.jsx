@@ -292,10 +292,7 @@ export class ActButton extends Button {
           onRequestClose={this.exit}
           style={{ boxShadow: '0px 5px 6.6px 0.4px rgba(96, 125, 139, 0.24), 0px 2px 9.8px 0.2px rgba(96, 125, 139, 0.16)' }}
         >
-          <Menu
-            style={{ width: 224, maxWidth: 224, height: 176, overflow: 'hidden' }}
-            onMouseMove={() => this.state.open && this.props.onHover()}
-          >
+          <Menu style={{ width: 224, maxWidth: 224, height: 176, overflow: 'hidden' }} >
             {
               items.map((props, index) => (
                 props.type === 'br' ? (
