@@ -838,7 +838,14 @@ class Home extends Base {
 
             /* the first one is always special; fix Built-in Drive without name */
             if (index === 0) acc.push(<BreadCrumbItem text={this.title()} key="root" {...funcs} last={last} />)
-            else acc.push(<BreadCrumbItem text={node.name || i18n.__('Built-in Drive')} key={`Item${index}`} {...funcs} last={last} />)
+            else {
+              acc.push(<BreadCrumbItem
+                last={last}
+                key={`Item${index}`}
+                text={node.bname || node.name || i18n.__('Built-in Drive')}
+                {...funcs}
+              />)
+            }
 
             return acc
           }, [])

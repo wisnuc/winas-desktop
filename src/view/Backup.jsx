@@ -22,12 +22,12 @@ class Backup extends Home {
           if (err || !listNav) this.ctx.props.openSnackBar(i18n.__('Get Backup Dirs Failed'))
           else {
             const { entries } = listNav
-            if (0 && entries && entries.find(e => e.metadata && e.metadata.localPath === localPath)) { // TODO
+            if (entries && entries.find(e => e.metadata && e.metadata.localPath === localPath)) {
               this.ctx.props.openSnackBar(i18n.__('Duplicated Backup Dir'))
             } else { // new backup dir
               const newDirName = remote.require('path').parse(localPath).base
               const dirs = entries ? entries.filter(e => e.metadata && e.metadata.localPath) : []
-              dirs.length = 0 // ignore previous top dirs TODO
+              // dirs.length = 0 // ignore previous top dirs TODO
               dirs.push({ metadata: { localPath }, name: newDirName })
               ipcRenderer.send('BACKUP_DIR', { dirs, drive })
             }
