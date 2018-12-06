@@ -15,8 +15,13 @@ const defaultTheme = getMuiTheme({
   fontFamily: 'Roboto, Noto Sans SC, Microsoft YaHei, PingFang SC, sans-serif',
   color: 'rgba(0,0,0,.76)',
   fontSize: 14,
+  overlay: { backgroundColor: 'rgba(0,0,0,.19)' },
+  ripple: { color: 'rgba(0,0,0,.38)' },
+  menuItem: { hoverColor: 'rgba(0,0,0,.05)' },
   palette: { primary1Color: '#009688', accent1Color: '#ff4081' }
 })
+
+console.log('defaultTheme', defaultTheme)
 
 class Winas extends React.Component {
   constructor () {
@@ -48,8 +53,11 @@ class Winas extends React.Component {
     this.setState({
       theme: getMuiTheme({
         fontFamily: 'Roboto, Noto Sans SC, Microsoft YaHei, PingFang SC, sans-serif',
-        color: 'rgba(0,0,0,.87)',
+        color: 'rgba(0,0,0,.76)',
         fontSize: 14,
+        overlay: { backgroundColor: 'rgba(0,0,0,.05)' },
+        ripple: { color: 'rgba(0,0,0,.38)' },
+        menuItem: { hoverColor: 'rgba(0,0,0,.05)' },
         palette: { primary1Color, accent1Color }
       })
     })

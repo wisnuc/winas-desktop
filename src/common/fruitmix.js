@@ -384,6 +384,14 @@ class Fruitmix extends EventEmitter {
     let qs
     switch (name) {
       /* file api */
+      case 'drive':
+        r = this.aget(`drives/${args.driveUUID}`)
+        break
+
+      case 'updateDrive':
+        r = this.apatch(`drives/${args.driveUUID}`, args.attr)
+        break
+
       case 'listNavDir':
         r = this.aget(`drives/${args.driveUUID}/dirs/${args.dirUUID}`, { metadata: 'true', counter: 'true' })
         break
