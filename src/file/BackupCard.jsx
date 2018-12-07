@@ -11,8 +11,11 @@ import SimpleScrollBar from '../common/SimpleScrollBar'
 class BackupCard extends React.Component {
   constructor (props) {
     super(props)
+    this.hasDrive = !!this.props.drive && this.props.drive.uuid !== 'fake-uuid'
+
     this.state = {
-      loading: true
+      topDirs: [],
+      loading: this.hasDrive
     }
 
     this.openSettings = (e, drive) => {
@@ -47,6 +50,12 @@ class BackupCard extends React.Component {
 
     this.delDir = (dir) => {
       console.log('this.delDir', dir)
+      const { uuid } = this.state.drive || this.props.drive
+      this.props.apis.pureRequest('delBackupFileOrDir', { name: dir.uuid, driveUUID: uuid, dirUUID: uuid }, (err, res) => {
+        console.log('delBackupFileOrDir', err, res)
+        this.setState({ confirmDelDir: false, dirDetail: null })
+        this.refresh()
+      })
     }
 
     this.onMsg = (event, data) => {
@@ -59,9 +68,25 @@ class BackupCard extends React.Component {
       this.props.apis.pureRequest('listNavDir', { driveUUID, dirUUID: driveUUID }, (err, res) => {
         if (err || !Array.isArray(res && res.entries)) console.error('refresh error', err, res)
         else {
-          this.setState({ topDirs: res.entries, loading: false })
+          this.setState({ topDirs: res.entries.filter(v => !v.deleted), loading: false })
         }
       })
+    }
+
+    this.updateDrive = (error, drive) => {
+      const { apis, openSnackBar } = this.props
+      if (error) {
+        this.setState({ toggleEnableLoading: false })
+        openSnackBar(i18n.__('Operation Failed'))
+      } else {
+        const { client } = drive
+        Object.assign(client, { disabled: !client.disabled })
+        apis.pureRequest('updateDrive', { driveUUID: drive.uuid, attr: { client, op: 'backup' } }, (e, d) => {
+          if (e) openSnackBar(i18n.__('Operation Failed'))
+          else this.setState({ drive: d })
+          this.setState({ toggleEnableLoading: false })
+        })
+      }
     }
 
     this.onToggleEnableBackup = () => {
@@ -69,27 +94,26 @@ class BackupCard extends React.Component {
       this.setState(Object.assign(this.state, { toggleEnableLoading: true }))
       const drive = this.state.drive || this.props.drive
       const { apis, openSnackBar } = this.props
-      apis.pureRequest('drive', { driveUUID: drive.uuid }, (error, body) => {
-        if (error) {
-          this.setState({ toggleEnableLoading: false })
-          openSnackBar(i18n.__('Operation Failed'))
-        } else {
-          const { client } = body
-          Object.assign(client, { disabled: !drive.client.disabled })
-          apis.pureRequest('updateDrive', { driveUUID: drive.uuid, attr: { client, op: 'backup' } }, (e, d) => {
-            console.log('updateDrive res', e, d, drive)
-            if (e) openSnackBar(i18n.__('Operation Failed'))
-            else this.setState({ drive: d })
-            this.setState({ toggleEnableLoading: false })
-          })
+      if (drive.uuid !== 'fake-uuid') apis.pureRequest('drive', { driveUUID: drive.uuid }, this.updateDrive)
+      else {
+        const { hostname, machineId, platform } = window.config
+        const args = {
+          label: hostname,
+          machineId: machineId.slice(-8),
+          type: platform === 'drawin' ? 'Mac-PC' : platform === 'win32' ? 'Win-PC' : 'Linux-PC'
         }
-      })
+        apis.pureRequest('createBackupDrive', args, (err, d) => {
+          if (err) openSnackBar(i18n.__('Operation Failed'))
+          else this.setState({ drive: d })
+          this.setState({ toggleEnableLoading: false })
+        })
+      }
     }
   }
 
   componentDidMount () {
     ipcRenderer.on('BACKUP_MSG', this.onMsg)
-    this.refresh()
+    if (this.hasDrive) this.refresh()
   }
 
   componentWillUnmount () {
@@ -113,7 +137,7 @@ class BackupCard extends React.Component {
   renderSettings (showDirs, transition) {
     const { topDirs } = this.state
     const drive = this.state.drive || this.props.drive
-    const enabled = !drive.client.disabled && !this.state.toggleEnableLoading
+    const enabled = drive && drive.uuid !== 'fake-uuid' && !drive.client.disabled && !this.state.toggleEnableLoading
     const color = enabled ? 'rgba(0,0,0,.76)' : 'rgba(0,0,0,.38)'
     return (
       <div style={{ position: 'absolute', height: '100%', width: '100%', left: showDirs ? '-100%' : 0, top: 0, transition }}>
@@ -244,6 +268,7 @@ class BackupCard extends React.Component {
                 key={v.uuid}
                 onClick={e => this.openDirDetail(e, {
                   name: v.bname,
+                  uuid: v.name,
                   disabled: v.metadata.disabled,
                   localPath: v.metadata.localPath
                 })}
@@ -269,6 +294,7 @@ class BackupCard extends React.Component {
   renderCurrentBackup (drive) {
     const { label, client } = drive
     const { lastBackupTime } = client
+    const disabled = drive.uuid === 'fake-uuid' || client.disabled
     const { showDirs } = this.state
     const transition = 'left 450ms'
     return (
@@ -322,11 +348,11 @@ class BackupCard extends React.Component {
           >
             {
               !!this.state.dirDetail &&
-                <Menu style={{ maxWidth: 306, fontSize: 14, marginTop: -8, width: 306 }} >
+                <Menu style={{ maxWidth: 280, fontSize: 14, marginTop: -8, width: 280 }} >
                   <div style={{ height: 56, display: 'flex', alignItems: 'center', borderBottom: '1px solid #e8eaed' }}>
                     <div style={{ display: 'flex', alignItems: 'center', marginLeft: 24 }}>
                       <AllFileIcon style={{ width: 24, height: 24, color: '#ffa93e', marginRight: 16 }} />
-                      <div style={{ width: 172 }} className="text">
+                      <div style={{ width: 146 }} className="text">
                         { this.state.dirDetail.name }
                       </div>
                     </div>
@@ -401,37 +427,44 @@ class BackupCard extends React.Component {
           </Popover>
         </div>
         <div style={{ fontSize: 12, fontWeight: 500, color: '#FFF', margin: '16px 0 0 0' }}>
-          { this.calcTime(lastBackupTime) }
+          { !disabled && !!lastBackupTime && this.calcTime(lastBackupTime) }
         </div>
         <div style={{ fontSize: 12, fontWeight: 500, color: '#FFF' }}>
-          { lastBackupTime ? i18n.__('Backup Success') : i18n.__('Backup Not Finished') }
+          { !disabled && (lastBackupTime ? i18n.__('Backup Success') : i18n.__('Backup Not Finished')) }
         </div>
-        <div
-          style={{
-            height: 40,
-            position: 'absolute',
-            left: 16,
-            bottom: 0,
-            display: 'flex',
-            alignItems: 'center',
-            cursor: 'pointer'
-          }}
-          onClick={e => this.handleClickAdd(e, drive)}
-          onDoubleClick={(e) => { e.stopPropagation(); e.preventDefault() }}
-        >
-          <div style={{ transform: 'rotate(45deg)' }}>
-            <FailedIcon style={{ color: '#FFF', height: 24, width: 24 }} />
-          </div>
-          <div style={{ fontSize: 12, fontWeight: 500, color: '#FFF', marginLeft: 16 }}>
-            { i18n.__('Add Backup Directroy') }
-          </div>
+        <div style={{ fontSize: 12, fontWeight: 500, color: '#FFF', width: '100%', marginTop: 56 }} className="flexCenter">
+          { disabled && i18n.__('Backup Disabled Text') }
         </div>
+        {
+          !disabled &&
+            <div
+              style={{
+                height: 40,
+                position: 'absolute',
+                left: 16,
+                bottom: 0,
+                display: 'flex',
+                alignItems: 'center',
+                cursor: 'pointer'
+              }}
+              onClick={e => this.handleClickAdd(e, drive)}
+              onDoubleClick={(e) => { e.stopPropagation(); e.preventDefault() }}
+            >
+              <div style={{ transform: 'rotate(45deg)' }}>
+                <FailedIcon style={{ color: '#FFF', height: 24, width: 24 }} />
+              </div>
+              <div style={{ fontSize: 12, fontWeight: 500, color: '#FFF', marginLeft: 16 }}>
+                { i18n.__('Add Backup Directroy') }
+              </div>
+            </div>
+        }
       </div>
     )
   }
 
   render () {
-    const { drive, index } = this.props
+    const { index } = this.props
+    const drive = this.state.drive || this.props.drive
     if (!index) return this.renderCurrentBackup(drive)
     const { client, label } = drive
     const { type, lastBackupTime } = client

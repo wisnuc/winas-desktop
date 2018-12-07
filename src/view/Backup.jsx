@@ -1,8 +1,10 @@
 import i18n from 'i18n'
+import React from 'react'
 import { remote, ipcRenderer } from 'electron'
 import Home from './Home'
 import sortByType from '../common/sort'
-import { BackupIcon } from '../common/Svg'
+import { LIButton } from '../common/Buttons'
+import { RefreshAltIcon, BackupIcon, MoreIcon } from '../common/Svg'
 
 class Backup extends Home {
   constructor (ctx) {
@@ -22,11 +24,11 @@ class Backup extends Home {
           if (err || !listNav) this.ctx.props.openSnackBar(i18n.__('Get Backup Dirs Failed'))
           else {
             const { entries } = listNav
-            if (entries && entries.find(e => e.metadata && e.metadata.localPath === localPath)) {
+            if (entries && entries.find(e => !e.deleted && e.metadata && e.metadata.localPath === localPath)) {
               this.ctx.props.openSnackBar(i18n.__('Duplicated Backup Dir'))
             } else { // new backup dir
               const newDirName = remote.require('path').parse(localPath).base
-              const dirs = entries ? entries.filter(e => e.metadata && e.metadata.localPath) : []
+              const dirs = entries ? entries.filter(e => !e.deleted && e.metadata && e.metadata.localPath) : []
               // dirs.length = 0 // ignore previous top dirs TODO
               dirs.push({ metadata: { localPath }, name: newDirName })
               ipcRenderer.send('BACKUP_DIR', { dirs, drive })
@@ -100,6 +102,16 @@ class Backup extends Home {
       }
     }
 
+    this.toggleShowArchive = () => {
+      console.log('this.toggleShowArchive', this.state)
+      const { showArchive, listNavDir, sortType } = this.state
+      let entries = listNavDir.entries.filter(e => !e.deleted)
+      if (showArchive) entries = entries.filter(e => !e.archived)
+      entries.sort((a, b) => sortByType(a, b, sortType))
+      const select = this.select.reset(entries.length)
+      this.setState({ entries, select, showArchive: !showArchive })
+    }
+
     ipcRenderer.on('BACKUP_STAT', (event, data) => {
       console.log('BACKUP_STAT', data)
     })
@@ -149,7 +161,7 @@ class Backup extends Home {
       const drives = this.state.drives || this.ctx.props.apis.drives.value()
       path[1].name = this.rootDrive.name || drives.find(d => d.uuid === this.rootDrive.uuid).label
 
-      let entries = [...this.state.listNavDir.entries]
+      let entries = [...this.state.listNavDir.entries].filter(e => !e.deleted)
       if (!this.state.showArchive) entries = entries.filter(e => !e.archived)
       entries.sort((a, b) => sortByType(a, b, this.state.sortType))
 
@@ -190,6 +202,32 @@ class Backup extends Home {
 
   menuSelectedIcon () {
     return BackupIcon
+  }
+
+  renderToolBar ({ style, openDetail }) {
+    const color = 'rgba(0,0,0,.54)'
+
+    const inRoot = this.state.inRoot || (this.hasRoot && !this.phyDrive)
+    const breadCrumbStyle = { height: 40, fontSize: 18, color: 'rgba(0,0,0,.54)', display: 'flex', alignItems: 'center', flexWrap: 'wrap' }
+    return (
+      <div style={style}>
+        { this.renderBreadCrumbItem({ style: breadCrumbStyle }) }
+        <div style={{ flexGrow: 1 }} />
+
+        <LIButton onClick={() => this.refresh()} tooltip={i18n.__('Refresh')} >
+          <RefreshAltIcon color={color} />
+        </LIButton>
+
+        {
+          !inRoot &&
+            <LIButton onClick={this.toggleShowArchive} tooltip={i18n.__('Filter')} >
+              <MoreIcon />
+            </LIButton>
+        }
+
+        <div style={{ width: 8 }} />
+      </div>
+    )
   }
 }
 

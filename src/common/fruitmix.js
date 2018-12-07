@@ -396,6 +396,11 @@ class Fruitmix extends EventEmitter {
         r = this.aget(`drives/${args.driveUUID}/dirs/${args.dirUUID}`, { metadata: 'true', counter: 'true' })
         break
 
+      case 'delBackupFileOrDir':
+        r = this.apost(`drives/${args.driveUUID}/dirs/${args.dirUUID}/entries`)
+          .field(args.name, JSON.stringify(args.hash ? { op: 'remove', uuid: args.uuid, hash: args.hash } : { op: 'remove' }))
+        break
+
       case 'content':
         r = this.aget(`drives/${args.driveUUID}/dirs/${args.dirUUID}/stats`)
         break
