@@ -6,7 +6,7 @@ import Name from './Name'
 import ScrollBar from '../common/ScrollBar'
 import renderFileIcon from '../common/renderFileIcon'
 import { BackwardIcon, FolderIcon, PublicIcon } from '../common/Svg'
-import { formatDate, formatMtime } from '../common/datetime'
+import { formatDate, localMtime } from '../common/datetime'
 
 class Row extends React.PureComponent {
   render () {
@@ -73,6 +73,8 @@ class Row extends React.PureComponent {
       border: 'solid 1px transparent'
     }, select.rowBorder(index))
 
+    const textStyle = { color: 'rgba(0,0,0,.54)', textAlign: 'right', fontSize: 12 }
+
     return (
       <div key={entry.name} style={Object.assign({ display: 'flex' }, style)}>
         <div
@@ -101,8 +103,9 @@ class Row extends React.PureComponent {
           </div>
           <div style={{ width: 12 }} />
 
-          <div style={{ width: 'calc(100% - 370px)', display: 'flex', alignItems: 'center' }} >
+          <div style={{ width: 'calc(100% - 522px)', display: 'flex', alignItems: 'center' }} >
             <Name
+              isBackup={this.props.isBackup}
               refresh={() => this.props.refresh({ noloading: true })}
               openSnackBar={this.props.openSnackBar}
               entry={entry}
@@ -113,14 +116,20 @@ class Row extends React.PureComponent {
               onMouseDown={e => onContentMouseDown(e, index)}
             />
           </div>
-          <div style={{ width: 20 }} />
 
           <div
-            style={{ width: 80, color: '#888a8c', textAlign: 'right' }}
+            style={Object.assign({ width: 152 }, textStyle)}
+            onMouseDown={e => onContentMouseDown(e, index)}
+          >
+            { this.props.isBackup && entry.mtime && localMtime(entry.mtime) }
+          </div>
+
+          <div
+            style={Object.assign({ width: 152 }, textStyle)}
             onMouseDown={e => onContentMouseDown(e, index)}
           >
             { showTakenTime ? entry.metadata && (entry.metadata.date || entry.metadata.datetime) &&
-              formatDate(entry.metadata.date || entry.metadata.datetime) : entry.mtime && formatMtime(entry.mtime) }
+              formatDate(entry.metadata.date || entry.metadata.datetime) : entry.mtime && localMtime(entry.mtime) }
             {
               inPublicRoot && (entry.writelist === '*' ? i18n.__('All Users')
                 : entry.writelist.filter(uuid => users.find(u => u.uuid === uuid))
@@ -130,7 +139,7 @@ class Row extends React.PureComponent {
           </div>
 
           <div
-            style={{ width: 200, color: '#888a8c', textAlign: 'right' }}
+            style={Object.assign({ width: 108 }, textStyle)}
             onMouseDown={e => onContentMouseDown(e, index)}
           >
             { entry.type === 'file' && entry.size && prettysize(entry.size, false, true, 2).toUpperCase() }
@@ -214,6 +223,7 @@ class RenderListByRow extends React.Component {
         style={{
           width: h.width,
           flexGrow: h.flexGrow,
+          textAlign: 'right',
           display: 'flex',
           alignItems: 'center',
           cursor: this.state.type === h.title ? 'pointer' : 'default'
@@ -245,13 +255,7 @@ class RenderListByRow extends React.Component {
   }
 
   render () {
-    const rowRenderer = props => (
-      <Row
-        {...props}
-        {...this.props}
-      />
-    )
-
+    const isBackup = this.props.isBackup
     return (
       <div
         style={{
@@ -276,9 +280,10 @@ class RenderListByRow extends React.Component {
             backgroundColor: '#f8f9fa'
           }}
         >
-          { this.renderHeader({ title: i18n.__('File Name'), flexGrow: 1, up: 'nameUp', down: 'nameDown' }) }
-          { this.renderHeader({ title: i18n.__('Date Modified'), width: 232, up: 'timeUp', down: 'timeDown' }) }
-          { this.renderHeader({ title: i18n.__('Size'), width: 48, up: 'sizeUp', down: 'sizeDown' }) }
+          { this.renderHeader({ title: i18n.__('Name'), flexGrow: 1, up: 'nameUp', down: 'nameDown' }) }
+          { !!isBackup && this.renderHeader({ title: i18n.__('Backup Date'), width: 152, up: 'backupUp', down: ' backupDown' }) }
+          { this.renderHeader({ title: i18n.__('Date Modified'), width: 152, up: 'timeUp', down: 'timeDown' }) }
+          { this.renderHeader({ title: i18n.__('Size'), width: 108, up: 'sizeUp', down: 'sizeDown' }) }
           <div style={{ width: 8 }} />
         </div>
 
@@ -303,7 +308,7 @@ class RenderListByRow extends React.Component {
                     rowCount={this.props.entries.length}
                     onScroll={this.onScroll}
                     rowHeight={48}
-                    rowRenderer={rowRenderer}
+                    rowRenderer={props => (<Row {...props} {...this.props} />)}
                   />
                 </div>
               )}

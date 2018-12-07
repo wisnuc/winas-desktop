@@ -121,3 +121,11 @@ export function formatMtime (mtime) {
   time.setTime(parseInt(mtime, 10))
   return time.toJSON().slice(0, 10)
 }
+
+export function localMtime (time) {
+  if (!time) return ''
+  const date = new Date(time)
+  const t = date.toLocaleTimeString('zh-CN', { hour12: false }).split(':')
+  t.pop()
+  return `${date.toLocaleDateString('zh-CN')} ${t.join(':')}`
+}

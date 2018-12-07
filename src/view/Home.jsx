@@ -1236,6 +1236,7 @@ class Home extends Base {
           onCut={this.onCut}
           inPublicRoot={this.hasRoot && !this.phyDrive}
           addBackupDir={this.addBackupDir}
+          isBackup={this.isBackup}
         />
 
         { this.renderMenu({ open: this.state.contextMenuOpen, openDetail }) }

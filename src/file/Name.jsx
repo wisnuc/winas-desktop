@@ -1,6 +1,7 @@
 import i18n from 'i18n'
 import React from 'react'
 import sanitize from 'sanitize-filename'
+import { PCIcon, MobileIcon } from '../common/Svg'
 
 class Name extends React.PureComponent {
   constructor (props) {
@@ -90,16 +91,21 @@ class Name extends React.PureComponent {
   }
 
   render () {
-    const { entry, modify, onMouseDown, center } = this.props
+    const { entry, modify, onMouseDown, center, isBackup } = this.props
     const name = entry.bname || entry.name // for backup top directory
-    if (!modify) {
+    if (!modify || isBackup) {
       this.reset()
       return (
-        <div
-          style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', color: '#525a60', letterSpacing: 1.4 }}
-          onMouseDown={onMouseDown}
-        >
-          { name }
+        <div style={{ width: '100%', display: 'flex', alignItems: 'center' }}>
+          <div style={{ maxWidth: 'calc(100% - 34px)' }}>
+            <div
+              style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', color: '#525a60', letterSpacing: 1.4 }}
+              onMouseDown={onMouseDown}
+            >
+              { name }
+            </div>
+          </div>
+          { entry.archived && <PCIcon style={{ width: 18, height: 18, marginLeft: 16 }} /> }
         </div>
       )
     }
