@@ -856,9 +856,6 @@ class Home extends Base {
 
   renderToolBar ({ style, openDetail }) {
     const color = 'rgba(0,0,0,.54)'
-    // const { curr, queue } = this.history.get()
-    // const noBack = curr < 1
-    // const noForward = curr > queue.length - 2
     const { select } = this.state
     const itemSelected = select && select.selected && select.selected.length
 
@@ -874,32 +871,10 @@ class Home extends Base {
     }
     return (
       <div style={style}>
-        {/*
-        <LIButton onClick={this.back} tooltip={i18n.__('Backward')} disabled={noBack} style={{ marginLeft: -8 }}>
-          <BackwardIcon color={color} />
-        </LIButton>
-        <div style={{ width: 8 }} />
-        <LIButton
-          onClick={this.forward}
-          tooltip={i18n.__('Forward')}
-          disabled={noForward}
-          iconStyle={{ transform: 'rotate(180deg)' }}
-        >
-          <BackwardIcon color={color} />
-        </LIButton>
-        */}
         {
           !this.state.showSearch ? this.renderBreadCrumbItem({ style: breadCrumbStyle })
             : (
-              <div
-                style={{
-                  fontSize: 18,
-                  height: 32,
-                  marginLeft: 24,
-                  display: 'flex',
-                  alignItems: 'center'
-                }}
-              >
+              <div style={{ fontSize: 18, height: 32, marginLeft: 24, display: 'flex', alignItems: 'center' }} >
                 { this.state.showSearch === true ? i18n.__('Search Results')
                   : i18n.__('Search Result of %s', this.state.showSearch) }
               </div>
@@ -917,9 +892,12 @@ class Home extends Base {
             </LIButton>
         }
 
-        <LIButton onClick={() => {}} tooltip={i18n.__('More')} >
-          <MoreIcon />
-        </LIButton>
+        {
+          !!itemSelected &&
+            <LIButton onClick={() => {}} tooltip={i18n.__('More')} >
+              <MoreIcon />
+            </LIButton>
+        }
 
         <LIButton
           onClick={() => this.toggleDialog('gridView')}

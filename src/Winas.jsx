@@ -140,7 +140,6 @@ class Winas extends React.Component {
           padding: '0 30px',
           borderRadius: 4,
           fontSize: 12,
-          letterSpacing: 1.2,
           color: '#FFF',
           backgroundColor: 'rgba(0,0,0,.8)',
           boxShadow: '0px 4px 8px 0 rgba(23,99,207,.1)'

@@ -2,11 +2,10 @@ import React from 'react'
 import i18n from 'i18n'
 import prettysize from 'prettysize'
 import { AutoSizer } from 'react-virtualized'
-import Name from './Name'
 import ScrollBar from '../common/ScrollBar'
 import SimpleScrollBar from '../common/SimpleScrollBar'
 import renderFileIcon from '../common/renderFileIcon'
-import { BackwardIcon, FolderIcon, PublicIcon } from '../common/Svg'
+import { BackwardIcon, FolderIcon, PublicIcon, PCIcon, MobileIcon } from '../common/Svg'
 import { formatDate, localMtime } from '../common/datetime'
 
 class FolderSize extends React.PureComponent {
@@ -40,7 +39,7 @@ class FolderSize extends React.PureComponent {
   render () {
     return (
       <div style={{ color: 'rgba(0,0,0,.54)', fontSize: 12, width: 100, textAlign: 'right' }}>
-        { this.state.loading ? i18n.__('Loading') : prettysize(this.state.fileTotalSize, false, true, 2).toUpperCase() }
+        { this.state.loading ? i18n.__('Loading') : prettysize(this.state.fileTotalSize) }
       </div>
     )
   }
@@ -72,8 +71,6 @@ class Row extends React.PureComponent {
     const backgroundColor = onDropping ? '#f8f9fa' : select.rowColor(index)
 
     const isSelected = select.selected.includes(index)
-
-    const isOnModify = select.modify === index
 
     /* render drive list */
     let users = []
@@ -113,6 +110,9 @@ class Row extends React.PureComponent {
 
     const textStyle = { color: 'rgba(0,0,0,.54)', textAlign: 'right', fontSize: 12 }
 
+    const isMobile = false // TODO
+    const Icon = isMobile ? MobileIcon : PCIcon
+
     return (
       <div key={entry.name} style={Object.assign({ display: 'flex' }, style)}>
         <div
@@ -142,17 +142,12 @@ class Row extends React.PureComponent {
           <div style={{ width: 12 }} />
 
           <div style={{ width: 'calc(100% - 522px)', display: 'flex', alignItems: 'center' }} >
-            <Name
-              isBackup={this.props.isBackup}
-              refresh={() => this.props.refresh({ noloading: true })}
-              openSnackBar={this.props.openSnackBar}
-              entry={entry}
-              entries={this.props.entries}
-              modify={isOnModify}
-              apis={this.props.apis}
-              path={this.props.path}
-              onMouseDown={e => onContentMouseDown(e, index)}
-            />
+            <div style={{ width: '100%', display: 'flex', alignItems: 'center' }}>
+              <div style={{ width: '100%', maxWidth: 'calc(100% - 40px)', color: 'rgba(0,0,0,.76)' }} className="text">
+                { entry.bname || entry.name }
+              </div>
+              { entry.archived && <Icon style={{ width: 18, height: 18, marginLeft: 16 }} /> }
+            </div>
           </div>
 
           <div
@@ -180,7 +175,7 @@ class Row extends React.PureComponent {
             style={Object.assign({ width: 108 }, textStyle)}
             onMouseDown={e => onContentMouseDown(e, index)}
           >
-            { entry.type === 'file' && entry.size && prettysize(entry.size, false, true, 2).toUpperCase() }
+            { entry.type === 'file' && entry.size && prettysize(entry.size) }
           </div>
 
         </div>
@@ -281,7 +276,7 @@ class RenderListByRow extends React.Component {
         >
           { h.title }
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', height: '100%', marginTop: 2 }}>
+        <div style={{ display: 'flex', alignItems: 'center', height: '100%', marginTop: 2, marginLeft: 8 }}>
           { this.props.sortType === h.up &&
             <BackwardIcon style={{ width: 18, height: 18, color: 'rgba(0,0,0,.27)', transform: 'rotate(-90deg)' }} /> }
           { this.props.sortType === h.down &&

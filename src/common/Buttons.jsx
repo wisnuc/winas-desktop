@@ -435,7 +435,7 @@ export class MenuButton extends Button {
     const iconColor = selected ? primaryColor : 'rgba(0,0,0,.54)'
     const zIndex = selected ? 100 : 1
     const opacity = selected ? 1 : 0.87
-    const fontWeight = selected ? 'bold' : 'normal'
+    const fontWeight = selected ? 500 : 'normal'
     const borderRadius = 0
 
     return (

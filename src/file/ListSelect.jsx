@@ -208,27 +208,34 @@ class ListSelect extends EventEmitter {
   }
 
   rowColor (index) {
-    if (this.state.selected.includes(index)) return 'rgba(224, 247, 250, 0.26)'
-    else if (this.shiftInRange(index) || (index === this.state.hover && !this.dragging.length)) return 'rgba(224, 247, 250, 0.26)'
+    if (this.state.selected.includes(index)) return 'rgba(0,150,136,.04)'
+    else if (this.shiftInRange(index) || (index === this.state.hover && !this.dragging.length)) return '#f8f9fa'
     return '#f8f9fa'
   }
 
   rowBorder (index) {
-    let borderColor = '#009688'
-    let borderTopColor = '#009688'
-    let borderBottomColor = '#009688'
+    const dColor = 'rgba(0,150,136,.38)'
+    const lColor = 'rgba(0,150,136,.26)'
+    let [borderColor, borderTopColor, borderRightColor, borderBottomColor, borderLeftColor] = [dColor, dColor, dColor, dColor, dColor]
+    const { selected, specified, hover } = this.state
 
     /* not selected, not specified, not hover */
-    if (!this.state.selected.includes(index) && this.state.specified !== index && this.state.hover !== index) return ({})
-    else if (!this.state.selected.includes(index) && this.state.specified !== index && this.state.hover === index) {
-      borderColor = '#d1e9fb'
-      borderTopColor = '#d1e9fb'
-      borderBottomColor = '#d1e9fb'
+    if (!selected.includes(index) && specified !== index && hover !== index) return ({})
+    else if (!selected.includes(index) && specified !== index && hover === index) {
+      [borderColor, borderTopColor, borderRightColor, borderBottomColor, borderLeftColor] = [lColor, lColor, lColor, dColor, dColor]
     } else {
-      if (this.state.selected.includes(index - 1)) borderTopColor = 'transparent'
-      if (this.state.selected.includes(index + 1)) borderBottomColor = 'transparent'
+      borderColor = dColor
+      if (selected.includes(index - 1) && selected.includes(index + 1)) {
+        [borderTopColor, borderBottomColor] = ['transparent', 'transparent']
+      } else if (selected.includes(index - 1) && !selected.includes(index + 1)) {
+        borderTopColor = 'transparent'
+      } else if (!selected.includes(index - 1) && selected.includes(index + 1)) {
+        borderBottomColor = 'transparent'
+      } else if (!selected.includes(index - 1) && !selected.includes(index + 1)) {
+        borderColor = dColor
+      }
     }
-    return ({ borderColor, borderTopColor, borderBottomColor })
+    return ({ borderColor, borderTopColor, borderRightColor, borderBottomColor, borderLeftColor })
   }
 
   rowLeading (index) {

@@ -99,7 +99,7 @@ class Name extends React.PureComponent {
         <div style={{ width: '100%', display: 'flex', alignItems: 'center' }}>
           <div style={{ maxWidth: 'calc(100% - 34px)' }}>
             <div
-              style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', color: '#525a60', letterSpacing: 1.4 }}
+              style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', color: '#525a60' }}
               onMouseDown={onMouseDown}
             >
               { name }
@@ -135,7 +135,6 @@ class Name extends React.PureComponent {
             width: '100%',
             fontSize: 14,
             color: '#525a60',
-            letterSpacing: 1.4,
             backgroundColor: '#FFF',
             textAlign: center ? 'center' : undefined
           }}

@@ -473,29 +473,39 @@ class NavViews extends React.Component {
       { Icon: AudioIcon, name: i18n.__('Audio'), type: 'audio', color: '#00bcd4' }
     ]
     return (
-      <div style={{ width: 192, marginLeft: 16 }}>
+      <div style={{ width: 192, marginLeft: 16, position: 'relative' }}>
         {
-          array.map(({ Icon, name, type, color }) => (
-            <div
-              key={name}
-              style={{
-                height: 40,
-                width: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                cursor: 'pointer',
-                borderRadius: 20,
-                margin: '8px 0px',
-                backgroundColor: this.state.types === '*' || this.state.types.includes(type) ? '#eeeeee' : '#FFF'
-              }}
-              onClick={() => this.handleCheck(type)}
-            >
-              <Icon style={{ color, marginLeft: 16 }} />
-              <div style={{ fontWeight: 500, marginLeft: 32, opacity: 0.87 }}>
-                { name }
+          array.map(({ Icon, name, type, color }) => {
+            const isHover = this.state.hoverType === type
+            const isSelected = this.state.types === '*' || this.state.types.includes(type)
+            return (
+              <div
+                key={name}
+                style={{
+                  height: 40,
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  cursor: 'pointer',
+                  borderRadius: 20,
+                  margin: isHover ? '-1px 0px 7px -1px' : '0px 0px 8px 0px',
+                  border: isHover ? '1px solid #e2e7ea' : '',
+                  backgroundColor: isSelected ? 'rgba(226,231,234,.26)' : '#FFF'
+                }}
+                onClick={() => this.handleCheck(type)}
+                onMouseMove={() => this.setState({ hoverType: type })}
+                onMouseLeave={() => this.setState({ hoverType: '' })}
+              >
+                <Icon style={{ color, marginLeft: 16 }} />
+                <div style={{ fontWeight: 500, marginLeft: 32, opacity: 0.87 }}>
+                  { name }
+                </div>
+                <div style={{ flexGrow: 1 }} />
+                { isSelected && <CloseIcon style={{ height: 18, width: 18 }} /> }
+                <div style={{ width: 16 }} />
               </div>
-            </div>
-          ))
+            )
+          })
         }
       </div>
     )
@@ -551,10 +561,10 @@ class NavViews extends React.Component {
               this.state.searchMode
                 ? (
                   <ExitSearchIcon
-                    style={{ width: 40, height: 40, cursor: 'pointer', marginTop: -8, opacity: 0.7 }}
+                    style={{ width: 40, height: 40, cursor: 'pointer', marginTop: -8, color: '#00695c' }}
                     onClick={this.exitSearchMode}
                   />
-                ) : <WisnucLogo style={{ width: 48, height: 48, color: this.state.primaryColor }} />
+                ) : <WisnucLogo style={{ width: 48, height: 48, color: '#00695c' }} />
             }
           </div>
           {
@@ -667,10 +677,10 @@ class NavViews extends React.Component {
                   />
                 </div>
                 <div
-                  style={{ position: 'absolute', top: 8, right: 8, cursor: 'pointer', display: this.state.searchText ? '' : 'none' }}
+                  style={{ position: 'absolute', top: 12, right: 16, cursor: 'pointer', display: this.state.searchText ? '' : 'none' }}
                   onClick={this.clearSearchText}
                 >
-                  <CloseIcon />
+                  <CloseIcon style={{ width: 18, height: 18 }} />
                 </div>
               </div>
               <div
@@ -683,7 +693,7 @@ class NavViews extends React.Component {
                   alignItems: 'center'
                 }}
               >
-                { i18n.__('Specific Type') }
+                { i18n.__('File Types') }
               </div>
               { this.renderTypes() }
             </div>

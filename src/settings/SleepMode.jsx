@@ -109,7 +109,6 @@ class SleepMode extends React.Component {
       width: 50,
       fontSize: 14,
       color: '#525a60',
-      letterSpacing: 1.8,
       backgroundColor: '#f5f7fa',
       cursor: 'pointer',
       textAlign: 'center'

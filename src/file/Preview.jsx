@@ -279,7 +279,7 @@ class Preview extends React.Component {
     return (
       <div
         style={{ height: 'calc(100% - 160px)', width: 'calc(100% - 200px)', backgroundColor: 'rgba(0,0,0,0)' }}
-        onClick={(e) => { e.preventDefault(); e.stopPropagation() }}
+        onClick={e => e.stopPropagation()}
       >
         <video
           width="100%"
@@ -309,7 +309,7 @@ class Preview extends React.Component {
 
   renderAudio () {
     return (
-      <div onClick={(e) => { e.preventDefault(); e.stopPropagation() }} >
+      <div onClick={e => e.stopPropagation()}>
         <audio width="100%" height="100%" controls controlsList="nodownload">
           <source src={this.state.filePath} />
           <track kind="captions" />
@@ -335,7 +335,7 @@ class Preview extends React.Component {
     return (
       <div
         style={{ width: 290, padding: '0 10px 20px 20px', backgroundColor: '#FFF' }}
-        onClick={(e) => { e.preventDefault(); e.stopPropagation() }}
+        onClick={e => e.stopPropagation()}
       >
         <div style={{ height: 60, display: 'flex', alignItems: 'center' }}>
           <div style={{ color: '#525a60', fontSize: 20, width: 215 }} className="text">

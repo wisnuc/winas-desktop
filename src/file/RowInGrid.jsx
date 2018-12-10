@@ -2,11 +2,10 @@ import i18n from 'i18n'
 import React from 'react'
 import { Menu, MenuItem, IconButton, Popover } from 'material-ui'
 
-import Name from './Name'
 import Thumb from './Thumb'
 import BackupCard from './BackupCard'
 import renderFileIcon from '../common/renderFileIcon'
-import { AllFileIcon, ArrowDownIcon, CheckedIcon } from '../common/Svg'
+import { AllFileIcon, ArrowDownIcon, CheckedIcon, PCIcon, MobileIcon } from '../common/Svg'
 import FlatButton from '../common/FlatButton'
 
 const hasThumb = (metadata) => {
@@ -69,7 +68,7 @@ class Row extends React.Component {
   }
 
   render () {
-    const { select, list, isScrolling, rowSum, inPublicRoot, sortType, changeSortType, size } = this.props
+    const { select, list, isScrolling, rowSum, sortType, changeSortType, size } = this.props
     const h = this.headers.find(header => header.title === this.state.type) || this.headers[0]
     return (
       <div style={{ height: '100%', width: '100%' }} >
@@ -148,169 +147,119 @@ class Row extends React.Component {
           list.first && list.entries[0].entry.type === 'backup' && <div style={{ height: 24 }} />
         }
         {/* onMouseDown: clear select and start grid select */}
-        {
-          isScrolling ? (
-            <div style={{ display: 'flex' }}>
-              {
-                list.entries.map((item) => {
-                  const { index, entry } = item
-                  const backgroundColor = '#FFF'
-                  return (
-                    <div
-                      style={{
-                        position: 'relative',
-                        width: size,
-                        height: entry.type !== 'directory' ? size : 48,
-                        marginRight: 16,
-                        marginBottom: 16,
-                        backgroundColor,
-                        overflow: 'hidden',
-                        borderRadius: 6,
-                        boxSizing: 'border-box',
-                        boxShadow: 'rgba(0, 0, 0, 0.118) 0px 1px 6px, rgba(0, 0, 0, 0.118) 0px 1px 4px'
-                      }}
-                      role="presentation"
-                      key={index}
-                    >
-                      {/* preview or icon */}
-                      {
-                        entry.type !== 'directory' &&
-                          <div
-                            draggable={false}
-                            className="flexCenter"
-                            style={{
-                              height: size - 48,
-                              width: size,
-                              margin: 0,
-                              overflow: 'hidden',
-                              backgroundColor: '#f0f0f0'
-                            }}
-                          />
-                      }
-
-                      {/* file name */}
-                      <div style={{ height: 48, width: size, position: 'relative', display: 'flex', alignItems: 'center' }} >
-                        <div style={{ width: 24, margin: '0px 16px' }}>
-                          { entry.type === 'directory' ? <AllFileIcon style={{ width: 24, height: 24, color: '#ffa93e' }} />
-                            : renderFileIcon(entry.name, entry.metadata, 24) }
-                        </div>
-                        <div style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', color: '#525a60' }} >
-                          { entry.name }
-                        </div>
-                        <div style={{ width: 8 }} />
-                      </div>
-                    </div>
-                  )
-                })
+        <div style={{ display: 'flex' }} >
+          {
+            list.entries.map((item) => {
+              // isScrolling
+              const { index, entry } = item
+              const selected = select.selected.findIndex(s => s === index) > -1
+              const hover = select.hover === index && !selected
+              const border = hover ? '1px solid rgba(0,150,136, 0.26)' : selected ? '1px solid rgba(0,150,136, 0.38)' : ''
+              const backgroundColor = selected ? 'rgba(0,150,136,.04)' : '#FFF'
+              const isMobile = false // TODO
+              const Icon = isMobile ? MobileIcon : PCIcon
+              if (entry.type === 'backup') {
+                return (
+                  <div
+                    key={entry.uuid}
+                    className="flexCenter"
+                    onClick={e => this.props.onRowClick(e, index)}
+                    onDoubleClick={e => this.props.onRowDoubleClick(e, index)}
+                    style={{
+                      height: size,
+                      width: size,
+                      borderRadius: 4,
+                      marginRight: 16,
+                      marginBottom: 16
+                    }}
+                  >
+                    <BackupCard {...this.props} drive={entry} index={index} />
+                  </div>
+                )
               }
-            </div>
-          )
-            : <div style={{ display: 'flex' }} >
-              {
-                list.entries.map((item) => {
-                  const { index, entry } = item
-                  const selected = select.selected.findIndex(s => s === index) > -1
-                  const isOnModify = select.modify === index && !inPublicRoot
-                  const hover = select.hover === index && !selected
-                  const backgroundColor = selected ? '#f4fafe' : hover ? '#f9fcfe' : '#FFF'
-                  if (entry.type === 'backup') {
-                    return (
+              const actions = isScrolling ? {} : {
+                onClick: e => this.props.onRowClick(e, index),
+                onMouseUp: (e) => { e.preventDefault(); e.stopPropagation() },
+                onContextMenu: e => this.props.onRowContextMenu(e, index),
+                onMouseEnter: e => this.props.onRowMouseEnter(e, index),
+                onMouseLeave: e => this.props.onRowMouseLeave(e, index),
+                onDoubleClick: e => this.props.onRowDoubleClick(e, index),
+                onMouseDown: e => e.stopPropagation() || this.props.gridDragStart(e, index)
+              }
+              return (
+                <div
+                  key={index}
+                  style={{
+                    position: 'relative',
+                    width: size,
+                    height: entry.type !== 'directory' ? size : 48,
+                    border,
+                    margin: border ? '-1px 16px 16px 0px' : '0px 16px 16px 0px',
+                    backgroundColor,
+                    boxSizing: 'border-box'
+                  }}
+                  {...actions}
+                >
+                  {/* preview or icon */}
+                  {
+                    entry.type !== 'directory' &&
                       <div
-                        key={entry.uuid}
+                        draggable={false}
                         className="flexCenter"
-                        onClick={e => this.props.onRowClick(e, index)}
-                        onDoubleClick={e => this.props.onRowDoubleClick(e, index)}
-                        style={{
-                          height: size,
-                          width: size,
-                          borderRadius: 4,
-                          marginRight: 16,
-                          marginBottom: 16,
-                          boxShadow: '0px 1px 0.9px 0.1px rgba(0, 0, 0, 0.24), 0 0 1px 0px rgba(0, 0, 0, 0.16)'
-                        }}
+                        style={{ height: size - 48, width: size, marginLeft: border ? -1 : 0, overflow: 'hidden' }}
                       >
-                        <BackupCard {...this.props} drive={entry} index={index} />
+                        {
+                          entry.type === 'directory'
+                            ? <AllFileIcon style={{ width: 48, height: 48, color: '#ffa93e' }} />
+                            : ((rowSum < 500 || !isScrolling) && entry.hash && hasThumb(entry.metadata)
+                              ? (
+                                <Thumb
+                                  full
+                                  name={entry.name}
+                                  metadata={entry.metadata}
+                                  bgColor="transparent"
+                                  digest={entry.hash}
+                                  ipcRenderer={this.props.ipcRenderer}
+                                  height={size - 48}
+                                  width={size}
+                                />
+                              ) : renderFileIcon(entry.name, entry.metadata, 48)
+                            )
+                        }
                       </div>
-                    )
                   }
-                  return (
-                    <div
-                      style={{
-                        position: 'relative',
-                        width: size,
-                        height: entry.type !== 'directory' ? size : 48,
-                        marginRight: 16,
-                        marginBottom: 16,
-                        backgroundColor,
-                        boxSizing: 'border-box',
-                        boxShadow: selected ? 'rgba(0, 0, 0, 0.19) 0px 10px 16px, rgba(0, 0, 0, 0.227) 0px 6px 10px'
-                          : 'rgba(0, 0, 0, 0.118) 0px 1px 6px, rgba(0, 0, 0, 0.118) 0px 1px 4px'
-                      }}
-                      role="presentation"
-                      onClick={e => this.props.onRowClick(e, index)}
-                      onMouseUp={(e) => { e.preventDefault(); e.stopPropagation() }}
-                      onContextMenu={e => this.props.onRowContextMenu(e, index)}
-                      onMouseEnter={e => this.props.onRowMouseEnter(e, index)}
-                      onMouseLeave={e => this.props.onRowMouseLeave(e, index)}
-                      onDoubleClick={e => this.props.onRowDoubleClick(e, index)}
-                      onMouseDown={e => e.stopPropagation() || this.props.gridDragStart(e, index)}
-                      key={index}
-                    >
-                      {/* preview or icon */}
-                      {
-                        entry.type !== 'directory' &&
-                          <div
-                            draggable={false}
-                            className="flexCenter"
-                            style={{ height: size - 48, width: size, margin: 0, overflow: 'hidden' }}
-                          >
-                            {
-                              entry.type === 'directory'
-                                ? <AllFileIcon style={{ width: 48, height: 48, color: '#ffa93e' }} />
-                                : ((rowSum < 500 || !isScrolling) && entry.hash && hasThumb(entry.metadata)
-                                  ? (
-                                    <Thumb
-                                      full={false}
-                                      name={entry.name}
-                                      metadata={entry.metadata}
-                                      bgColor="#FFFFFF"
-                                      digest={entry.hash}
-                                      ipcRenderer={this.props.ipcRenderer}
-                                      height={size - 48}
-                                      width={size}
-                                    />
-                                  ) : renderFileIcon(entry.name, entry.metadata, 48)
-                                )
-                            }
-                          </div>
-                      }
 
-                      {/* file name */}
-                      <div
-                        style={{ height: 48, width: size, position: 'relative', display: 'flex', alignItems: 'center' }}
-                      >
-                        <div style={{ width: 24, margin: '0px 16px' }}>
-                          { entry.type === 'directory' ? <AllFileIcon style={{ width: 24, height: 24, color: '#ffa93e' }} />
-                            : renderFileIcon(entry.name, entry.metadata, 24) }
-                        </div>
-                        <Name
-                          center
-                          refresh={() => this.props.refresh({ noloading: true })}
-                          openSnackBar={this.props.openSnackBar}
-                          entry={entry}
-                          entries={this.props.entries}
-                          modify={isOnModify}
-                          apis={this.props.apis}
-                          path={this.props.path}
-                        />
-                        <div style={{ width: 8 }} />
-                      </div>
+                  {/* file name */}
+                  <div
+                    style={{
+                      height: 48,
+                      width: size,
+                      position: 'relative',
+                      display: 'flex',
+                      alignItems: 'center',
+                      marginLeft: border ? -1 : 0
+                    }}
+                  >
+                    <div
+                      className="flexCenter"
+                      style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: '#FFF', margin: '0px 8px' }}
+                    >
+                      { entry.type === 'directory' ? <AllFileIcon style={{ width: 24, height: 24, color: '#ffa93e' }} />
+                        : renderFileIcon(entry.name, entry.metadata, 24) }
                     </div>
-                  )
-                })
-              }
-            </div>
-        }
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <div style={{ width: size - 80 }} className="text">
+                        { entry.bname || entry.name }
+                      </div>
+                      { entry.archived && <Icon style={{ width: 18, height: 18, marginLeft: 16 }} /> }
+                    </div>
+                    <div style={{ width: 8 }} />
+                  </div>
+                </div>
+              )
+            })
+          }
+        </div>
       </div>
     )
   }
