@@ -4,9 +4,47 @@ import prettysize from 'prettysize'
 import { AutoSizer } from 'react-virtualized'
 import Name from './Name'
 import ScrollBar from '../common/ScrollBar'
+import SimpleScrollBar from '../common/SimpleScrollBar'
 import renderFileIcon from '../common/renderFileIcon'
 import { BackwardIcon, FolderIcon, PublicIcon } from '../common/Svg'
 import { formatDate, localMtime } from '../common/datetime'
+
+class FolderSize extends React.PureComponent {
+  constructor (props) {
+    super(props)
+    this.state = {
+      loading: true,
+      dirCount: 0,
+      fileCount: 0,
+      fileTotalSize: 0
+    }
+    this.reqAsync = async () => {
+      this.setState({ loading: true })
+      const { entry, drive, apis } = this.props
+      const driveUUID = drive.uuid
+      const dirUUID = entry.uuid
+      const res = await apis.pureRequestAsync('content', { driveUUID, dirUUID })
+      return ({ dirCount: res.dirCount, fileCount: res.fileCount, fileTotalSize: res.fileTotalSize })
+    }
+  }
+
+  componentDidMount () {
+    this.reqAsync()
+      .then((content) => {
+        const { dirCount, fileCount, fileTotalSize } = content
+        this.setState({ dirCount, fileCount, fileTotalSize, loading: false })
+      })
+      .catch(e => console.error('req dir content error', e))
+  }
+
+  render () {
+    return (
+      <div style={{ color: 'rgba(0,0,0,.54)', fontSize: 12, width: 100, textAlign: 'right' }}>
+        { this.state.loading ? i18n.__('Loading') : prettysize(this.state.fileTotalSize, false, true, 2).toUpperCase() }
+      </div>
+    )
+  }
+}
 
 class Row extends React.PureComponent {
   render () {
@@ -236,9 +274,8 @@ class RenderListByRow extends React.Component {
       >
         <div
           style={{
-            fontSize: 12,
-            color: '#888a8c',
-            letterSpacing: 1.4,
+            fontSize: 14,
+            color: 'rgba(0,0,0,.54)',
             opacity: this.state.type === h.title ? 1 : 0.7
           }}
         >
@@ -254,13 +291,106 @@ class RenderListByRow extends React.Component {
     )
   }
 
+  renderTopDirs () {
+    console.log('renderTopDirs', this.props)
+    const { entries, select, path, apis } = this.props
+    const drive = (path && path[1]) || {}
+    const onRowMouseDown = (e, i) => {
+      e.stopPropagation()
+      if (select.selected.includes(i)) this.props.rowDragStart(e, i)
+      else {
+        this.props.onRowClick(e, i)
+        this.props.selectStart(e)
+      }
+    }
+    return (
+      <div style={{ width: '100%', height: '100%' }}>
+        <div
+          style={{
+            position: 'relative',
+            height: 48,
+            width: 'calc(100% - 48px)',
+            marginLeft: 48,
+            zIndex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            backgroundColor: '#f8f9fa'
+          }}
+        >
+          { this.renderHeader({ title: i18n.__('Name'), flexGrow: 1, up: 'nameUp', down: 'nameDown' }) }
+          <div style={{ fontSize: 14, color: 'rgba(0,0,0,.54)', width: 190 }} >
+            { i18n.__('Backup Status') }
+          </div>
+          <div style={{ fontSize: 14, color: 'rgba(0,0,0,.54)', width: 48, textAlign: 'right' }} >
+            { i18n.__('Size') }
+          </div>
+          <div style={{ width: 24 }} />
+        </div>
+        <AutoSizer>
+          {({ height, width }) => (
+            <SimpleScrollBar width={width} height={height} >
+              {
+                entries.map((entry, index) => (
+                  <div
+                    key={entry.uuid}
+                    onClick={e => this.props.onRowClick(e, index)}
+                    onMouseUp={(e) => { e.preventDefault(); e.stopPropagation() }}
+                    onMouseEnter={e => this.props.onRowMouseEnter(e, index)}
+                    onMouseLeave={e => this.props.onRowMouseLeave(e, index)}
+                    onDoubleClick={e => this.props.onRowDoubleClick(e, index)}
+                    onMouseDown={e => onRowMouseDown(e, index)}
+                    style={{
+                      height: 56,
+                      width: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      paddingLeft: 32,
+                      boxSizing: 'border-box'
+                    }}
+                  >
+                    <div
+                      style={{ width: 24, marginLeft: 16 }}
+                      className="flexCenter"
+                    >
+                      <FolderIcon style={{ color: '#f9a825', width: 24, height: 24 }} />
+                    </div>
+                    <div style={{ width: 16 }} />
+
+                    <div style={{ width: 'calc(100% - 500px)', height: 56 }}>
+                      <div style={{ margin: '8px 0' }} className="text">
+                        { entry.bname }
+                      </div>
+                      <div style={{ color: 'rgba(0,0,0,.54)', fontSize: 12 }} className="text">
+                        { entry.metadata && entry.metadata.localPath }
+                      </div>
+                    </div>
+                    <div style={{ flexGrow: 1 }} />
+                    <div style={{ width: 136, height: 56 }}>
+                      <div style={{ color: 'rgba(0,0,0,.54)', fontSize: 12, display: 'flex', alignItems: 'center', height: 56 }}>
+                        { '备份中' }
+                      </div>
+                    </div>
+                    <FolderSize entry={entry} drive={drive} apis={apis} />
+                    <div style={{ width: 24 }} />
+                  </div>
+                ))
+              }
+            </SimpleScrollBar>
+          )}
+        </AutoSizer>
+      </div>
+    )
+  }
+
   render () {
     const isBackup = this.props.isBackup
+    const isTopDirs = isBackup && this.props.path && this.props.path.length === 2
+    if (isTopDirs) return this.renderTopDirs()
     return (
       <div
         style={{
-          marginLeft: 12,
-          width: 'calc(100% - 12px)',
+          marginLeft: 8,
+          width: 'calc(100% - 8px)',
           height: '100%',
           boxSizing: 'border-box',
           position: 'relative'
@@ -307,7 +437,7 @@ class RenderListByRow extends React.Component {
                     allHeight={Math.min(this.props.entries.length * 48, 1500000)}
                     rowCount={this.props.entries.length}
                     onScroll={this.onScroll}
-                    rowHeight={48}
+                    rowHeight={isTopDirs ? 56 : 48}
                     rowRenderer={props => (<Row {...props} {...this.props} />)}
                   />
                 </div>

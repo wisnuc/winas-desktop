@@ -51,6 +51,7 @@ class Backup extends Home {
           if (err || !drive) this.ctx.props.openSnackBar(i18n.__('Create Backup Drive Failed'))
           else {
             const rest = this.state.entries.slice(1, this.state.entries.length)
+            this.currentDrive = drive
             this.setState({ entries: [Object.assign({ name: drive.label }, drive), ...rest] })
             this.openAddDirDialog(drive)
           }

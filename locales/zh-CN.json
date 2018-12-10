@@ -672,6 +672,10 @@
   "Confirm Delete Backup Dir Text" : "备份文件夹移除，此文件夹下的备份内容也将移除",
   "Starting Once Dir Changed": "有变动即备份",
   "Starting When Computer Is Free" : "电脑空闲时备份",
+  "Backup Disabled Text": "备份关闭，请在设置中打开",
+  "Backup Status": "备份状态",
+  "Backup Date": "备份时间",
+  "Filter" : "筛选",
 
   "==== view/Photo.jsx ====": "",
   "New Album": "新建相簿",
