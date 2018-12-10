@@ -180,10 +180,6 @@ class NavViews extends React.Component {
       this.setState({ conflicts: data })
     }
 
-    this.openDetail = () => {
-      this.setState({ detail: true })
-    }
-
     this.handleCheck = (type) => {
       const t = this.state.types
       const index = t.indexOf(type)
@@ -287,47 +283,8 @@ class NavViews extends React.Component {
       navToDrive: this.navToDrive,
       openSnackBar: this.props.openSnackBar,
       pin: this.state.pin,
-      primaryColor: this.state.primaryColor,
-      openDetail: this.openDetail
+      primaryColor: this.state.primaryColor
     })
-  }
-
-  renderDetail () {
-    return (
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: this.state.detail ? 0 : '100%',
-          width: '100%',
-          height: '100%',
-          zIndex: 100,
-          transition: 'left 175ms'
-        }}
-        onMouseDown={() => this.setState({ detail: false })}
-      >
-        <div
-          style={{
-            position: 'absolute',
-            zIndex: 100,
-            top: 46,
-            right: 0,
-            width: 320,
-            height: 'calc(100% - 46px)',
-            backgroundColor: '#FFF',
-            overflowY: 'auto',
-            overflowX: 'hidden'
-          }}
-          onMouseDown={(e) => { e.preventDefault(); e.stopPropagation() }}
-        >
-          {
-            this.state.detail && this.views[this.state.nav].renderDetail({
-              nav: this.state.nav, onClose: () => this.setState({ detail: false })
-            })
-          }
-        </div>
-      </div>
-    )
   }
 
   renderFileGroup () {
@@ -345,7 +302,7 @@ class NavViews extends React.Component {
       >
         <div style={{ height: '100%', width: '100%', position: 'relative' }}>
           {/* Toolbar */}
-          { this.views[this.state.nav].renderToolBar({ style: toolBarStyle, openDetail: this.openDetail }) }
+          { this.views[this.state.nav].renderToolBar({ style: toolBarStyle }) }
 
           {/* Title and BreadCrumbItem */}
           {/* this.views[this.state.nav].renderTitle({ style: titleStyle }) */}
@@ -357,9 +314,6 @@ class NavViews extends React.Component {
             { this.renderView() }
           </div>
         </div>
-
-        {/* detail frame */}
-        { this.renderDetail() }
 
         {/* drag item */}
         { this.views[this.state.nav].renderDragItems() }

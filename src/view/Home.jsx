@@ -15,7 +15,7 @@ import DialogOverlay from '../common/PureDialog'
 import MenuItem from '../common/MenuItem'
 import sortByType from '../common/sort'
 import { BreadCrumbItem, BreadCrumbSeparator } from '../common/BreadCrumb'
-import { RefreshAltIcon, DeleteIcon, MoreIcon, ListIcon, GridIcon, InfoIcon, ArrowIcon, FolderIcon, FolderOutlineIcon, AddIcon } from '../common/Svg'
+import { RefreshAltIcon, DeleteIcon, MoreIcon, ListIcon, GridIcon, ArrowIcon, FolderIcon, FolderOutlineIcon, AddIcon } from '../common/Svg'
 import renderFileIcon from '../common/renderFileIcon'
 import { xcopyMsg } from '../common/msg'
 import History from '../common/history'
@@ -854,7 +854,7 @@ class Home extends Base {
     )
   }
 
-  renderToolBar ({ style, openDetail }) {
+  renderToolBar ({ style }) {
     const color = 'rgba(0,0,0,.54)'
     const { select } = this.state
     const itemSelected = select && select.selected && select.selected.length
@@ -911,9 +911,6 @@ class Home extends Base {
           }
         </LIButton>
 
-        <LIButton onClick={openDetail} tooltip={i18n.__('Info')} >
-          <InfoIcon />
-        </LIButton>
         <div style={{ width: 8 }} />
       </div>
     )
@@ -960,6 +957,8 @@ class Home extends Base {
   }
 
   renderDialogs (openSnackBar, navTo) {
+    const showDetail = this.state.detail && this.select.state && this.select.state.selected &&
+      this.state.entries && this.state.entries[this.select.state.selected[0]]
     return (
       <div style={{ width: '100%', height: '100%' }}>
         <DownloadDialog
@@ -990,6 +989,21 @@ class Home extends Base {
           text={() => this.deleteText()}
         />
 
+        <DialogOverlay open={!!showDetail} onRequestClose={() => this.toggleDialog('detail')}>
+          {
+            showDetail &&
+            <FileDetail
+              {...this.ctx.props}
+              isUSB={this.isUSB}
+              path={this.state.path}
+              entries={this.state.entries}
+              isSearch={!!this.state.showSearch}
+              onRequestClose={() => this.toggleDialog('detail')}
+              selected={this.select.state.selected}
+            />
+          }
+        </DialogOverlay>
+
         <ConfirmDialog
           open={this.state.deleteDriveConfirm}
           onCancel={() => this.setState({ deleteDriveConfirm: false })}
@@ -1001,7 +1015,7 @@ class Home extends Base {
     )
   }
 
-  renderMenu ({ open, openDetail }) {
+  renderMenu ({ open }) {
     const itemSelected = this.state.select && this.state.select.selected && this.state.select.selected.length
     const multiSelected = this.state.select && this.state.select.selected && (this.state.select.selected.length > 1)
 
@@ -1162,7 +1176,7 @@ class Home extends Base {
                   <Divider style={{ marginLeft: 10, marginTop: 2, marginBottom: 2, width: 'calc(100% - 20px)' }} />
                   <MenuItem
                     primaryText={i18n.__('Properties')}
-                    onClick={openDetail}
+                    onClick={() => this.setState({ detail: true })}
                   />
                 </div>
               )
@@ -1171,21 +1185,7 @@ class Home extends Base {
     )
   }
 
-  renderDetail ({ onClose }) {
-    return (
-      <FileDetail
-        {...this.ctx.props}
-        isUSB={this.isUSB}
-        path={this.state.path}
-        entries={this.state.entries}
-        isSearch={!!this.state.showSearch}
-        onRequestClose={() => onClose()}
-        selected={this.select.state.selected}
-      />
-    )
-  }
-
-  renderContent ({ openSnackBar, navTo, pin, openDetail }) {
+  renderContent ({ openSnackBar, navTo, pin }) {
     return (
       <div style={{ position: 'relative', width: '100%', height: '100%' }}>
         <FileContent
@@ -1217,7 +1217,7 @@ class Home extends Base {
           isBackup={this.isBackup}
         />
 
-        { this.renderMenu({ open: this.state.contextMenuOpen, openDetail }) }
+        { this.renderMenu({ open: this.state.contextMenuOpen }) }
 
         { this.renderDialogs(openSnackBar, navTo) }
       </div>

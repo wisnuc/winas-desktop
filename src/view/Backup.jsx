@@ -205,7 +205,7 @@ class Backup extends Home {
     return BackupIcon
   }
 
-  renderToolBar ({ style, openDetail }) {
+  renderToolBar ({ style }) {
     const color = 'rgba(0,0,0,.54)'
 
     const inRoot = this.state.inRoot || (this.hasRoot && !this.phyDrive)

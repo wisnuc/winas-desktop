@@ -27,7 +27,7 @@ class Transmission extends Base {
     return TransIcon
   }
 
-  renderToolBar ({ style, openDetail }) {
+  renderToolBar ({ style }) {
     return (
       <div style={style}>
         <div style={{ width: 16 }} />
