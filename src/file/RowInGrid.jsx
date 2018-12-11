@@ -170,7 +170,9 @@ class Row extends React.Component {
                       width: size,
                       borderRadius: 4,
                       marginRight: 16,
-                      marginBottom: 16
+                      marginBottom: 16,
+                      backgroundColor: '#FFF',
+                      boxShadow: '0px 1px 0.9px 0.1px rgba(0, 0, 0, 0.24), 0 0 1px 0px rgba(0, 0, 0, 0.16)'
                     }}
                   >
                     <BackupCard {...this.props} drive={entry} index={index} />

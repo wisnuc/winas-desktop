@@ -524,7 +524,7 @@ class NavViews extends React.Component {
           {
             !this.state.searchMode &&
               <div style={{ height: 72, fontSize: 24, fontWeight: 500, alignItems: 'center', display: 'flex' }} >
-                Winas
+                WISNUC
               </div>
           }
         </div>

@@ -10,6 +10,7 @@ import FileDetail from '../file/FileDetail'
 import ListSelect from '../file/ListSelect'
 import FileContent from '../file/FileContent'
 import NewFolderDialog from '../file/NewFolderDialog'
+import RenameDialog from '../file/RenameDialog'
 import ContextMenu from '../common/ContextMenu'
 import DialogOverlay from '../common/PureDialog'
 import MenuItem from '../common/MenuItem'
@@ -245,7 +246,7 @@ class Home extends Base {
     }
 
     this.rename = () => {
-      this.state.select.setModify(this.state.select.selected[0])
+      this.setState({ rename: true })
     }
 
     this.deleteMediaOrSearchAsync = async () => {
@@ -885,6 +886,13 @@ class Home extends Base {
           <RefreshAltIcon color={color} />
         </LIButton>
 
+        <LIButton
+          onClick={() => this.toggleDialog('gridView')}
+          tooltip={this.state.gridView ? i18n.__('List View') : i18n.__('Grid View')}
+        >
+          { this.state.gridView ? <ListIcon style={iconStyle()} /> : <GridIcon style={iconStyle()} /> }
+        </LIButton>
+
         {
           !!itemSelected &&
             <LIButton onClick={() => this.toggleDialog('delete')} tooltip={i18n.__('Delete')} >
@@ -898,18 +906,6 @@ class Home extends Base {
               <MoreIcon />
             </LIButton>
         }
-
-        <LIButton
-          onClick={() => this.toggleDialog('gridView')}
-          tooltip={this.state.gridView ? i18n.__('List View') : i18n.__('Grid View')}
-          disabled={inRoot}
-        >
-          {
-            this.state.gridView
-              ? <ListIcon style={iconStyle(inRoot)} />
-              : <GridIcon style={iconStyle(inRoot)} />
-          }
-        </LIButton>
 
         <div style={{ width: 8 }} />
       </div>
@@ -1002,6 +998,19 @@ class Home extends Base {
               selected={this.select.state.selected}
             />
           }
+        </DialogOverlay>
+
+        <DialogOverlay open={!!this.state.rename} onRequestClose={() => this.toggleDialog('rename')}>
+          { this.state.rename &&
+            <RenameDialog
+              apis={this.ctx.props.apis}
+              path={this.state.path}
+              entries={this.state.entries}
+              select={this.state.select}
+              openSnackBar={openSnackBar}
+              refresh={this.refresh}
+              onRequestClose={() => this.toggleDialog('rename')}
+            /> }
         </DialogOverlay>
 
         <ConfirmDialog
