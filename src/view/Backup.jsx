@@ -4,7 +4,7 @@ import { remote, ipcRenderer } from 'electron'
 import Home from './Home'
 import sortByType from '../common/sort'
 import { LIButton } from '../common/Buttons'
-import { RefreshAltIcon, BackupIcon, MoreIcon } from '../common/Svg'
+import { RefreshAltIcon, BackupIcon, MoreIcon, ListIcon, GridIcon } from '../common/Svg'
 
 class Backup extends Home {
   constructor (ctx) {
@@ -206,10 +206,10 @@ class Backup extends Home {
   }
 
   renderToolBar ({ style }) {
+    const { inRoot, path } = this.state
     const color = 'rgba(0,0,0,.54)'
-
-    const inRoot = this.state.inRoot || (this.hasRoot && !this.phyDrive)
-    const breadCrumbStyle = { height: 40, fontSize: 18, color: 'rgba(0,0,0,.54)', display: 'flex', alignItems: 'center', flexWrap: 'wrap' }
+    const breadCrumbStyle = { height: 40, fontSize: 18, color, display: 'flex', alignItems: 'center', flexWrap: 'wrap' }
+    const iconStyle = { color, width: 24, height: 24 }
     return (
       <div style={style}>
         { this.renderBreadCrumbItem({ style: breadCrumbStyle }) }
@@ -223,6 +223,15 @@ class Backup extends Home {
           !inRoot &&
             <LIButton onClick={this.toggleShowArchive} tooltip={i18n.__('Filter')} >
               <MoreIcon />
+            </LIButton>
+        }
+        {
+          path && path.length > 2 &&
+            <LIButton
+              onClick={() => this.toggleDialog('gridView')}
+              tooltip={this.state.gridView ? i18n.__('List View') : i18n.__('Grid View')}
+            >
+              { this.state.gridView ? <ListIcon style={iconStyle} /> : <GridIcon style={iconStyle} /> }
             </LIButton>
         }
 

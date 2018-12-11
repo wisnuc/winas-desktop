@@ -375,13 +375,15 @@ class FileContent extends React.Component {
       this.props.entries[this.state.seqIndex].metadata &&
       ['JPEG', 'PNG', 'JPG', 'GIF', 'BMP', 'RAW'].includes(this.props.entries[this.state.seqIndex].metadata.type)
 
+    const isBackup = this.props.isBackup
+    const isTopDirs = isBackup && this.props.path && this.props.path.length === 2
     /* got list */
     return (
       <div style={{ width: '100%', height: '100%', position: 'relatvie', backgroundColor: '#f8f9fa' }} >
         <EventListener target="window" onResize={this.handleResize} />
         {/* render list */}
         {
-          this.props.gridView || this.props.inRoot
+          !isTopDirs && (this.props.gridView || this.props.inRoot)
             ? <GridView
               {...this.props}
               onRowClick={this.onRowClick}
@@ -398,6 +400,7 @@ class FileContent extends React.Component {
             />
             : <RenderListByRow
               {...this.props}
+              isTopDirs={isTopDirs}
               onRowClick={this.onRowClick}
               onRowContextMenu={this.onRowContextMenu}
               onRowMouseEnter={this.onRowMouseEnter}

@@ -112,8 +112,10 @@ class BackupCard extends React.Component {
   }
 
   componentDidMount () {
-    ipcRenderer.on('BACKUP_MSG', this.onMsg)
-    if (this.hasDrive) this.refresh()
+    if (!this.props.index) {
+      ipcRenderer.on('BACKUP_MSG', this.onMsg)
+      if (this.hasDrive) this.refresh()
+    }
   }
 
   componentWillUnmount () {
@@ -483,9 +485,13 @@ class BackupCard extends React.Component {
         backgroundColor = '#43a047'
         Icon = MobileIcon
         break
-      case 'IOS-Mobile':
+      case 'iOS-Mobile':
         backgroundColor = '#000000'
         Icon = MobileIcon
+        break
+      case 'Linux-PC':
+        backgroundColor = '#039be5'
+        Icon = PCIcon
         break
       default:
         break

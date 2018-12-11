@@ -860,16 +860,8 @@ class Home extends Base {
     const { select } = this.state
     const itemSelected = select && select.selected && select.selected.length
 
-    const iconStyle = disabled => ({ color: disabled ? 'rgba(0,0,0,.54)' : color, width: 24, height: 24 })
-    const inRoot = this.state.inRoot || (this.hasRoot && !this.phyDrive)
+    const iconStyle = { color, width: 24, height: 24 }
     const breadCrumbStyle = { height: 40, fontSize: 18, color: 'rgba(0,0,0,.54)', display: 'flex', alignItems: 'center', flexWrap: 'wrap' }
-    if (inRoot) {
-      return (
-        <div style={style}>
-          { this.renderBreadCrumbItem({ style: breadCrumbStyle }) }
-        </div>
-      )
-    }
     return (
       <div style={style}>
         {
@@ -882,17 +874,6 @@ class Home extends Base {
             )
         }
         <div style={{ flexGrow: 1 }} />
-        <LIButton onClick={() => this.refresh()} tooltip={i18n.__('Refresh')} >
-          <RefreshAltIcon color={color} />
-        </LIButton>
-
-        <LIButton
-          onClick={() => this.toggleDialog('gridView')}
-          tooltip={this.state.gridView ? i18n.__('List View') : i18n.__('Grid View')}
-        >
-          { this.state.gridView ? <ListIcon style={iconStyle()} /> : <GridIcon style={iconStyle()} /> }
-        </LIButton>
-
         {
           !!itemSelected &&
             <LIButton onClick={() => this.toggleDialog('delete')} tooltip={i18n.__('Delete')} >
@@ -906,6 +887,17 @@ class Home extends Base {
               <MoreIcon />
             </LIButton>
         }
+
+        <LIButton onClick={() => this.refresh()} tooltip={i18n.__('Refresh')} >
+          <RefreshAltIcon color={color} />
+        </LIButton>
+
+        <LIButton
+          onClick={() => this.toggleDialog('gridView')}
+          tooltip={this.state.gridView ? i18n.__('List View') : i18n.__('Grid View')}
+        >
+          { this.state.gridView ? <ListIcon style={iconStyle} /> : <GridIcon style={iconStyle} /> }
+        </LIButton>
 
         <div style={{ width: 8 }} />
       </div>

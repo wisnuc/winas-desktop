@@ -59,8 +59,7 @@ class Row extends React.PureComponent {
       /* these are view-model state */
       entries,
       select,
-      showTakenTime,
-      inPublicRoot
+      showTakenTime
     } = this.props
 
     const entry = entries[index]
@@ -71,10 +70,6 @@ class Row extends React.PureComponent {
     const backgroundColor = onDropping ? '#f8f9fa' : select.rowColor(index)
 
     const isSelected = select.selected.includes(index)
-
-    /* render drive list */
-    let users = []
-    if (inPublicRoot) users = this.props.apis.users && this.props.apis.users.data
 
     const onRowMouseDown = (e, i) => {
       e.stopPropagation()
@@ -142,8 +137,8 @@ class Row extends React.PureComponent {
           <div style={{ width: 12 }} />
 
           <div style={{ width: 'calc(100% - 522px)', display: 'flex', alignItems: 'center' }} >
-            <div style={{ width: '100%', display: 'flex', alignItems: 'center' }}>
-              <div style={{ width: '100%', maxWidth: 'calc(100% - 40px)', color: 'rgba(0,0,0,.76)' }} className="text">
+            <div style={{ width: '100%', display: 'flex', alignItems: 'center', position: 'relative' }}>
+              <div style={{ maxWidth: 'calc(100% - 40px)', color: 'rgba(0,0,0,.76)' }} className="text">
                 { entry.bname || entry.name }
               </div>
               { entry.archived && <Icon style={{ width: 18, height: 18, marginLeft: 16 }} /> }
@@ -154,7 +149,7 @@ class Row extends React.PureComponent {
             style={Object.assign({ width: 152 }, textStyle)}
             onMouseDown={e => onContentMouseDown(e, index)}
           >
-            { this.props.isBackup && entry.mtime && localMtime(entry.mtime) }
+            { this.props.isBackup && entry.otime && localMtime(entry.otime) }
           </div>
 
           <div
@@ -162,13 +157,8 @@ class Row extends React.PureComponent {
             onMouseDown={e => onContentMouseDown(e, index)}
           >
             { showTakenTime ? entry.metadata && (entry.metadata.date || entry.metadata.datetime) &&
-              formatDate(entry.metadata.date || entry.metadata.datetime) : entry.mtime && localMtime(entry.mtime) }
-            {
-              inPublicRoot && (entry.writelist === '*' ? i18n.__('All Users')
-                : entry.writelist.filter(uuid => users.find(u => u.uuid === uuid))
-                  .map(uuid => users.find(u => u.uuid === uuid).username).join(', ')
-              )
-            }
+                formatDate(entry.metadata.date || entry.metadata.datetime)
+              : entry.bmtime ? localMtime(entry.bmtime) : entry.mtime && localMtime(entry.mtime) }
           </div>
 
           <div
@@ -277,9 +267,9 @@ class RenderListByRow extends React.Component {
           { h.title }
         </div>
         <div style={{ display: 'flex', alignItems: 'center', height: '100%', marginTop: 2, marginLeft: 8 }}>
-          { this.props.sortType === h.up &&
-            <BackwardIcon style={{ width: 18, height: 18, color: 'rgba(0,0,0,.27)', transform: 'rotate(-90deg)' }} /> }
           { this.props.sortType === h.down &&
+            <BackwardIcon style={{ width: 18, height: 18, color: 'rgba(0,0,0,.27)', transform: 'rotate(-90deg)' }} /> }
+          { this.props.sortType === h.up &&
             <BackwardIcon style={{ width: 18, height: 18, color: 'rgba(0,0,0,.27)', transform: 'rotate(90deg)' }} /> }
         </div>
       </div>
@@ -287,8 +277,8 @@ class RenderListByRow extends React.Component {
   }
 
   renderTopDirs () {
-    console.log('renderTopDirs', this.props)
-    const { entries, select, path, apis } = this.props
+    const { select, path, apis } = this.props
+    const entries = this.props.entries.filter(e => e.metadata && !e.deleted)
     const drive = (path && path[1]) || {}
     const onRowMouseDown = (e, i) => {
       e.stopPropagation()
@@ -312,7 +302,7 @@ class RenderListByRow extends React.Component {
             backgroundColor: '#f8f9fa'
           }}
         >
-          { this.renderHeader({ title: i18n.__('Name'), flexGrow: 1, up: 'nameUp', down: 'nameDown' }) }
+          { this.renderHeader({ title: i18n.__('Backup Folder'), flexGrow: 1, up: 'nameUp', down: 'nameDown' }) }
           <div style={{ fontSize: 14, color: 'rgba(0,0,0,.54)', width: 190 }} >
             { i18n.__('Backup Status') }
           </div>
@@ -356,15 +346,32 @@ class RenderListByRow extends React.Component {
                         { entry.bname }
                       </div>
                       <div style={{ color: 'rgba(0,0,0,.54)', fontSize: 12 }} className="text">
-                        { entry.metadata && entry.metadata.localPath }
+                        { entry.metadata.localPath }
                       </div>
                     </div>
                     <div style={{ flexGrow: 1 }} />
-                    <div style={{ width: 136, height: 56 }}>
-                      <div style={{ color: 'rgba(0,0,0,.54)', fontSize: 12, display: 'flex', alignItems: 'center', height: 56 }}>
-                        { '备份中' }
-                      </div>
+
+                    <div style={{ width: 136, height: 56, color: 'rgba(0,0,0,.54)', fontSize: 12 }}>
+                      {
+                        entry.metadata.status === 'Idle' && entry.metadata.lastBackupTime
+                          ? (
+                            <div>
+                              <div style={{ margin: '8px 0px' }}>
+                                { localMtime(entry.metadata.lastBackupTime) }
+                              </div>
+                              <div>
+                                { i18n.__('Last Success Backup') }
+                              </div>
+                            </div>
+                          ) : (
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                              { entry.metadata.disabled ? i18n.__('Backup is Disabled')
+                                : entry.metadata.status === 'Working' ? i18n.__('Backuping') : i18n.__('Backup Not Finished') }
+                            </div>
+                          )
+                      }
                     </div>
+
                     <FolderSize entry={entry} drive={drive} apis={apis} />
                     <div style={{ width: 24 }} />
                   </div>
@@ -378,9 +385,7 @@ class RenderListByRow extends React.Component {
   }
 
   render () {
-    const isBackup = this.props.isBackup
-    const isTopDirs = isBackup && this.props.path && this.props.path.length === 2
-    if (isTopDirs) return this.renderTopDirs()
+    if (this.props.isTopDirs) return this.renderTopDirs()
     return (
       <div
         style={{
@@ -406,7 +411,8 @@ class RenderListByRow extends React.Component {
           }}
         >
           { this.renderHeader({ title: i18n.__('Name'), flexGrow: 1, up: 'nameUp', down: 'nameDown' }) }
-          { !!isBackup && this.renderHeader({ title: i18n.__('Backup Date'), width: 152, up: 'backupUp', down: ' backupDown' }) }
+          { this.props.isBackup &&
+              this.renderHeader({ title: i18n.__('Backup Date'), width: 152, up: 'backupUp', down: ' backupDown' }) }
           { this.renderHeader({ title: i18n.__('Date Modified'), width: 152, up: 'timeUp', down: 'timeDown' }) }
           { this.renderHeader({ title: i18n.__('Size'), width: 108, up: 'sizeUp', down: 'sizeDown' }) }
           <div style={{ width: 8 }} />
@@ -432,7 +438,7 @@ class RenderListByRow extends React.Component {
                     allHeight={Math.min(this.props.entries.length * 48, 1500000)}
                     rowCount={this.props.entries.length}
                     onScroll={this.onScroll}
-                    rowHeight={isTopDirs ? 56 : 48}
+                    rowHeight={this.props.isTopDirs ? 56 : 48}
                     rowRenderer={props => (<Row {...props} {...this.props} />)}
                   />
                 </div>
