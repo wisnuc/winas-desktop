@@ -106,8 +106,7 @@ class Backup extends Home {
     this.toggleShowArchive = () => {
       console.log('this.toggleShowArchive', this.state)
       const { showArchive, listNavDir, sortType } = this.state
-      let entries = listNavDir.entries.filter(e => !e.deleted)
-      if (showArchive) entries = entries.filter(e => !e.archived)
+      const entries = this.rearrange(listNavDir.entries)
       entries.sort((a, b) => sortByType(a, b, sortType))
       const select = this.select.reset(entries.length)
       this.setState({ entries, select, showArchive: !showArchive })
@@ -116,6 +115,33 @@ class Backup extends Home {
     ipcRenderer.on('BACKUP_STAT', (event, data) => {
       console.log('BACKUP_STAT', data)
     })
+  }
+
+  rearrange (entries) {
+    const map = new Map()
+    // map: name => files, acc: dirs
+    const sorted = entries.filter(e => !e.deleted).sort((a, b) => sortByType(a, b, 'otimeDown'))
+    const dirs = sorted.reduce((acc, cur, idx) => {
+      if (cur.type !== 'file') {
+        acc.push(cur)
+        return acc
+      }
+      const versions = map.get(cur.name)
+      if (versions) versions.push(cur)
+      else map.set(cur.name, [cur])
+      return acc
+    }, [])
+    if (!map.size) return dirs
+
+    const newArray = [...map.values()].map((arr) => {
+      const latestVersion = arr[0]
+      return Object.assign(latestVersion, { versions: arr, versionNum: arr.length })
+    })
+
+    console.log('result', dirs, newArray)
+    const result = ([...dirs, ...newArray])
+    if (!this.state.showArchive) return result.filter(e => !e.archived)
+    return result
   }
 
   willReceiveProps (nextProps) {
@@ -162,8 +188,8 @@ class Backup extends Home {
       const drives = this.state.drives || this.ctx.props.apis.drives.value()
       path[1].name = this.rootDrive.name || drives.find(d => d.uuid === this.rootDrive.uuid).label
 
-      let entries = [...this.state.listNavDir.entries].filter(e => !e.deleted)
-      if (!this.state.showArchive) entries = entries.filter(e => !e.archived)
+      const entries = this.rearrange(this.state.listNavDir.entries)
+
       entries.sort((a, b) => sortByType(a, b, this.state.sortType))
 
       const select = this.select.reset(entries.length)

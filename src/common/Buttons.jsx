@@ -236,7 +236,6 @@ export class ActButton extends Button {
     }
 
     this.exit = () => {
-      this.props.offHover()
       this.setState({ open: false })
     }
   }

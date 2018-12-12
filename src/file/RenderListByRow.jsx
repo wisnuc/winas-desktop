@@ -6,7 +6,12 @@ import ScrollBar from '../common/ScrollBar'
 import SimpleScrollBar from '../common/SimpleScrollBar'
 import renderFileIcon from '../common/renderFileIcon'
 import { BackwardIcon, FolderIcon, PublicIcon, PCIcon, MobileIcon } from '../common/Svg'
-import { formatDate, localMtime } from '../common/datetime'
+import { localMtime } from '../common/datetime'
+
+const mtimeWidth = 144
+const sizeWidth = 96
+const versionWidth = 108
+const deltaWidth = 60
 
 class FolderSize extends React.PureComponent {
   constructor (props) {
@@ -58,8 +63,7 @@ class Row extends React.PureComponent {
 
       /* these are view-model state */
       entries,
-      select,
-      showTakenTime
+      select
     } = this.props
 
     const entry = entries[index]
@@ -94,7 +98,7 @@ class Row extends React.PureComponent {
     /* { borderColor, borderTopColor, borderBottomColor } = select.rowBorder(index) */
     const rowStyle = Object.assign({
       height: '100%',
-      width: 'calc(100% - 20px)',
+      width: 'calc(100% - 24px)',
       display: 'flex',
       alignItems: 'center',
       backgroundColor,
@@ -107,6 +111,8 @@ class Row extends React.PureComponent {
 
     const isMobile = false // TODO
     const Icon = isMobile ? MobileIcon : PCIcon
+    const otherWidth = sizeWidth + mtimeWidth + deltaWidth + ((this.props.isBackup && entry.versions && versionWidth) || 0)
+    const nameWidth = `calc(100% - ${otherWidth}px)`
 
     return (
       <div key={entry.name} style={Object.assign({ display: 'flex' }, style)}>
@@ -136,7 +142,7 @@ class Row extends React.PureComponent {
           </div>
           <div style={{ width: 12 }} />
 
-          <div style={{ width: 'calc(100% - 522px)', display: 'flex', alignItems: 'center' }} >
+          <div style={{ width: nameWidth, display: 'flex', alignItems: 'center' }} >
             <div style={{ width: '100%', display: 'flex', alignItems: 'center', position: 'relative' }}>
               <div style={{ maxWidth: 'calc(100% - 40px)', color: 'rgba(0,0,0,.76)' }} className="text">
                 { entry.bname || entry.name }
@@ -146,34 +152,37 @@ class Row extends React.PureComponent {
           </div>
 
           <div
-            style={Object.assign({ width: 152 }, textStyle)}
+            style={Object.assign({ width: mtimeWidth }, textStyle)}
             onMouseDown={e => onContentMouseDown(e, index)}
           >
-            { this.props.isBackup && entry.otime && localMtime(entry.otime) }
+            { localMtime(entry.bmtime || entry.mtime) }
           </div>
 
           <div
-            style={Object.assign({ width: 152 }, textStyle)}
-            onMouseDown={e => onContentMouseDown(e, index)}
-          >
-            { showTakenTime ? entry.metadata && (entry.metadata.date || entry.metadata.datetime) &&
-                formatDate(entry.metadata.date || entry.metadata.datetime)
-              : entry.bmtime ? localMtime(entry.bmtime) : entry.mtime && localMtime(entry.mtime) }
-          </div>
-
-          <div
-            style={Object.assign({ width: 108 }, textStyle)}
+            style={Object.assign({ width: sizeWidth }, textStyle)}
             onMouseDown={e => onContentMouseDown(e, index)}
           >
             { entry.type === 'file' && entry.size && prettysize(entry.size) }
           </div>
+
+          {
+            this.props.isBackup && entry.versions
+              ? <div
+                style={Object.assign({ width: versionWidth }, textStyle)}
+                className="flexCenter"
+                onMouseDown={e => onContentMouseDown(e, index)}
+              >
+                { entry.versions.length > 1 ? <FolderIcon /> : '--' }
+              </div>
+              : <div style={{ width: 26 }} />
+          }
 
         </div>
         <div
           onMouseDown={e => onBGMouseDown(e)}
           onContextMenu={e => this.props.onRowContextMenu(e, -1)}
           draggable={false}
-          style={{ width: 20, height: '100%' }}
+          style={{ width: 24, height: '100%' }}
         />
       </div>
     )
@@ -240,13 +249,19 @@ class RenderListByRow extends React.Component {
   }
 
   renderHeader (h) {
+    const dStyle = { width: 18, height: 18, color: 'rgba(0,0,0,.27)', transition: 'all 0ms' }
+    const Icon = this.props.sortType === h.down
+      ? <BackwardIcon style={Object.assign({ transform: 'rotate(-90deg)' }, dStyle)} />
+      : this.props.sortType === h.up
+        ? <BackwardIcon style={Object.assign({ transform: 'rotate(90deg)' }, dStyle)} />
+        : <div />
     return (
       <div
         key={h.title}
         style={{
           width: h.width,
           flexGrow: h.flexGrow,
-          textAlign: 'right',
+          position: 'relative',
           display: 'flex',
           alignItems: 'center',
           cursor: this.state.type === h.title ? 'pointer' : 'default'
@@ -260,18 +275,36 @@ class RenderListByRow extends React.Component {
         <div
           style={{
             fontSize: 14,
+            width: '100%',
             color: 'rgba(0,0,0,.54)',
+            textAlign: h.textAlign,
+            display: h.textAlign === 'left' ? 'flex' : undefined,
+            alignItems: 'center',
             opacity: this.state.type === h.title ? 1 : 0.7
           }}
         >
           { h.title }
+          {
+            h.textAlign === 'left' &&
+              <div style={{ marginLeft: 8 }} className="flexCenter">
+                { Icon }
+              </div>
+          }
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', height: '100%', marginTop: 2, marginLeft: 8 }}>
-          { this.props.sortType === h.down &&
-            <BackwardIcon style={{ width: 18, height: 18, color: 'rgba(0,0,0,.27)', transform: 'rotate(-90deg)' }} /> }
-          { this.props.sortType === h.up &&
-            <BackwardIcon style={{ width: 18, height: 18, color: 'rgba(0,0,0,.27)', transform: 'rotate(90deg)' }} /> }
-        </div>
+        {
+          h.textAlign !== 'left' &&
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                height: '100%',
+                position: 'absolute',
+                right: h.textAlign === 'right' ? -26 : 0
+              }}
+            >
+              { Icon }
+            </div>
+        }
       </div>
     )
   }
@@ -302,7 +335,7 @@ class RenderListByRow extends React.Component {
             backgroundColor: '#f8f9fa'
           }}
         >
-          { this.renderHeader({ title: i18n.__('Backup Folder'), flexGrow: 1, up: 'nameUp', down: 'nameDown' }) }
+          { this.renderHeader({ title: i18n.__('Backup Folder'), flexGrow: 1, up: 'nameUp', down: 'nameDown', textAlign: 'left' }) }
           <div style={{ fontSize: 14, color: 'rgba(0,0,0,.54)', width: 190 }} >
             { i18n.__('Backup Status') }
           </div>
@@ -364,7 +397,7 @@ class RenderListByRow extends React.Component {
                               </div>
                             </div>
                           ) : (
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', height: 56 }}>
                               { entry.metadata.disabled ? i18n.__('Backup is Disabled')
                                 : entry.metadata.status === 'Working' ? i18n.__('Backuping') : i18n.__('Backup Not Finished') }
                             </div>
@@ -410,12 +443,12 @@ class RenderListByRow extends React.Component {
             backgroundColor: '#f8f9fa'
           }}
         >
-          { this.renderHeader({ title: i18n.__('Name'), flexGrow: 1, up: 'nameUp', down: 'nameDown' }) }
+          { this.renderHeader({ title: i18n.__('Name'), flexGrow: 1, up: 'nameUp', down: 'nameDown', textAlign: 'left' }) }
+          { this.renderHeader({ title: i18n.__('Date Modified'), width: mtimeWidth, up: 'timeUp', down: 'timeDown', textAlign: 'right' }) }
+          { this.renderHeader({ title: i18n.__('Size'), width: sizeWidth, up: 'sizeUp', down: 'sizeDown', textAlign: 'right' }) }
           { this.props.isBackup &&
-              this.renderHeader({ title: i18n.__('Backup Date'), width: 152, up: 'backupUp', down: ' backupDown' }) }
-          { this.renderHeader({ title: i18n.__('Date Modified'), width: 152, up: 'timeUp', down: 'timeDown' }) }
-          { this.renderHeader({ title: i18n.__('Size'), width: 108, up: 'sizeUp', down: 'sizeDown' }) }
-          <div style={{ width: 8 }} />
+              this.renderHeader({ title: i18n.__('Versions'), width: versionWidth, down: 'versionDown', up: 'versionUp', textAlign: 'center' }) }
+          <div style={{ width: this.props.isBackup ? 22 : 48 }} />
         </div>
 
         {/* list content */}

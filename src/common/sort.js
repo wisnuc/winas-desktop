@@ -18,6 +18,18 @@ const sort = (a, b, sortType) => {
       return (a.mtime && b.mtime) ? (a.mtime - b.mtime) : a.name.localeCompare(b.name)
     case 'timeDown':
       return (a.mtime && b.mtime) ? (b.mtime - a.mtime) : a.name.localeCompare(b.name)
+    case 'btimeUp':
+      return (a.bmtime && b.bmtime) ? (a.bmtime - b.bmtime) : a.bname.localeCompare(b.bname)
+    case 'btimeDown':
+      return (a.bmtime && b.bmtime) ? (b.bmtime - a.bmtime) : a.bname.localeCompare(b.bname)
+    case 'otimeUp':
+      return (a.otime && b.otime) ? (a.otime - b.otime) : a.bname.localeCompare(b.bname)
+    case 'otimeDown':
+      return (a.otime && b.otime) ? (b.otime - a.otime) : a.bname.localeCompare(b.bname)
+    case 'versionUp':
+      return (a.versionNum && b.versionNum) ? (a.versionNum - b.versionNum) : a.bname.localeCompare(b.bname)
+    case 'versionDown':
+      return (a.versionNum && b.versionNum) ? (b.versionNum - a.versionNum) : a.bname.localeCompare(b.bname)
     case 'takenUp':
       if (getDateTime(a) && !getDateTime(b)) return -1
       if (!getDateTime(a) && getDateTime(b)) return 1

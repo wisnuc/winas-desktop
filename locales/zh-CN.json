@@ -683,6 +683,7 @@
   "Calculating Rest Time": "正在计算剩余时间",
   "Rest Time By Minute %s": "约%s分钟后完成备份",
   "Rest Time By Hour And Minute %s, %s" : "约%s小时%s分钟后完成备份",
+  "Versions" : "历史版本",
 
   "==== view/Photo.jsx ====": "",
   "New Album": "新建相簿",
