@@ -680,6 +680,9 @@
   "Last Success Backup": "最近一次完整备份",
   "Backup is Disabled": "备份已经关闭",
   "Backuping": "备份中",
+  "Calculating Rest Time": "正在计算剩余时间",
+  "Rest Time By Minute %s": "约%s分钟后完成备份",
+  "Rest Time By Hour And Minute %s, %s" : "约%s小时%s分钟后完成备份",
 
   "==== view/Photo.jsx ====": "",
   "New Album": "新建相簿",

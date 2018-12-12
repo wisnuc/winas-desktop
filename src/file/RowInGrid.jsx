@@ -250,7 +250,7 @@ class Row extends React.Component {
                         : renderFileIcon(entry.name, entry.metadata, 24) }
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                      <div style={{ width: size - 80 }} className="text">
+                      <div style={{ maxWidth: size - (entry.archived ? 108 : 80) }} className="text">
                         { entry.bname || entry.name }
                       </div>
                       { entry.archived && <Icon style={{ width: 18, height: 18, marginLeft: 16 }} /> }

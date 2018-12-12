@@ -8,13 +8,14 @@ import FlatButton from '../common/FlatButton'
 import { LIButton } from '../common/Buttons'
 import SimpleScrollBar from '../common/SimpleScrollBar'
 
-class BackupCard extends React.Component {
+class BackupCard extends React.PureComponent {
   constructor (props) {
     super(props)
     this.hasDrive = !!this.props.drive && this.props.drive.uuid !== 'fake-uuid'
 
     this.state = {
       topDirs: [],
+      status: 'Idle',
       loading: this.hasDrive
     }
 
@@ -56,10 +57,6 @@ class BackupCard extends React.Component {
         this.setState({ confirmDelDir: false, dirDetail: null })
         this.refresh()
       })
-    }
-
-    this.onMsg = (event, data) => {
-      console.log('this.onMsg', data)
     }
 
     this.refresh = () => {
@@ -108,6 +105,12 @@ class BackupCard extends React.Component {
           this.setState({ toggleEnableLoading: false })
         })
       }
+    }
+
+    this.onMsg = (event, data) => {
+      console.log('this.onMsg', data)
+      const { status, size, completeSize, count, finishCount, restTime } = data
+      this.setState({ status, size, completeSize, count, finishCount, restTime })
     }
   }
 
@@ -293,6 +296,14 @@ class BackupCard extends React.Component {
     )
   }
 
+  renderRestTime (restTime) {
+    if (!(restTime > 0)) return i18n.__('Calculating Rest Time')
+    const hour = Math.floor(restTime / 3600)
+    const minute = Math.ceil((restTime - hour * 3600) / 60)
+    if (!hour) return i18n.__('Rest Time By Minute %s', minute)
+    return i18n.__('Rest Time By Hour And Minute %s, %s', hour, minute)
+  }
+
   renderCurrentBackup (drive) {
     const { label, client } = drive
     const { lastBackupTime } = client
@@ -315,8 +326,8 @@ class BackupCard extends React.Component {
             <div style={{ fontSize: 16, fontWeight: 500 }}>
               { label }
             </div>
-            <div style={{ fontSize: 12 }}>
-              { i18n.__('Current Device') }
+            <div style={{ fontSize: 12, display: 'flex', alignItems: 'center', height: 16 }}>
+              { this.state.status === 'Idle' ? i18n.__('Current Device') : i18n.__('Backuping') }
             </div>
           </div>
           <div style={{ flexGrow: 1 }} />
@@ -428,15 +439,30 @@ class BackupCard extends React.Component {
             </Menu>
           </Popover>
         </div>
-        <div style={{ fontSize: 12, fontWeight: 500, color: '#FFF', margin: '16px 0 0 0' }}>
-          { !disabled && !!lastBackupTime && this.calcTime(lastBackupTime) }
-        </div>
-        <div style={{ fontSize: 12, fontWeight: 500, color: '#FFF' }}>
-          { !disabled && (lastBackupTime ? i18n.__('Backup Success') : i18n.__('Backup Not Finished')) }
-        </div>
-        <div style={{ fontSize: 12, fontWeight: 500, color: '#FFF', width: '100%', marginTop: 56 }} className="flexCenter">
-          { disabled && i18n.__('Backup Disabled Text') }
-        </div>
+        {
+          this.state.status === 'Idle' ? (
+            <div style={{ fontSize: 12, fontWeight: 500, color: '#FFF' }} key="Idle">
+              <div style={{ marginTop: 16, height: 16, display: 'flex', alignItems: 'center' }}>
+                { !disabled && !!lastBackupTime && this.calcTime(lastBackupTime) }
+              </div>
+              <div style={{ height: 16, display: 'flex', alignItems: 'center' }}>
+                { !disabled && (lastBackupTime ? i18n.__('Backup Success') : i18n.__('Backup Not Finished')) }
+              </div>
+              <div style={{ width: '100%', marginTop: 56 }} className="flexCenter">
+                { disabled && i18n.__('Backup Disabled Text') }
+              </div>
+            </div>
+          ) : (
+            <div style={{ fontSize: 12, fontWeight: 500, color: '#FFF' }} key="Running">
+              <div style={{ marginTop: 16, height: 16, display: 'flex', alignItems: 'center' }} >
+                { this.renderRestTime(this.state.restTime) }
+              </div>
+              <div style={{ height: 16, display: 'flex', alignItems: 'center' }}>
+                { !!this.state.finishCount && !!this.state.count && `${this.state.finishCount}/${this.state.count}` }
+              </div>
+            </div>
+          )
+        }
         {
           !disabled &&
             <div
@@ -459,6 +485,30 @@ class BackupCard extends React.Component {
                 { i18n.__('Add Backup Directroy') }
               </div>
             </div>
+        }
+        {
+          this.state.status !== 'Idle' && (
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: 6,
+                borderRadius: 3,
+                backgroundColor: 'rgba(0,0,0,.26)'
+              }}
+            >
+              <div
+                style={{
+                  height: 6,
+                  borderRadius: 3,
+                  backgroundColor: '#ffc107',
+                  width: `${Math.round(this.state.finishCount / this.state.count * 100) || 0}%`
+                }}
+              />
+            </div>
+          )
         }
       </div>
     )
