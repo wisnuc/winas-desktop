@@ -103,6 +103,7 @@ class FileContent extends React.Component {
 
     /* handle files */
     this.drop = (e) => {
+      if (this.props.isBackup) return
       if (this.props.isMedia || this.props.showSearch) return
       const files = [...e.dataTransfer.files].map(f => f.path)
       const isPhy = this.props.path[0].isPhy || this.props.path[0].isPhyRoot
@@ -129,6 +130,7 @@ class FileContent extends React.Component {
     this.selectBox = null
 
     this.selectStart = (event, scrollTop) => {
+      if (this.props.isBackup) return
       /* disabled in public root */
       if (this.props.inPublicRoot) return
 
@@ -171,6 +173,8 @@ class FileContent extends React.Component {
 
     /* draw select box */
     this.drawBox = (event) => {
+      if (this.isBackup) return
+      if (this.props.isBackup) return
       const s = this.refSelectBox.style
       const dx = event.clientX - this.selectBox.x
       const dy = event.clientY - this.selectBox.y

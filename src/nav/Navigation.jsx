@@ -307,7 +307,7 @@ class NavViews extends React.Component {
           {/* Title and BreadCrumbItem */}
           {/* this.views[this.state.nav].renderTitle({ style: titleStyle }) */}
 
-          <div style={{ backgroundColor: '#e8eaed', height: 1, width: '100%', marginTop: 8, marginBottom: 8 }} />
+          <div style={{ backgroundColor: '#e8eaed', height: 1, width: '100%', margin: '8px 0px 8px 32px' }} />
 
           {/* File Content */}
           <div style={{ height: 'calc(100% - 88px)', width: '100%' }} id="content-container">

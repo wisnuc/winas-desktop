@@ -71,7 +71,7 @@ class Row extends React.Component {
     const { select, list, isScrolling, rowSum, sortType, changeSortType, size } = this.props
     const h = this.headers.find(header => header.title === this.state.type) || this.headers[0]
     return (
-      <div style={{ height: '100%', width: '100%' }} >
+      <div style={{ height: '100%', width: '100%', paddingLeft: 8 }} >
         {/* header */}
         {
           list.first && list.entries[0].entry.type !== 'backup' &&
@@ -179,6 +179,7 @@ class Row extends React.Component {
                       width: size,
                       height: size,
                       borderRadius: 4,
+                      overflow: 'hidden',
                       marginRight: 16,
                       marginBottom: 16,
                       backgroundColor: selected ? 'rgba(0,150,136,.04)' : '#FFF'
@@ -199,7 +200,9 @@ class Row extends React.Component {
                     border,
                     margin: border ? '-1px 16px 16px 0px' : '0px 16px 16px 0px',
                     backgroundColor,
-                    boxSizing: 'border-box'
+                    boxSizing: 'border-box',
+                    borderRadius: 4,
+                    overflow: 'hidden'
                   }}
                   {...actions}
                 >
@@ -245,7 +248,7 @@ class Row extends React.Component {
                   >
                     <div
                       className="flexCenter"
-                      style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: '#FFF', margin: '0px 8px' }}
+                      style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: '#FFF', margin: '0px 12px' }}
                     >
                       { entry.type === 'directory' ? <AllFileIcon style={{ width: 24, height: 24, color: '#ffa93e' }} />
                         : renderFileIcon(entry.name, entry.metadata, 24) }

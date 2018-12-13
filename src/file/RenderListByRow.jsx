@@ -11,7 +11,7 @@ import SimpleScrollBar from '../common/SimpleScrollBar'
 import { BackwardIcon, FolderIcon, PublicIcon, DesktopNoAccessIcon, MobileNoAccessIcon, PublishIcon, VersionsIcon, CloseIcon, DeleteIcon } from '../common/Svg'
 
 const mtimeWidth = 144
-const sizeWidth = 96
+const sizeWidth = 144
 const versionWidth = 108
 const deltaWidth = 60
 
@@ -46,7 +46,7 @@ class FolderSize extends React.PureComponent {
   render () {
     return (
       <div style={{ color: 'rgba(0,0,0,.54)', fontSize: 12, width: 100, textAlign: 'right' }}>
-        { this.state.loading ? i18n.__('Loading') : prettysize(this.state.fileTotalSize) }
+        { this.state.loading ? '--' : prettysize(this.state.fileTotalSize) }
       </div>
     )
   }
@@ -106,6 +106,8 @@ class Row extends React.PureComponent {
       backgroundColor,
       color: 'transparent',
       boxSizing: 'border-box',
+      borderRadius: 4,
+      overflow: 'hidden',
       border: 'solid 1px transparent'
     }, select.rowBorder(index))
 
@@ -356,10 +358,10 @@ class RenderListByRow extends React.Component {
           }}
         >
           { this.renderHeader({ title: i18n.__('Backup Folder'), flexGrow: 1, up: 'nameUp', down: 'nameDown', textAlign: 'left' }) }
-          <div style={{ fontSize: 14, color: 'rgba(0,0,0,.54)', width: 190 }} >
+          <div style={{ color: 'rgba(0,0,0,.54)', width: 190, opacity: 0.7 }} >
             { i18n.__('Backup Status') }
           </div>
-          <div style={{ fontSize: 14, color: 'rgba(0,0,0,.54)', width: 48, textAlign: 'right' }} >
+          <div style={{ color: 'rgba(0,0,0,.54)', width: 48, textAlign: 'right', opacity: 0.7 }} >
             { i18n.__('Size') }
           </div>
           <div style={{ width: 24 }} />
@@ -368,8 +370,22 @@ class RenderListByRow extends React.Component {
           {({ height, width }) => (
             <SimpleScrollBar width={width} height={height} >
               {
-                entries.map((entry, index) => (
-                  <div
+                entries.map((entry, index) => {
+                  /* backgroud color */
+                  const backgroundColor = select.rowColor(index)
+                  const rowStyle = Object.assign({
+                    height: 56,
+                    width: 'calc(100% - 56px)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    marginLeft: 32,
+                    backgroundColor,
+                    color: 'transparent',
+                    boxSizing: 'border-box',
+                    border: 'solid 1px transparent'
+                  }, select.rowBorder(index))
+
+                  return (<div
                     key={entry.uuid}
                     onClick={e => this.props.onRowClick(e, index)}
                     onMouseUp={(e) => { e.preventDefault(); e.stopPropagation() }}
@@ -377,14 +393,7 @@ class RenderListByRow extends React.Component {
                     onMouseLeave={e => this.props.onRowMouseLeave(e, index)}
                     onDoubleClick={e => this.props.onRowDoubleClick(e, index)}
                     onMouseDown={e => onRowMouseDown(e, index)}
-                    style={{
-                      height: 56,
-                      width: '100%',
-                      display: 'flex',
-                      alignItems: 'center',
-                      paddingLeft: 32,
-                      boxSizing: 'border-box'
-                    }}
+                    style={rowStyle}
                   >
                     <div
                       style={{ width: 24, marginLeft: 16 }}
@@ -395,7 +404,7 @@ class RenderListByRow extends React.Component {
                     <div style={{ width: 16 }} />
 
                     <div style={{ width: 'calc(100% - 500px)', height: 56 }}>
-                      <div style={{ margin: '8px 0' }} className="text">
+                      <div style={{ margin: '12px 0 4px 0', color: 'rgba(0,0,0,.76)' }} className="text">
                         { entry.bname }
                       </div>
                       <div style={{ color: 'rgba(0,0,0,.54)', fontSize: 12 }} className="text">
@@ -409,7 +418,7 @@ class RenderListByRow extends React.Component {
                         entry.metadata.status === 'Idle' && entry.metadata.lastBackupTime
                           ? (
                             <div>
-                              <div style={{ margin: '8px 0px' }}>
+                              <div style={{ margin: '12px 0px 4px 0px' }}>
                                 { localMtime(entry.metadata.lastBackupTime) }
                               </div>
                               <div>
@@ -428,7 +437,8 @@ class RenderListByRow extends React.Component {
                     <FolderSize entry={entry} drive={drive} apis={apis} />
                     <div style={{ width: 24 }} />
                   </div>
-                ))
+                  )
+                })
               }
             </SimpleScrollBar>
           )}
@@ -438,7 +448,6 @@ class RenderListByRow extends React.Component {
   }
 
   renderVersions (versions) {
-    console.log('renderVersions', versions)
     return (
       <div style={{ height: 441, width: 560 }}>
         <div style={{ height: 56, display: 'flex', alignItems: 'center', marginLeft: 24 }}>

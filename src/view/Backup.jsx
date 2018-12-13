@@ -16,15 +16,21 @@ class Backup extends Home {
 
     this.openAddDirDialog = (drive) => {
       remote.dialog.showOpenDialog({ properties: ['openDirectory'] }, (filePaths) => {
-        if (!filePaths || !filePaths.length) return
+        if (!filePaths || !filePaths.length) {
+          this.setState({ addingBackupDir: false })
+          return
+        }
         const localPath = filePaths[0]
 
         const args = { driveUUID: drive.uuid, dirUUID: drive.uuid }
         this.ctx.props.apis.pureRequest('listNavDir', args, (err, listNav) => {
-          if (err || !listNav) this.ctx.props.openSnackBar(i18n.__('Get Backup Dirs Failed'))
-          else {
+          if (err || !listNav) {
+            this.setState({ addingBackupDir: false })
+            this.ctx.props.openSnackBar(i18n.__('Get Backup Dirs Failed'))
+          } else {
             const { entries } = listNav
             if (entries && entries.find(e => !e.deleted && e.metadata && e.metadata.localPath === localPath)) {
+              this.setState({ addingBackupDir: false })
               this.ctx.props.openSnackBar(i18n.__('Duplicated Backup Dir'))
             } else { // new backup dir
               const newDirName = remote.require('path').parse(localPath).base
@@ -32,6 +38,7 @@ class Backup extends Home {
               // dirs.length = 0 // ignore previous top dirs TODO
               dirs.push({ metadata: { localPath }, name: newDirName })
               ipcRenderer.send('BACKUP_DIR', { dirs, drive })
+              this.setState({ addingBackupDir: false })
             }
           }
         })
@@ -39,7 +46,8 @@ class Backup extends Home {
     }
 
     this.addBackupDir = () => {
-      if (!this.currentDrive) return // should have current device's backup drive
+      if (!this.currentDrive || this.state.addingBackupDir) return // should have current device's backup drive
+      this.setState(Object.assign(this.state, { addingBackupDir: true }))
       if (this.currentDrive.uuid === 'fake-uuid') { // create backup drive
         const { hostname, machineId, platform } = window.config
         const args = {
@@ -48,8 +56,10 @@ class Backup extends Home {
           type: platform === 'drawin' ? 'Mac-PC' : platform === 'win32' ? 'Win-PC' : 'Linux-PC'
         }
         this.ctx.props.apis.pureRequest('createBackupDrive', args, (err, drive) => {
-          if (err || !drive) this.ctx.props.openSnackBar(i18n.__('Create Backup Drive Failed'))
-          else {
+          if (err || !drive) {
+            this.setState({ addingBackupDir: false })
+            this.ctx.props.openSnackBar(i18n.__('Create Backup Drive Failed'))
+          } else {
             const rest = this.state.entries.slice(1, this.state.entries.length)
             this.currentDrive = drive
             this.setState({ entries: [Object.assign({ name: drive.label }, drive), ...rest] })

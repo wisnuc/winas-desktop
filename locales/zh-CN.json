@@ -228,7 +228,7 @@
   "Bind Email Hint": "请输入邮箱地址",
   "Input Code": "验证码",
   "Input Code Hint": "请输入邮箱验证码",
-  "Logout" : "登出账户",
+  "Logout" : "退出登录",
   "Your Username %s": "您当前的用户名为：%s 。",
   "Username Text": "设备登录用户名是系统用户名，也是您登录Samba的用户名。",
   "First User Text": "您是系统的第一个用户，是最高权限的系统管理员。",

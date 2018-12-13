@@ -181,7 +181,7 @@ class GridView extends React.Component {
     if (!this.props.entries || this.props.entries.length === 0) return (<div />)
     return (
       <div
-        style={{ width: 'calc(100% - 48px)', marginLeft: 48, height: '100%' }}
+        style={{ width: 'calc(100% - 48px)', marginLeft: 40, height: '100%' }}
         onDrop={this.props.drop}
         onMouseMove={this.onMouseMove}
         onMouseDown={e => this.props.onRowClick(e, -1) || this.props.selectStart(e)}

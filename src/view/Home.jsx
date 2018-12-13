@@ -500,6 +500,7 @@ class Home extends Base {
 
     /* drag row */
     this.dragRow = (e) => {
+      if (this.isBackup) return
       const s = this.refDragedItems.style
       if (!this.state.select.selected.includes(this.RDSI)) {
         if (this.RDSI > -1) this.state.select.addByArray([this.RDSI], (new Date()).getTime())
@@ -581,6 +582,7 @@ class Home extends Base {
     }
 
     this.rowDragStart = (event, index) => {
+      if (this.isBackup) return
       /* only left click */
       if (event.nativeEvent.button !== 0) return
       /* not public */
@@ -599,6 +601,7 @@ class Home extends Base {
 
     /* drag item in GridView */
     this.dragGrid = (e) => {
+      if (this.isBackup) return
       const s = this.refDragedItems.style
       if (!this.state.select.selected.includes(this.RDSI)) {
         if (this.RDSI > -1) this.state.select.addByArray([this.RDSI], (new Date()).getTime())
@@ -619,6 +622,7 @@ class Home extends Base {
     }
 
     this.gridDragStart = (event, index) => {
+      if (this.isBackup) return
       /* only left click */
       if (event.nativeEvent.button !== 0) return
       /* not public */
