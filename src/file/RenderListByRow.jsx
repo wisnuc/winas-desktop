@@ -364,7 +364,7 @@ class RenderListByRow extends React.Component {
           <div style={{ color: 'rgba(0,0,0,.54)', width: 48, textAlign: 'right', opacity: 0.7 }} >
             { i18n.__('Size') }
           </div>
-          <div style={{ width: 24 }} />
+          <div style={{ width: 48 }} />
         </div>
         <AutoSizer>
           {({ height, width }) => (

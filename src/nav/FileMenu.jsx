@@ -41,7 +41,7 @@ class NavDrawer extends React.Component {
   }
 
   render () {
-    const { views, primaryColor } = this.props
+    const { views, primaryColor, pin } = this.props
     const { nav } = this.state
 
     return (
@@ -59,7 +59,7 @@ class NavDrawer extends React.Component {
           ))
         }
         <div style={{ height: 8 }} />
-        <Divider style={{ marginLeft: 15, width: 180 }} className="divider" />
+        <div style={{ margin: '0px 15px 0px 15px', width: !pin ? 58 : 180, height: 1, backgroundColor: '#f2f2f2' }} />
         <div style={{ height: 8 }} />
         {
           ['transfer'].map(v => (
@@ -74,7 +74,7 @@ class NavDrawer extends React.Component {
           ))
         }
         <div style={{ height: 8 }} />
-        <Divider style={{ marginLeft: 15, width: 180 }} className="divider" />
+        <div style={{ margin: '0px 15px 0px 15px', width: !pin ? 58 : 180, height: 1, backgroundColor: '#f2f2f2' }} />
       </div>
     )
   }

@@ -551,6 +551,7 @@ class NavViews extends React.Component {
               <div style={{ height: 16 }} />
               <div style={{ width: 224 }}>
                 <FileMenu
+                  pin={this.state.pin}
                   views={this.views}
                   nav={this.state.nav}
                   navTo={this.navTo}
