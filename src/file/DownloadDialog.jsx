@@ -14,9 +14,9 @@ class DownloadDialog extends React.PureComponent {
     this.state = { fired: false }
 
     this.onFire = () => {
-      const { selected, entries, path } = this.props.data
+      const { entries, path } = this.props.data
       const downloadPath = global.config.global.downloadPath || global.config.defaultDownload
-      this.setState({ fired: true }, () => this.props.onConfirm({ selected, entries, path, downloadPath }))
+      this.setState({ fired: true }, () => this.props.onConfirm({ entries, path, downloadPath }))
     }
 
     this.openDialog = () => {

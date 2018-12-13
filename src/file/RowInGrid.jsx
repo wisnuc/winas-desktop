@@ -158,27 +158,6 @@ class Row extends React.Component {
               const backgroundColor = selected ? 'rgba(0,150,136,.04)' : '#FFF'
               const isMobile = false // TODO
               const Icon = isMobile ? MobileIcon : PCIcon
-              if (entry.type === 'backup') {
-                return (
-                  <div
-                    key={entry.uuid}
-                    className="flexCenter"
-                    onClick={e => this.props.onRowClick(e, index)}
-                    onDoubleClick={e => this.props.onRowDoubleClick(e, index)}
-                    style={{
-                      height: size,
-                      width: size,
-                      borderRadius: 4,
-                      marginRight: 16,
-                      marginBottom: 16,
-                      backgroundColor: '#FFF',
-                      boxShadow: '0px 1px 0.9px 0.1px rgba(0, 0, 0, 0.24), 0 0 1px 0px rgba(0, 0, 0, 0.16)'
-                    }}
-                  >
-                    <BackupCard {...this.props} drive={entry} index={index} />
-                  </div>
-                )
-              }
               const actions = isScrolling ? {} : {
                 onClick: e => this.props.onRowClick(e, index),
                 onMouseUp: (e) => { e.preventDefault(); e.stopPropagation() },
@@ -187,6 +166,28 @@ class Row extends React.Component {
                 onMouseLeave: e => this.props.onRowMouseLeave(e, index),
                 onDoubleClick: e => this.props.onRowDoubleClick(e, index),
                 onMouseDown: e => e.stopPropagation() || this.props.gridDragStart(e, index)
+              }
+              if (entry.type === 'backup') {
+                const boxShadow = (selected || hover) ? '0px 5px 6.6px 0.4px rgba(0,105,92,.24), 0px 2px 9.8px 0.2px rgba(0,105,92,.16)'
+                  : '0px 1px 0.9px 0.1px rgba(0, 0, 0, 0.24), 0 0 1px 0px rgba(0, 0, 0, 0.16)'
+                return (
+                  <div
+                    key={entry.uuid}
+                    className="flexCenter"
+                    style={{
+                      boxShadow,
+                      width: size,
+                      height: size,
+                      borderRadius: 4,
+                      marginRight: 16,
+                      marginBottom: 16,
+                      backgroundColor: selected ? 'rgba(0,150,136,.04)' : '#FFF'
+                    }}
+                    {...actions}
+                  >
+                    <BackupCard {...this.props} drive={entry} index={index} selected={selected} />
+                  </div>
+                )
               }
               return (
                 <div

@@ -332,11 +332,12 @@ class BackupCard extends React.PureComponent {
           </div>
           <div style={{ flexGrow: 1 }} />
           <div
-            style={{ width: 24, height: 24, cursor: 'pointer' }}
-            onClick={this.openSettings}
+            style={{ marginRight: -12 }}
             onDoubleClick={(e) => { e.stopPropagation(); e.preventDefault() }}
           >
-            <SettingsIcon style={{ color: '#FFF' }} onClick={e => this.openSettings(e, drive)} />
+            <LIButton onClick={e => this.openSettings(e, drive)} iconStyle={{ color: '#FFF', height: 20, width: 20 }}>
+              <SettingsIcon />
+            </LIButton>
           </div>
           <Popover
             open={this.state.openBS}
@@ -546,6 +547,7 @@ class BackupCard extends React.PureComponent {
       default:
         break
     }
+    const color = this.props.selected ? '#009688' : 'rgba(0,0,0,.54)'
     return (
       <div style={{ height: 108, width: 'calc(100% - 64px)' }} >
         <div
@@ -554,13 +556,13 @@ class BackupCard extends React.PureComponent {
         >
           <Icon style={{ color: '#FFF' }} />
         </div>
-        <div style={{ fontSize: 14, fontWeight: 500 }}>
+        <div style={{ fontSize: 14, fontWeight: 500, color: this.props.selected ? '#009688' : undefined }}>
           { label }
         </div>
-        <div style={{ fontSize: 12, fontWeight: 500, color: 'rgba(0,0,0,.54)', margin: '16px 0 0 0' }}>
+        <div style={{ fontSize: 12, color, margin: '16px 0 0 0' }}>
           { this.calcTime(lastBackupTime) }
         </div>
-        <div style={{ fontSize: 12, fontWeight: 500, color: 'rgba(0,0,0,.54)' }}>
+        <div style={{ fontSize: 12, color }}>
           { lastBackupTime ? i18n.__('Backup Success') : i18n.__('Backup Not Finished') }
         </div>
       </div>

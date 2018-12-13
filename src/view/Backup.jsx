@@ -4,7 +4,7 @@ import { remote, ipcRenderer } from 'electron'
 import Home from './Home'
 import sortByType from '../common/sort'
 import { LIButton } from '../common/Buttons'
-import { RefreshAltIcon, BackupIcon, MoreIcon, ListIcon, GridIcon } from '../common/Svg'
+import { RefreshAltIcon, BackupIcon, ListIcon, GridIcon, EyeOffIcon, EyeOpenIcon } from '../common/Svg'
 
 class Backup extends Home {
   constructor (ctx) {
@@ -247,8 +247,11 @@ class Backup extends Home {
 
         {
           !inRoot &&
-            <LIButton onClick={this.toggleShowArchive} tooltip={i18n.__('Filter')} >
-              <MoreIcon />
+            <LIButton
+              onClick={this.toggleShowArchive}
+              tooltip={!this.state.showArchive ? i18n.__('Hide Archived') : i18n.__('Show Archived')}
+            >
+              { !this.state.showArchive ? <EyeOffIcon /> : <EyeOpenIcon /> }
             </LIButton>
         }
         {

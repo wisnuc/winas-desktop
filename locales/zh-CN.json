@@ -684,6 +684,11 @@
   "Rest Time By Minute %s": "约%s分钟后完成备份",
   "Rest Time By Hour And Minute %s, %s" : "约%s小时%s分钟后完成备份",
   "Versions" : "历史版本",
+  "File Versions": "文件版本",
+  "Confirm Delete Backup Version Title": "删除确认",
+  "Confirm Delete Backup Version Text" : "确定要永久删除该文件版本吗？",
+  "Hide Archived": "隐藏归档文件",
+  "Show Archived" : "显示归档文件",
 
   "==== view/Photo.jsx ====": "",
   "New Album": "新建相簿",

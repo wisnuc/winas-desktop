@@ -104,10 +104,14 @@ class Home extends Base {
       const selected = this.state.select.selected
       const entries = selected.map(index => this.state.entries[index])
       const path = this.state.path
-      this.setState({ onDownload: { selected, entries, path } })
+      this.setState({ onDownload: { entries, path } })
     }
 
-    this.downloadFire = ({ selected, entries, path, downloadPath }) => {
+    this.downloadBackup = (entries) => {
+      this.setState({ onDownload: { entries, path: this.state.path } })
+    }
+
+    this.downloadFire = ({ entries, path, downloadPath }) => {
       if (this.state.showSearch) { // search result
         const entriesByDir = entries.sort((a, b) => a.pdir.localeCompare(b.pdir)).reduce((acc, cur) => {
           if (!acc[0]) acc.push([cur])
@@ -327,6 +331,27 @@ class Home extends Base {
         this.setState({ deleteLoading: false, delete: false })
         this.ctx.props.openSnackBar(i18n.__('Delete Failed'))
       })
+    }
+
+    this.deleteVersion = (entry) => {
+      const path = this.state.path
+      const dirUUID = path[path.length - 1].uuid
+      const driveUUID = this.state.path[0].uuid
+      const { bname, uuid, hash } = entry
+      this.setState({ deleteLoading: true })
+      this.ctx.props.apis.request('deleteDirOrFile', [{ driveUUID, dirUUID, entryName: bname, entryUUID: uuid, hash }], (err) => {
+        if (err) {
+          this.setState({ deleteLoading: false, openDeleteVersion: false })
+          this.ctx.props.openSnackBar(i18n.__('Delete Failed'))
+        } else {
+          this.setState({ deleteLoading: false, openDeleteVersion: false })
+          this.ctx.props.openSnackBar(i18n.__('Delete Success'))
+        }
+      })
+    }
+
+    this.onDeleteVersion = (entry) => {
+      this.setState({ openDeleteVersion: entry })
     }
 
     this.fakeOpen = () => {
@@ -977,6 +1002,14 @@ class Home extends Base {
           text={() => this.deleteText()}
         />
 
+        <ConfirmDialog
+          open={!!this.state.openDeleteVersion}
+          onCancel={() => this.setState({ openDeleteVersion: false })}
+          onConfirm={() => this.deleteVersion(this.state.openDeleteVersion)}
+          title={i18n.__('Confirm Delete Backup Version Title')}
+          text={i18n.__('Confirm Delete Backup Version Text')}
+        />
+
         <DialogOverlay open={!!showDetail} onRequestClose={() => this.toggleDialog('detail')}>
           {
             showDetail &&
@@ -1199,6 +1232,8 @@ class Home extends Base {
           showContextMenu={this.showContextMenu}
           ipcRenderer={ipcRenderer}
           download={this.download}
+          downloadBackup={this.downloadBackup}
+          onDeleteVersion={this.onDeleteVersion}
           primaryColor={this.groupPrimaryColor()}
           changeSortType={this.changeSortType}
           openSnackBar={openSnackBar}

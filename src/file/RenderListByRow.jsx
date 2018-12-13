@@ -2,11 +2,13 @@ import React from 'react'
 import i18n from 'i18n'
 import prettysize from 'prettysize'
 import { AutoSizer } from 'react-virtualized'
+import Dialog from '../common/PureDialog'
 import ScrollBar from '../common/ScrollBar'
-import SimpleScrollBar from '../common/SimpleScrollBar'
-import renderFileIcon from '../common/renderFileIcon'
-import { BackwardIcon, FolderIcon, PublicIcon, PCIcon, MobileIcon } from '../common/Svg'
+import { LIButton } from '../common/Buttons'
 import { localMtime } from '../common/datetime'
+import renderFileIcon from '../common/renderFileIcon'
+import SimpleScrollBar from '../common/SimpleScrollBar'
+import { BackwardIcon, FolderIcon, PublicIcon, DesktopNoAccessIcon, MobileNoAccessIcon, PublishIcon, VersionsIcon, CloseIcon, DeleteIcon } from '../common/Svg'
 
 const mtimeWidth = 144
 const sizeWidth = 96
@@ -110,8 +112,8 @@ class Row extends React.PureComponent {
     const textStyle = { color: 'rgba(0,0,0,.54)', textAlign: 'right', fontSize: 12 }
 
     const isMobile = false // TODO
-    const Icon = isMobile ? MobileIcon : PCIcon
-    const otherWidth = sizeWidth + mtimeWidth + deltaWidth + ((this.props.isBackup && entry.versions && versionWidth) || 0)
+    const Icon = isMobile ? MobileNoAccessIcon : DesktopNoAccessIcon
+    const otherWidth = sizeWidth + mtimeWidth + deltaWidth + ((this.props.isBackup && versionWidth) || 0)
     const nameWidth = `calc(100% - ${otherWidth}px)`
 
     return (
@@ -147,7 +149,7 @@ class Row extends React.PureComponent {
               <div style={{ maxWidth: 'calc(100% - 40px)', color: 'rgba(0,0,0,.76)' }} className="text">
                 { entry.bname || entry.name }
               </div>
-              { entry.archived && <Icon style={{ width: 18, height: 18, marginLeft: 16 }} /> }
+              { entry.archived && <Icon style={{ width: 16, height: 16, marginLeft: 16 }} /> }
             </div>
           </div>
 
@@ -166,17 +168,24 @@ class Row extends React.PureComponent {
           </div>
 
           {
-            this.props.isBackup && entry.versions
+            this.props.isBackup
               ? <div
                 style={Object.assign({ width: versionWidth }, textStyle)}
                 className="flexCenter"
-                onMouseDown={e => onContentMouseDown(e, index)}
+                onClick={e => e.stopPropagation()}
+                onDoubleClick={e => e.stopPropagation()}
               >
-                { entry.versions.length > 1 ? <FolderIcon /> : '--' }
+                {
+                  !entry.versions || (entry.versions && entry.versions.length <= 1) ? '--'
+                    : (
+                      <LIButton onClick={() => this.props.showVersions(entry.versions)} iconStyle={{ width: 18, height: 18 }}>
+                        <VersionsIcon />
+                      </LIButton>
+                    )
+                }
               </div>
               : <div style={{ width: 26 }} />
           }
-
         </div>
         <div
           onMouseDown={e => onBGMouseDown(e)}
@@ -234,6 +243,17 @@ class RenderListByRow extends React.Component {
     this.onScroll = ({ scrollTop }) => {
       this.scrollTop = scrollTop
       this.props.onScroll(scrollTop)
+    }
+    this.showVersions = (versions) => {
+      this.setState({ openVersions: versions })
+    }
+
+    this.onDownload = (entries) => {
+      this.setState({ openVersions: null }, () => this.props.downloadBackup(entries))
+    }
+
+    this.onDelete = (entry) => {
+      this.setState({ openVersions: null }, () => this.props.onDeleteVersion(entry))
     }
   }
 
@@ -417,6 +437,66 @@ class RenderListByRow extends React.Component {
     )
   }
 
+  renderVersions (versions) {
+    console.log('renderVersions', versions)
+    return (
+      <div style={{ height: 441, width: 560 }}>
+        <div style={{ height: 56, display: 'flex', alignItems: 'center', marginLeft: 24 }}>
+          { i18n.__('File Versions') }
+          <div style={{ flexGrow: 1 }} />
+          <LIButton onClick={() => this.setState({ openVersions: null })}> <CloseIcon /> </LIButton>
+          <div style={{ width: 7 }} />
+        </div>
+        <div style={{ height: 1, backgroundColor: '#e8eaed', width: '100%' }} />
+        <div style={{ height: 32, fontSize: 12, color: 'rgba(0,0,0,.54)', display: 'flex', alignItems: 'center', marginTop: 8 }}>
+          <div style={{ marginLeft: 72, width: 186 }} >
+            { i18n.__('Name') }
+          </div>
+          <div style={{ width: 108, textAlign: 'right' }}>
+            { i18n.__('Date Modified') }
+          </div>
+          <div style={{ width: 77, textAlign: 'right' }}>
+            { i18n.__('Size') }
+          </div>
+        </div>
+        <SimpleScrollBar height={344} width={560}>
+          {
+            versions.map((entry, index) => {
+              const { bname, bmtime, metadata, size } = entry
+              return (
+                <div
+                  key={index.toString()}
+                  style={{ height: 56, width: '100%', display: 'flex', alignItems: 'center', fontWeight: 500 }}
+                >
+                  <div style={{ width: 22 }} />
+                  { renderFileIcon(bname, metadata, 24) }
+                  <div style={{ width: 27 }} />
+                  <div style={{ width: 186 }} className="text">
+                    { bname }
+                  </div>
+                  <div style={{ fontSize: 12, color: 'rgba(0,0,0,.54)', textAlign: 'right', width: 108 }}>
+                    { localMtime(bmtime) }
+                  </div>
+                  <div style={{ fontSize: 12, color: 'rgba(0,0,0,.54)', textAlign: 'right', width: 77 }}>
+                    { prettysize(size) }
+                  </div>
+                  <div style={{ width: 23 }} />
+                  <LIButton onClick={() => this.onDownload([entry])} iconStyle={{ transform: 'rotate(180deg)' }}>
+                    <PublishIcon />
+                  </LIButton>
+                  <div style={{ marginLeft: -9 }}>
+                    <LIButton onClick={() => this.onDelete(entry)}> <DeleteIcon /> </LIButton>
+                  </div>
+                  <div style={{ width: 7 }} />
+                </div>
+              )
+            })
+          }
+        </SimpleScrollBar>
+      </div>
+    )
+  }
+
   render () {
     if (this.props.isTopDirs) return this.renderTopDirs()
     return (
@@ -472,13 +552,17 @@ class RenderListByRow extends React.Component {
                     rowCount={this.props.entries.length}
                     onScroll={this.onScroll}
                     rowHeight={this.props.isTopDirs ? 56 : 48}
-                    rowRenderer={props => (<Row {...props} {...this.props} />)}
+                    rowRenderer={props => (<Row {...props} {...this.props} showVersions={this.showVersions} />)}
                   />
                 </div>
               )}
             </AutoSizer>
           }
         </div>
+
+        <Dialog open={!!this.state.openVersions} onRequestClose={() => this.setState({ openVersions: null })} modal >
+          { !!this.state.openVersions && this.renderVersions(this.state.openVersions) }
+        </Dialog>
       </div>
     )
   }
