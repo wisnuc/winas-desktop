@@ -6,40 +6,6 @@ import Popover, { PopoverAnimationVertical } from 'material-ui/Popover'
 import Tooltip from '../common/Tooltip'
 import { CheckedIcon, SmallErrorIcon, UploadFile, UploadFold, NewFolderIcon } from '../common/Svg'
 
-class LoadingLabel extends React.PureComponent {
-  constructor (props) {
-    super(props)
-    this.state = { count: 1 }
-
-    this.changeCount = () => {
-      this.setState({ count: (this.state.count + 1) % 4 })
-    }
-  }
-
-  componentDidMount () {
-    if (this.props.loading) this.timer = setInterval(this.changeCount, 1000)
-  }
-
-  componentWillReceiveProps (nextProps) {
-    if (!this.props.loading && nextProps.loading) this.timer = setInterval(this.changeCount, 1000)
-    else if (!nextProps.loading) clearInterval(this.timer)
-  }
-
-  componentWillUnmount () {
-    clearInterval(this.timer)
-  }
-
-  render () {
-    const { style, loading, label } = this.props
-    const dash = Array.from({ length: this.state.count }).fill('.').join('')
-    return (
-      <div style={style}>
-        { loading ? label + dash : label }
-      </div>
-    )
-  }
-}
-
 export class Button extends React.PureComponent {
   constructor (props) {
     super(props)
@@ -162,12 +128,6 @@ export class RRButton extends Button {
     const backgroundColor = (disabled && !loading) ? '#FFF' : alt ? '#44c468' : '#00695c'
     const border = (disabled && !loading) ? 'solid 1px rgba(0,0,0,.06)' : ''
 
-    const boxShadow = (disabled && !loading)
-      ? ''
-      : this.state.hover
-        ? `0px 10px 15px 0 ${alt ? 'rgba(47, 162, 79, 0.2)' : 'rgba(33, 110, 209, 0.2)'}`
-        : `0px 5px 10px 0 ${alt ? 'rgba(47, 162, 79, 0.25)' : 'rgba(33, 110, 209, 0.25)'}`
-
     const buttonStyle = Object.assign({
       width,
       height,
@@ -175,12 +135,11 @@ export class RRButton extends Button {
       border,
       borderRadius,
       backgroundColor,
-      boxShadow,
       position: 'relative',
       overflow: 'hidden'
     }, style)
 
-    const textStyle = Object.assign({ color: (disabled && !loading) ? 'rgba(0,0,0,.26)' : '#FFF', fontSize: 16 }, labelStyle)
+    const textStyle = Object.assign({ color: (disabled && !loading) ? 'rgba(0,0,0,.26)' : '#FFF', fontSize: 14 }, labelStyle)
 
     const overlayBgColor = loading ? 'rgba(0,0,0,.1)'
       : disabled ? 'transparent'
@@ -191,7 +150,7 @@ export class RRButton extends Button {
 
     return (
       <div {...this.funcs} style={buttonStyle} className="flexCenter" >
-        <LoadingLabel style={textStyle} loading={loading} label={label} />
+        <div style={textStyle}> { label } </div>
         <div style={overlayStyle} />
         { this.state.hover && tooltip && this.renderTootip(tooltip) }
       </div>

@@ -182,7 +182,9 @@ class Preview extends React.Component {
         }}
         onClick={(e) => { e.preventDefault(); e.stopPropagation() }}
       >
-        { type === 'pdf' ? this.renderPDF() : this.renderRawText() }
+        <div style={{ width: '100%', height: '100%', position: 'relative' }} className="flexCenter">
+          { type === 'pdf' ? this.renderPDF() : this.renderRawText() }
+        </div>
       </div>
     )
   }

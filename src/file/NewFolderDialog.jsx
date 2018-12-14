@@ -1,8 +1,8 @@
-import i18n from 'i18n'
 import React from 'react'
-import { Divider } from 'material-ui'
+import i18n from 'i18n'
+import { TextField } from 'material-ui'
 import sanitize from 'sanitize-filename'
-import { RSButton, TextField } from '../common/Buttons'
+import FlatButton from '../common/FlatButton'
 
 class NewFolderDialog extends React.PureComponent {
   constructor (props) {
@@ -25,7 +25,8 @@ class NewFolderDialog extends React.PureComponent {
       }
     }
 
-    this.mkdir = () => {
+    this.fire = () => {
+      this.setState({ loading: true })
       const { apis, path } = this.props
       const curr = path[path.length - 1]
       const args = {
@@ -35,7 +36,7 @@ class NewFolderDialog extends React.PureComponent {
       }
       apis.request('mkdir', args, (err) => {
         if (err) {
-          console.error('mkdir error', err, err.code)
+          console.log('mkdir error', err.code)
           this.setState({ errorText: i18n.__('Mkdir Failed'), loading: false })
         } else {
           this.props.onRequestClose(true)
@@ -43,32 +44,6 @@ class NewFolderDialog extends React.PureComponent {
           this.props.refresh({ fileName: this.state.value })
         }
       })
-    }
-
-    this.mkPhyDir = () => {
-      const { apis, path } = this.props
-
-      const args = {
-        id: [...path].pop().id,
-        path: path.filter(p => p.type === 'directory').map(p => p.name).join('/'),
-        dirname: this.state.value
-      }
-      apis.request('mkPhyDir', args, (err) => {
-        if (err) {
-          console.error('mkdir error', err, err.code)
-          this.setState({ errorText: i18n.__('Mkdir Failed'), loading: false })
-        } else {
-          this.props.onRequestClose(true)
-          this.props.openSnackBar(i18n.__('Mkdir Success'))
-          this.props.refresh({ fileName: this.state.value })
-        }
-      })
-    }
-
-    this.fire = () => {
-      this.setState({ loading: true })
-      if (this.props.path[0].uuid) this.mkdir()
-      else this.mkPhyDir()
     }
 
     this.onKeyDown = (e) => {
@@ -78,34 +53,30 @@ class NewFolderDialog extends React.PureComponent {
 
   render () {
     return (
-      <div style={{ width: 280, padding: '0 20px 20px 20px', zIndex: 2000 }}>
-        <div style={{ height: 59, display: 'flex', alignItems: 'center' }} className="title">
-          { i18n.__('Create New Folder') }
+      <div style={{ width: 320, padding: '24px 24px 0px 24px' }}>
+        <div style={{ fontSize: 20 }}>
+          { this.props.title ? this.props.title : i18n.__('Create New Folder') }
         </div>
-        <Divider style={{ width: 280 }} className="divider" />
+        <div style={{ height: 20 }} />
         <div style={{ height: 60 }}>
           <TextField
-            autoFoucus
-            hintText={i18n.__('Mkdir Hint')}
+            fullWidth
+            hintText={this.props.hintText ? this.props.hintText : i18n.__('Mkdir Hint')}
             errorText={this.state.errorText}
-            value={this.state.value}
-            onKeyDown={this.onKeyDown}
             onChange={e => this.handleChange(e.target.value)}
+            ref={input => input && input.focus()}
+            onKeyDown={this.onKeyDown}
             disabled={this.state.loading}
           />
         </div>
-        <div style={{ height: 40 }} />
-        <div style={{ height: 30, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-          <RSButton
-            alt
-            label={i18n.__('Cancel')}
-            onClick={this.props.onRequestClose}
-          />
-          <div style={{ width: 10 }} />
-          <RSButton
+        <div style={{ height: 24 }} />
+        <div style={{ height: 52, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginRight: -24 }}>
+          <FlatButton label={i18n.__('Cancel')} primary onClick={this.props.onRequestClose} />
+          <FlatButton
             label={i18n.__('Create')}
-            disabled={this.state.value.length === 0 || !!this.state.errorText || this.state.loading}
+            primary
             onClick={this.fire}
+            disabled={this.state.value.length === 0 || !!this.state.errorText || this.state.loading}
           />
         </div>
       </div>

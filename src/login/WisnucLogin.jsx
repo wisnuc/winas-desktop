@@ -278,7 +278,6 @@ class WisnucLogin extends React.Component {
           {
             status === 'phone' &&
             <LoginTF
-              autoFoucus
               floatingLabelText={i18n.__('Phone Number')}
               type="text"
               errorText={this.state.pnError}
@@ -291,7 +290,6 @@ class WisnucLogin extends React.Component {
           {
             status === 'password' &&
               <LoginTF
-                autoFoucus={!this.state.pwd && !this.state.loading}
                 type={this.state.showPwd ? 'text' : 'password'}
                 floatingLabelText={i18n.__('Password')}
                 errorText={this.state.pwdError}
@@ -303,7 +301,7 @@ class WisnucLogin extends React.Component {
           {/* clear password */}
           {
             !!this.state.pn && status === 'phone' && (
-              <div style={{ position: 'absolute', right: 0, top: 36 }}>
+              <div style={{ position: 'absolute', right: 0, top: 34 }}>
                 <TFButton icon={WinCloseIcon} onClick={this.clearPn} />
               </div>
             )
@@ -311,7 +309,7 @@ class WisnucLogin extends React.Component {
           {/* password visibility */}
           {
             status === 'password' && (
-              <div style={{ position: 'absolute', right: 0, top: 36 }}>
+              <div style={{ position: 'absolute', right: 0, top: 34 }}>
                 <TFButton icon={!this.state.showPwd ? EyeOpenIcon : EyeOffIcon} onClick={this.togglePwd} />
               </div>
             )
@@ -321,7 +319,7 @@ class WisnucLogin extends React.Component {
               style={{
                 position: 'absolute',
                 right: 0,
-                top: 68,
+                top: 70,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'flex-end'

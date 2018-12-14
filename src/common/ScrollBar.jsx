@@ -4,23 +4,22 @@ import { List } from 'react-virtualized'
 class ScrollBar extends React.PureComponent {
   constructor (props) {
     super(props)
-    this.state = {}
+    this.state = { mouseDown: false }
 
     this.scrollTop = 0
 
-    this.mouseDown = false
     this.onMouseDown = (event) => {
       event.preventDefault()
       event.stopPropagation()
-      this.mouseDown = true
+      this.setState({ mouseDown: true })
       this.startY = event.clientY
       this.startScrollTop = this.scrollTop
     }
 
-    this.onMouseUp = () => (this.mouseDown = false)
+    this.onMouseUp = () => this.setState({ mouseDown: false })
 
     this.onMouseMove = (event) => {
-      if (!this.refBar || !this.mouseDown) return
+      if (!this.refBar || !this.state.mouseDown) return
       const { allHeight, height } = this.props
       const barH = Math.max(height * height / allHeight, 48)
       const diff = event.clientY - this.startY
@@ -53,10 +52,6 @@ class ScrollBar extends React.PureComponent {
 
     this.onHover = () => {
       this.setState({ hover: true })
-      clearTimeout(this.timer)
-      this.timer = setTimeout(() => {
-        this.setState({ hover: false })
-      }, 1000)
     }
   }
 
@@ -102,6 +97,7 @@ class ScrollBar extends React.PureComponent {
       transition: 'opacity 225ms',
       display: barH < height ? '' : 'none'
     }
+    const backgroundColor = this.state.mouseDown ? 'rgba(0,150,136)' : this.state.hover ? 'rgba(0,150,136,0.38)' : 'rgba(0,0,0,.26)'
     return (
       <div style={{ position: 'relative', width, height, overflow: 'hidden' }}>
         <div
@@ -131,7 +127,7 @@ class ScrollBar extends React.PureComponent {
           onMouseMove={this.onHover}
           onMouseDown={this.onMouseDown}
           ref={ref => (this.refBar = ref)}
-          style={Object.assign({ backgroundColor: '#009688', height: barH }, barStyle)}
+          style={Object.assign({ backgroundColor, height: barH }, barStyle)}
         />
       </div>
     )

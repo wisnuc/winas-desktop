@@ -892,6 +892,8 @@ class Home extends Base {
 
     const iconStyle = { color, width: 24, height: 24 }
     const breadCrumbStyle = { height: 40, fontSize: 18, color: 'rgba(0,0,0,.54)', display: 'flex', alignItems: 'center', flexWrap: 'wrap' }
+    const noRefresh = this.state.showSearch === true
+    const hasEntries = this.state.entries && this.state.entries.length
     return (
       <div style={style}>
         {
@@ -918,18 +920,24 @@ class Home extends Base {
             </LIButton>
         }
 
-        <LIButton onClick={() => this.refresh()} tooltip={i18n.__('Refresh')} >
-          <RefreshAltIcon color={color} />
-        </LIButton>
+        {
+          !noRefresh &&
+            <LIButton onClick={() => this.refresh()} tooltip={i18n.__('Refresh')} >
+              <RefreshAltIcon color={color} />
+            </LIButton>
+        }
 
-        <LIButton
-          onClick={() => this.toggleDialog('gridView')}
-          tooltip={this.state.gridView ? i18n.__('List View') : i18n.__('Grid View')}
-        >
-          { this.state.gridView ? <ListIcon style={iconStyle} /> : <GridIcon style={iconStyle} /> }
-        </LIButton>
+        {
+          !!hasEntries &&
+            <LIButton
+              onClick={() => this.toggleDialog('gridView')}
+              tooltip={this.state.gridView ? i18n.__('List View') : i18n.__('Grid View')}
+            >
+              { this.state.gridView ? <ListIcon style={iconStyle} /> : <GridIcon style={iconStyle} /> }
+            </LIButton>
+        }
 
-        <div style={{ width: 8 }} />
+        <div style={{ width: 16 }} />
       </div>
     )
   }

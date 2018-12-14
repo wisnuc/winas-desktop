@@ -374,15 +374,11 @@ class FileContent extends React.Component {
     /* lost connection to wisnuc */
     if (!window.navigator.onLine) return this.renderOffLine()
 
-    const isPhoto = this.state.seqIndex > -1 && this.props.entries && this.props.entries[this.state.seqIndex] &&
-      this.props.entries[this.state.seqIndex].metadata &&
-      ['JPEG', 'PNG', 'JPG', 'GIF', 'BMP', 'RAW'].includes(this.props.entries[this.state.seqIndex].metadata.type)
-
     const isBackup = this.props.isBackup
     const isTopDirs = isBackup && this.props.path && this.props.path.length === 2
     /* got list */
     return (
-      <div style={{ width: '100%', height: '100%', position: 'relatvie', backgroundColor: '#f8f9fa' }} >
+      <div style={{ width: '100%', height: '100%', position: 'relatvie', backgroundColor: '#FFF' }} >
         <EventListener target="window" onResize={this.handleResize} />
         {/* render list */}
         {

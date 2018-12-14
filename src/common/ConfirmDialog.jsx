@@ -1,8 +1,8 @@
 import i18n from 'i18n'
 import React from 'react'
-import { Checkbox, Divider } from 'material-ui'
-import { RSButton } from '../common/Buttons'
+import { Checkbox } from 'material-ui'
 import Dialog from '../common/PureDialog'
+import FlatButton from '../common/FlatButton'
 
 class ConfirmDialog extends React.PureComponent {
   constructor (props) {
@@ -26,10 +26,9 @@ class ConfirmDialog extends React.PureComponent {
         {
           open && (
             <div style={{ width: 320 }} >
-              <div style={{ height: 60, display: 'flex', alignItems: 'center', paddingLeft: 20 }} className="title">
+              <div style={{ height: 60, display: 'flex', alignItems: 'center', paddingLeft: 20, fontSize: 20 }}>
                 { title }
               </div>
-              <Divider style={{ marginLeft: 20, width: 280 }} className="divider" />
               <div style={{ height: 20 }} />
               <div
                 style={{
@@ -38,7 +37,7 @@ class ConfirmDialog extends React.PureComponent {
                   display: 'flex',
                   alignItems: 'center',
                   lineHeight: '30px',
-                  color: 'var(--grey-text)'
+                  color: 'rgba(0,0,0,.54)'
                 }}
               >
                 { content }
@@ -59,11 +58,9 @@ class ConfirmDialog extends React.PureComponent {
                 )
               }
               <div style={{ height: 20 }} />
-              <div style={{ height: 34, width: 'calc(100% - 40px)', display: 'flex', alignItems: 'center', padding: 20 }}>
-                <div style={{ flexGrow: 1 }} />
-                <RSButton label={i18n.__('Cancel')} onClick={onCancel} alt />
-                <div style={{ width: 10 }} />
-                <RSButton label={i18n.__('Confirm')} onClick={this.onFire} disabled={this.state.fired} />
+              <div style={{ height: 52, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+                <FlatButton label={i18n.__('Cancel')} primary onClick={onCancel} />
+                <FlatButton label={i18n.__('Confirm')} primary disabled={this.state.fired} onClick={this.onFire} />
               </div>
             </div>
           )

@@ -73,7 +73,7 @@ class Row extends React.PureComponent {
     const onDropping = entry.type === 'directory' && select.rowDrop(index)
 
     /* backgroud color */
-    const backgroundColor = onDropping ? '#f8f9fa' : select.rowColor(index)
+    const backgroundColor = onDropping ? '#FFF' : select.rowColor(index)
 
     const isSelected = select.selected.includes(index)
 
@@ -354,7 +354,7 @@ class RenderListByRow extends React.Component {
             zIndex: 1,
             display: 'flex',
             alignItems: 'center',
-            backgroundColor: '#f8f9fa'
+            backgroundColor: '#FFF'
           }}
         >
           { this.renderHeader({ title: i18n.__('Backup Folder'), flexGrow: 1, up: 'nameUp', down: 'nameDown', textAlign: 'left' }) }
@@ -529,7 +529,7 @@ class RenderListByRow extends React.Component {
             zIndex: 1,
             display: 'flex',
             alignItems: 'center',
-            backgroundColor: '#f8f9fa'
+            backgroundColor: '#FFF'
           }}
         >
           { this.renderHeader({ title: i18n.__('Name'), flexGrow: 1, up: 'nameUp', down: 'nameDown', textAlign: 'left' }) }

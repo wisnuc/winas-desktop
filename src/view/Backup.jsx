@@ -274,7 +274,7 @@ class Backup extends Home {
             </LIButton>
         }
 
-        <div style={{ width: 8 }} />
+        <div style={{ width: 16 }} />
       </div>
     )
   }

@@ -154,7 +154,7 @@ class Row extends React.Component {
               const { index, entry } = item
               const selected = select.selected.findIndex(s => s === index) > -1
               const hover = select.hover === index && !selected
-              const border = hover ? '1px solid rgba(0,150,136, 0.26)' : selected ? '1px solid rgba(0,150,136, 0.38)' : ''
+              const borderColor = hover ? 'rgba(0,150,136, 0.26)' : selected ? 'rgba(0,150,136, 0.38)' : '#E8EAED'
               const backgroundColor = selected ? 'rgba(0,150,136,.04)' : '#FFF'
               const isMobile = false // TODO
               const Icon = isMobile ? MobileIcon : PCIcon
@@ -167,9 +167,11 @@ class Row extends React.Component {
                 onDoubleClick: e => this.props.onRowDoubleClick(e, index),
                 onMouseDown: e => e.stopPropagation() || this.props.gridDragStart(e, index)
               }
-              if (entry.type === 'backup') {
-                const boxShadow = (selected || hover) ? '0px 5px 6.6px 0.4px rgba(0,105,92,.24), 0px 2px 9.8px 0.2px rgba(0,105,92,.16)'
-                  : '0px 1px 0.9px 0.1px rgba(0, 0, 0, 0.24), 0 0 1px 0px rgba(0, 0, 0, 0.16)'
+              const isBackup = entry.type === 'backup'
+              const boxShadow = (selected || hover) ? '0px 5px 6.6px 0.4px rgba(0,105,92,.24), 0px 2px 9.8px 0.2px rgba(0,105,92,.16)'
+                : '0px 1px 0.9px 0.1px rgba(0, 0, 0, 0.24), 0 0 1px 0px rgba(0, 0, 0, 0.16)'
+
+              if (isBackup) {
                 return (
                   <div
                     key={entry.uuid}
@@ -197,8 +199,8 @@ class Row extends React.Component {
                     position: 'relative',
                     width: size,
                     height: entry.type !== 'directory' ? size : 48,
-                    border,
-                    margin: border ? '-1px 16px 16px 0px' : '0px 16px 16px 0px',
+                    border: `1px solid ${borderColor}`,
+                    margin: '-1px 16px 16px 0px',
                     backgroundColor,
                     boxSizing: 'border-box',
                     borderRadius: 4,
@@ -212,7 +214,7 @@ class Row extends React.Component {
                       <div
                         draggable={false}
                         className="flexCenter"
-                        style={{ height: size - 48, width: size, marginLeft: border ? -1 : 0, overflow: 'hidden' }}
+                        style={{ height: size - 48, width: size, marginLeft: -1, overflow: 'hidden' }}
                       >
                         {
                           entry.type === 'directory'
@@ -243,7 +245,7 @@ class Row extends React.Component {
                       position: 'relative',
                       display: 'flex',
                       alignItems: 'center',
-                      marginLeft: border ? -1 : 0
+                      marginLeft: -1
                     }}
                   >
                     <div

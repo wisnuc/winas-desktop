@@ -300,7 +300,7 @@ class NavViews extends React.Component {
           height: '100%',
           width: '100%',
           position: 'relative',
-          backgroundColor: '#f8f8f8'
+          backgroundColor: 'FFF'
         }}
       >
         <div style={{ height: '100%', width: '100%', position: 'relative' }}>
@@ -499,15 +499,14 @@ class NavViews extends React.Component {
           WebkitAppRegion: 'no-drag',
           overflow: 'hidden',
           transition,
-          boxShadow: (shrinked || this.state.pin || this.state.searchText) ? ''
-            : '0px 5px 6.6px 0.4px rgba(96,125,139,.24), 0px 2px 9.8px 0.2px rgba(96,125,139,.16)'
+          borderRight: '1px solid rgba(0,0,0,.06)'
         }}
       >
         <div style={{ height: 34, width: '100%', display: 'flex', alignItems: 'center' }}>
           <div style={{ height: 34, width: 34, margin: 4 }} className="flexCenter">
             <SIButton
               onClick={() => this.setState({ pin: !this.state.pin })}
-              iconStyle={{ color: 'rgba(0,0,0,.54)' }}
+              iconStyle={{ color: 'rgba(0,0,0,.26)' }}
             >
               { !this.state.pin ? <LockOpenIcon /> : <LockIcon /> }
             </SIButton>
@@ -679,10 +678,24 @@ class NavViews extends React.Component {
       default:
         break
     }
+    const shrinked = ['pin', 'searchMode'].every(v => !this.state[v])
     return (
       <div style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }} >
         {/* Navs */}
         { this.renderNavs() }
+        <div
+          style={{
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            height: '100%',
+            width: shrinked ? 88 : 224,
+            backgroundColor: '#000000',
+            opacity: this.state.pin ? 0 : 0.02,
+            zIndex: 103,
+            pointerEvents: 'none'
+          }}
+        />
 
         {
           this.state.searchMode && !this.state.searchText && !this.state.types.length && (
@@ -693,11 +706,9 @@ class NavViews extends React.Component {
                 left: 0,
                 height: '100%',
                 width: '100%',
-                backgroundColor: '#000000',
-                opacity: 0.13,
+                backgroundColor: 'transparent',
                 zIndex: 100
               }}
-              onClick={this.exitSearchMode}
             />
           )
         }
@@ -710,7 +721,7 @@ class NavViews extends React.Component {
             transition: 'margin 225ms'
           }}
         >
-          <div style={{ height: 34, backgroundColor: '#f8f8f8', WebkitAppRegion: 'drag' }} />
+          <div style={{ height: 34, backgroundColor: '#FFF', WebkitAppRegion: 'drag' }} />
           <div style={{ height: 'calc(100% - 38px)', width: '100%', position: 'relative' }} >
             { view }
           </div>
