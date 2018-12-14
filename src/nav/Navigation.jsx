@@ -573,7 +573,17 @@ class NavViews extends React.Component {
                 style={{ height: 72, width: 224, display: 'flex', alignItems: 'center', position: 'relative', cursor: 'pointer' }}
               >
                 <div style={{ height: 72, width: 88 }} className="flexCenter">
-                  <DeviceIcon style={{ width: 24, height: 24 }} />
+                  <div
+                    style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 20,
+                      backgroundColor: this.state.openDevice ? 'rgba(0,0,0,.06)' : '#FFF'
+                    }}
+                    className="flexCenter"
+                  >
+                    <DeviceIcon style={{ width: 24, height: 24 }} />
+                  </div>
                 </div>
                 <div style={{ height: 72, marginTop: 16 }}>
                   <div style={{ opacity: 0.87, fontWeight: 500 }}> { deviceName } </div>
@@ -590,7 +600,7 @@ class NavViews extends React.Component {
                   </div>
                   <div style={{ opacity: 0.54, color: 'rgba(0,0,0,.54)', fontSize: 12, fontWeight: 500 }}> { usage } </div>
                 </div>
-                <div style={{ position: 'absolute', right: 12, top: 24, opacity: 0.38, height: 18, width: 18 }}>
+                <div style={{ position: 'absolute', right: 12, top: 24, opacity: 0.38, height: 18, width: 18 }} >
                   <ArrowDownIcon />
                 </div>
               </div>
@@ -600,7 +610,11 @@ class NavViews extends React.Component {
                 anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
                 targetOrigin={{ horizontal: 'left', vertical: 'top' }}
                 onRequestClose={() => this.setState({ openDevice: false })}
-                style={{ boxShadow: '0px 5px 6.6px 0.4px rgba(96,125,139,.24), 0px 2px 9.8px 0.2px rgba(96,125,139,.16)', marginTop: 8 }}
+                style={{
+                  boxShadow: '0px 5px 6.6px 0.4px rgba(96,125,139,.24), 0px 2px 9.8px 0.2px rgba(96,125,139,.16)',
+                  marginTop: -16,
+                  marginLeft: 88
+                }}
               >
                 <Menu style={{ maxWidth: 260 }}>
                   <RenderDevice {...this.props} />

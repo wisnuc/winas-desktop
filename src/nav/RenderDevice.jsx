@@ -44,12 +44,12 @@ class Disk extends React.PureComponent {
     ]
 
     return (
-      <div style={{ width: 260, height: 396 }}>
+      <div style={{ width: 260, height: 339, marginTop: -8, overflow: 'hidden' }}>
         <div style={{ height: 56, position: 'relative', paddingLeft: 24, paddingTop: 16 }}>
           <div style={{ height: 24, fontSize: 18, fontWeight: 500, color: 'rgba(0,0,0,.76)' }}>
             Wisnuc Office
           </div>
-          <div style={{ height: 22, fontSize: 12, color: 'rgba(14,5,10,.54)' }}>
+          <div style={{ height: 22, fontSize: 12, color: 'rgba(14,5,10,.29)' }}>
             当前设备
           </div>
           <div style={{ position: 'absolute', top: 16, right: 8 }}>
@@ -97,19 +97,18 @@ class Disk extends React.PureComponent {
             ))
           }
         </div>
-        <div style={{ width: '100%', height: 1, marginTop: 31, backgroundColor: '#e8eaed' }} />
-        <div style={{ width: 212, height: 240, padding: '8px 24px' }} >
+        <div style={{ width: '100%', height: 1, marginTop: 24, backgroundColor: '#e8eaed' }} />
+        <div style={{ width: 212, height: 200, padding: '8px 24px' }} >
           {
             data.map(({ title, size }) => (
-              <div style={{ height: 48, display: 'flex', alignItems: 'center', width: '100%' }} key={title}>
-                <div style={{ fontSize: 16, fontWeight: 500, color: 'rgba(0,0,0,.76)' }}> { title }</div>
+              <div style={{ height: 40, display: 'flex', alignItems: 'center', width: '100%' }} key={title}>
+                <div style={{ fontWeight: 500, color: 'rgba(0,0,0,.76)' }}> { title }</div>
                 <div style={{ flexGrow: 1 }} />
-                <div style={{ fontWeight: 500, color: 'rgba(0,0,0,.76)' }}> { prettysize(size) } </div>
+                <div style={{ fontWeight: 500, color: 'rgba(0,0,0,.29)' }}> { prettysize(size) } </div>
               </div>
             ))
           }
         </div>
-
       </div>
     )
   }
