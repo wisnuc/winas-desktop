@@ -439,7 +439,8 @@ class Home extends Base {
 
       if (this.select.state.ctrl || this.select.state.shift) return
       const containerDom = document.getElementById('content-container')
-      const maxLeft = containerDom.offsetLeft + containerDom.clientWidth + 80
+      console.log('containerDom', containerDom.offsetLeft, containerDom.clientWidth)
+      const maxLeft = containerDom.offsetLeft + containerDom.clientWidth - 24
       const x = clientX > maxLeft ? maxLeft : clientX
       /* calc positon of menu using height of menu which is related to number of selected items */
       const length = (this.select.state && this.select.state.selected && this.select.state.selected.length) || 0
@@ -451,7 +452,7 @@ class Home extends Base {
       } else if (length > 1) itemNum = 5
       else itemNum = 7
 
-      const maxTop = containerDom.offsetTop + containerDom.offsetHeight - itemNum * 30 + 90
+      const maxTop = containerDom.offsetTop + containerDom.offsetHeight - itemNum * 30 + 24
       const y = clientY > maxTop ? maxTop : clientY
       this.setState({
         contextMenuOpen: true,

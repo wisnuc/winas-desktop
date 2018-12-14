@@ -3,7 +3,6 @@ import i18n from 'i18n'
 import EventListener from 'react-event-listener'
 import ErrorIcon from 'material-ui/svg-icons/alert/error'
 import ContainerOverlay from './ContainerOverlay'
-import SingleView from './SingleView'
 import RenderListByRow from './RenderListByRow'
 import GridView from './GridView'
 import CircularLoading from '../common/CircularLoading'
@@ -420,26 +419,8 @@ class FileContent extends React.Component {
 
         {/* preview picture */}
         {
-          this.state.seqIndex > -1 && isPhoto &&
+          this.state.seqIndex > -1 &&
             <ContainerOverlay
-              onRequestClose={() => this.setState({ preview: false })}
-              isMedia={this.props.isMedia || this.props.showSearch}
-              open={this.state.preview}
-              items={this.props.entries}
-              seqIndex={this.state.seqIndex}
-              ipcRenderer={this.props.ipcRenderer}
-              memoize={this.props.memoize}
-              download={this.download}
-              path={this.props.path}
-              select={this.props.select.touchTap}
-              apis={this.props.apis}
-            />
-        }
-
-        {/* preview other files */}
-        {
-          this.state.seqIndex > -1 && !isPhoto &&
-            <SingleView
               onRequestClose={() => this.setState({ preview: false })}
               isMedia={this.props.isMedia || this.props.showSearch}
               open={this.state.preview}

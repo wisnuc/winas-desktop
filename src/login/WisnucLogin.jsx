@@ -52,10 +52,13 @@ class WisnucLogin extends React.Component {
       this.props.phi.req('checkUser', { phone: this.state.pn }, (err, res) => {
         if (err || !res || !res.userExist) this.setState({ pnError: i18n.__('User Not Exist'), loading: false })
         else {
-          const accounts = [...this.state.accounts]
-          if (this.state.accounts.every(user => user.pn !== this.state.pn)) {
-            accounts.push(Object.assign({ pn: this.state.pn }, res))
-          }
+          const accounts = this.state.accounts || []
+
+          // replace previous accounts
+          const index = accounts.findIndex(user => user.pn === this.state.pn)
+          if (index > -1) accounts.splice(index, 1)
+          accounts.unshift(Object.assign({ pn: this.state.pn }, res))
+
           this.setState({ status: 'password', loading: false, accounts, avatarUrl: res.avatarUrl })
           const newUserInfo = Object.assign({}, this.phi || {}, { accounts })
           this.props.ipcRenderer.send('SETCONFIG', { phi: newUserInfo })
@@ -337,7 +340,7 @@ class WisnucLogin extends React.Component {
         <div style={{ display: 'flex', alignItems: 'center', width: 290, margin: '64px auto' }}>
           <div style={{ width: 200, height: 32 }}>
             {
-              status === 'password'
+              status === 'password' && 0
                 ? <FlatButton label={i18n.__('Forget Password')} primary labelStyle={{ fontSize: 14 }} />
                 : <WeChatIcon style={{ width: 32, height: 32, cursor: 'pointer' }} onClick={this.props.openWeChat} />
             }

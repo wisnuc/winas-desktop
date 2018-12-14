@@ -72,7 +72,7 @@ class WeChatLogin extends React.Component {
       const clientId = window.config && window.config.machineId && window.config.machineId.slice(0, 8)
 
       this.props.phi.req('wechatToken', { code, clientId }, (err, data) => {
-        if (err || !data || 1) {
+        if (err || !data) {
           this.setState({ error: i18n.__('WeChat Login Error Text') })
         } else if (!data.user) {
           this.setState({ error: i18n.__('WeChat Login No User Error Text') })

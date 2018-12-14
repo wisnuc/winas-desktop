@@ -1,15 +1,15 @@
 import i18n from 'i18n'
 import UUID from 'uuid'
 import React from 'react'
-import { remote, ipcRenderer } from 'electron'
-import { Divider } from 'material-ui'
+import { Divider, RaisedButton } from 'material-ui'
+import OpenIcon from 'material-ui/svg-icons/action/open-with'
+import DownloadIcon from 'material-ui/svg-icons/file/file-download'
 
 import PDFView from './PDF'
 import PhotoDetail from './PhotoDetail'
 import DialogOverlay from '../common/DialogOverlay'
-import { OLButton, LIButton, RSButton } from '../common/Buttons'
+import { RSButton } from '../common/Buttons'
 import CircularLoading from '../common/CircularLoading'
-import { DownloadFileIcon, WinFullIcon, WinNormalIcon, CloseIcon, OpenViaLocalIcon } from '../common/Svg'
 
 class Preview extends React.Component {
   constructor (props) {
@@ -19,8 +19,6 @@ class Preview extends React.Component {
       pages: null,
       alert: false
     }
-
-    this.toggleMax = () => ipcRenderer.send('TOGGLE_MAX')
 
     this.close = () => {
       this.props.close()
@@ -172,40 +170,6 @@ class Preview extends React.Component {
     )
   }
 
-  renderDocHeader (entry) {
-    const isMaximized = remote.getCurrentWindow().isMaximized()
-    return (
-      <div
-        style={{
-          width: '100%',
-          height: 59,
-          display: 'flex',
-          alignItems: 'center',
-          background: '#FFF'
-        }}
-        onClick={(e) => { e.preventDefault(); e.stopPropagation() }}
-      >
-        <div style={{ width: 600, fontSize: 20, color: '#525a60', marginLeft: 20 }} className="text">
-          { entry.name }
-        </div>
-        <div style={{ flexGrow: 1 }} />
-        <LIButton tooltip={i18n.__('Download')} onClick={this.props.download}>
-          <DownloadFileIcon />
-        </LIButton>
-        <LIButton
-          onClick={this.toggleMax}
-          tooltip={!isMaximized ? i18n.__('Full Winodw') : i18n.__('Normal Window')}
-        >
-          { !isMaximized ? <WinFullIcon /> : <WinNormalIcon /> }
-        </LIButton>
-        <LIButton tooltip={i18n.__('Close')} onClick={this.close}>
-          <CloseIcon />
-        </LIButton>
-        <div style={{ width: 10 }} />
-      </div>
-    )
-  }
-
   renderDoc (type) {
     return (
       <div
@@ -218,11 +182,7 @@ class Preview extends React.Component {
         }}
         onClick={(e) => { e.preventDefault(); e.stopPropagation() }}
       >
-        { this.renderDocHeader(this.props.item) }
-        <Divider style={{ marginLeft: 20, width: 'calc(100% - 40px)', marginBottom: 20 }} className="divider" />
-        <div style={{ height: 'calc(100% - 80px)', width: '100%' }} className="flexCenter">
-          { type === 'pdf' ? this.renderPDF() : this.renderRawText() }
-        </div>
+        { type === 'pdf' ? this.renderPDF() : this.renderRawText() }
       </div>
     )
   }
@@ -334,26 +294,34 @@ class Preview extends React.Component {
     // debug('this.props renderOtherFiles', this.props)
     return (
       <div
-        style={{ width: 290, padding: '0 10px 20px 20px', backgroundColor: '#FFF' }}
-        onClick={e => e.stopPropagation()}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexDirection: 'column',
+          height: 144,
+          width: 360,
+          backgroundColor: '#424242',
+          borderRadius: '20px'
+        }}
+        onClick={(e) => { e.preventDefault(); e.stopPropagation() }}
       >
-        <div style={{ height: 60, display: 'flex', alignItems: 'center' }}>
-          <div style={{ color: '#525a60', fontSize: 20, width: 215 }} className="text">
-            { this.props.item.name }
-          </div>
-
-          <LIButton onClick={() => { this.props.download(); this.props.close() }} tooltip={i18n.__('Download')}>
-            <DownloadFileIcon />
-          </LIButton>
-          <LIButton onClick={this.props.close} tooltip={i18n.__('Close')}>
-            <CloseIcon />
-          </LIButton>
+        <div style={{ color: '#FFFFFF', fontSize: 20, fontWeight: 500 }}>
+          { i18n.__('Can Not Preview Text')}
         </div>
-        <Divider style={{ width: '100%' }} className="divider" />
-        <div style={{ display: 'flex', alignItems: 'center', marginTop: 20 }}>
-          <OLButton
+        <div style={{ height: 8 }} />
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <RaisedButton
+            label={i18n.__('Download')}
+            primary
+            style={{ margin: 12 }}
+            icon={<DownloadIcon />}
+            onClick={() => { this.props.download(); this.props.close() }}
+          />
+          <RaisedButton
             label={i18n.__('Open via Local App')}
-            icon={OpenViaLocalIcon}
+            style={{ margin: 12 }}
+            icon={<OpenIcon />}
             onClick={this.openByLocal}
           />
         </div>
