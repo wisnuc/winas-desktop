@@ -32,7 +32,7 @@ export class BreadCrumbItem extends React.PureComponent {
           color: this.state.hover ? '#000000' : last ? '#505259' : '#85868c',
           display: 'flex',
           alignItems: 'center',
-          backgroundColor: this.state.hover ? 'rgba(207,216,220,.54)' : 'transparent'
+          backgroundColor: this.state.hover ? 'rgba(207,216,220,.26)' : 'transparent'
         }}
         onClick={onClick}
         onMouseMove={this.onMouseMove}

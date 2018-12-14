@@ -2,10 +2,11 @@ import i18n from 'i18n'
 import React from 'react'
 import prettysize from 'prettysize'
 import { Divider } from 'material-ui'
+import ContentCopyIcon from 'material-ui/svg-icons/content/content-copy'
 import { remote, ipcRenderer } from 'electron'
 import renderFileIcon from '../common/renderFileIcon'
 import { RSButton } from '../common/Buttons'
-import { FolderIcon, MultiDownloadIcon } from '../common/Svg'
+import { FolderIcon } from '../common/Svg'
 import Dialog from '../common/PureDialog'
 
 class DownloadDialog extends React.PureComponent {
@@ -97,8 +98,8 @@ class DownloadDialog extends React.PureComponent {
               <div style={{ height: 60, width: 380, display: 'flex', alignItems: 'center' }}>
                 <div style={{ width: 60, height: 60, display: 'flex', alignItems: 'center', margin: '0 6px 0 -6px' }}>
                   {
-                    isTask ? <MultiDownloadIcon style={{ width: 60, height: 60 }} />
-                      : entry.type === 'directory' ? <FolderIcon style={{ width: 60, height: 60 }} />
+                    isTask ? <ContentCopyIcon style={{ width: 60, height: 60, color: 'rgba(0,0,0,.54)' }} />
+                      : entry.type === 'directory' ? <FolderIcon style={{ width: 60, height: 60, color: '#ffa93e' }} />
                         : renderFileIcon(entry.name, null, 60)
                   }
                 </div>

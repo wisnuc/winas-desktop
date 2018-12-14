@@ -318,7 +318,7 @@ class DeviceLogin extends React.Component {
         <div style={{ marginTop: 46, height: 24, display: 'flex', alignItems: 'center' }}>
           {
             !isLogging &&
-            <LIButton style={{ marginLeft: 48 }} onClick={this.props.backToLogin}>
+            <LIButton style={{ marginLeft: 20 }} onClick={this.props.backToLogin}>
               <BackwardIcon />
             </LIButton>
           }

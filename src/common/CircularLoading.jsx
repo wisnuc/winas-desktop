@@ -1,8 +1,9 @@
 import React from 'react'
+import { CircularProgress } from 'material-ui'
 
 const CircularLoading = props => (
   <div {...props}>
-    <img src="./assets/images/loading.gif" alt="" width={52} height={52} />
+    <CircularProgress thickness={2} size={24} />
   </div>
 )
 

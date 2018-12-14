@@ -4,6 +4,8 @@ import Promise from 'bluebird'
 import prettysize from 'prettysize'
 import { ipcRenderer } from 'electron'
 import { FlatButton, Menu, Popover } from 'material-ui'
+import LockIcon from 'material-ui/svg-icons/action/lock'
+import LockOpenIcon from 'material-ui/svg-icons/action/lock-open'
 
 import Tasks from './Tasks'
 import Policy from './Policy'
@@ -39,10 +41,11 @@ import ResetDevice from '../view/ResetDevice'
 import UpdateFirmDialog from '../settings/UpdateFirmDialog'
 import SearchButton from '../common/Search'
 
+import { SIButton } from '../common/Buttons'
 import Fruitmix from '../common/fruitmix'
 import WindowAction from '../common/WindowAction'
 import DialogOverlay from '../common/PureDialog'
-import { BackIcon, WisnucLogo, MenuIcon, DeviceIcon, ArrowDownIcon, CloseIcon, PDFIcon, WORDIcon, EXCELIcon, PPTIcon, PhotoIcon, VideoIcon, AudioIcon, ExitSearchIcon } from '../common/Svg'
+import { BackIcon, WisnucLogo, DeviceIcon, ArrowDownIcon, CloseIcon, PDFIcon, WORDIcon, EXCELIcon, PPTIcon, PhotoIcon, VideoIcon, AudioIcon, ExitSearchIcon } from '../common/Svg'
 
 class NavViews extends React.Component {
   constructor (props) {
@@ -502,10 +505,12 @@ class NavViews extends React.Component {
       >
         <div style={{ height: 34, width: '100%', display: 'flex', alignItems: 'center' }}>
           <div style={{ height: 34, width: 34, margin: 4 }} className="flexCenter">
-            <MenuIcon
-              style={{ height: 18, width: 18, cursor: 'pointer' }}
+            <SIButton
               onClick={() => this.setState({ pin: !this.state.pin })}
-            />
+              iconStyle={{ color: 'rgba(0,0,0,.54)' }}
+            >
+              { !this.state.pin ? <LockOpenIcon /> : <LockIcon /> }
+            </SIButton>
           </div>
           <div style={{ height: 34, width: this.state.pin ? 180 : 0, WebkitAppRegion: 'drag', transition }} />
         </div>

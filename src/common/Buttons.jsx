@@ -624,6 +624,7 @@ export class LoginTF extends React.PureComponent {
       <MTF
         fullWidth
         ref={input => input && this.props.autoFoucus && input.focus()}
+        inputStyle={{ paddingRight: 32 }}
         underlineStyle={{ backgroundColor: '#eaeaea' }}
         underlineDisabledStyle={{ borderBottom: '1px solid #eaeaea' }}
         {...props}

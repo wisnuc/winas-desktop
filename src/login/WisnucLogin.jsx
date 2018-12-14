@@ -8,7 +8,7 @@ import Dialog from '../common/PureDialog'
 import FlatButton from '../common/FlatButton'
 import { isPhoneNumber } from '../common/validate'
 import { RRButton, TFButton, LoginTF } from '../common/Buttons'
-import { EyeOpenIcon, EyeOffIcon, WinCloseIcon, CheckBoxOutlineIcon, ArrowDownIcon, WeChatIcon } from '../common/Svg'
+import { EyeOpenIcon, EyeOffIcon, WinCloseIcon, CheckBoxOutlineIcon, ArrowDownIcon, WeChatIcon, CloseIcon } from '../common/Svg'
 
 let firstLogin = true
 
@@ -192,6 +192,9 @@ class WisnucLogin extends React.Component {
                 { pn }
               </div>
             </div>
+            <div style={{ flexGrow: 1 }} />
+            { isDelUser && <CloseIcon /> }
+            <div style={{ width: 24 }} />
           </div>
         </MenuItem>
       </div>
@@ -309,7 +312,7 @@ class WisnucLogin extends React.Component {
           {
             status === 'password' && (
               <div style={{ position: 'absolute', right: 0, top: 36 }}>
-                <TFButton icon={this.state.showPwd ? EyeOpenIcon : EyeOffIcon} onClick={this.togglePwd} />
+                <TFButton icon={!this.state.showPwd ? EyeOpenIcon : EyeOffIcon} onClick={this.togglePwd} />
               </div>
             )
           }
