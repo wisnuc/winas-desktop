@@ -52,6 +52,10 @@ class ScrollBar extends React.PureComponent {
 
     this.onHover = () => {
       this.setState({ hover: true })
+      clearTimeout(this.timer)
+      this.timer = setTimeout(() => {
+        this.setState({ hover: false })
+      }, 1000)
     }
   }
 
@@ -113,7 +117,7 @@ class ScrollBar extends React.PureComponent {
         </div>
         {/* scrollBar hover area */}
         <div
-          style={Object.assign({ backgroundColor: 'transparent', height }, barStyle, { width: 10 })}
+          style={Object.assign({ backgroundColor: 'transparent', height }, barStyle, { width: 20 })}
           onMouseMove={this.onHover}
         />
         {/* scrollBar background */}

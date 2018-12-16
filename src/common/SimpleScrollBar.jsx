@@ -5,7 +5,8 @@ class ScrollBar extends React.PureComponent {
   constructor (props) {
     super(props)
     this.state = {
-      scrollHeight: 0
+      scrollHeight: 0,
+      mouseDown: false
     }
 
     this.updateScrollHeight = () => {
@@ -14,20 +15,18 @@ class ScrollBar extends React.PureComponent {
 
     this.scrollTop = 0
 
-    this.mouseDown = false
-
     this.onMouseDown = (event) => {
       event.preventDefault()
       event.stopPropagation()
-      this.mouseDown = true
+      this.setState({ mouseDown: true })
       this.startY = event.clientY
       this.startScrollTop = this.scrollTop
     }
 
-    this.onMouseUp = () => (this.mouseDown = false)
+    this.onMouseUp = () => this.setState({ mouseDown: false })
 
     this.onMouseMove = (event) => {
-      if (!this.refBar || !this.mouseDown || !this.state.scrollHeight) return
+      if (!this.refBar || !this.state.mouseDown || !this.state.scrollHeight) return
       const { scrollHeight, clientHeight } = this.state
       const barH = Math.max(clientHeight * clientHeight / scrollHeight, 48)
       const diff = event.clientY - this.startY
@@ -96,6 +95,7 @@ class ScrollBar extends React.PureComponent {
       transition: 'opacity 225ms',
       display: scrollHeight && (barH < clientHeight) ? '' : 'none'
     }
+    const backgroundColor = this.state.mouseDown ? 'rgba(0,150,136)' : this.state.hover ? 'rgba(0,150,136,0.38)' : 'rgba(0,0,0,.26)'
 
     return (
       <div style={rootStyle}>
@@ -125,7 +125,7 @@ class ScrollBar extends React.PureComponent {
           ref={ref => (this.refBar = ref)}
           onMouseMove={this.onHover}
           onMouseDown={this.onMouseDown}
-          style={Object.assign({ backgroundColor: '#4a95f2', height: barH }, barStyle)}
+          style={Object.assign({ backgroundColor, height: barH }, barStyle)}
         />
       </div>
     )
