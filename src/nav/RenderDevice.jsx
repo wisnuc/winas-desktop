@@ -6,26 +6,37 @@ import CircularLoading from '../common/CircularLoading'
 import FlatButton from '../common/FlatButton'
 
 class Disk extends React.PureComponent {
+  constructor (props) {
+    super(props)
+    this.state = {}
+
+    this.reqDataAsync = async () => {
+      const { apis } = this.props
+      const [space, stats] = await Promise.all([apis.requestAsync('space'), apis.requestAsync('stats')])
+      return ({ space, stats })
+    }
+  }
+
   renderLoading () {
     return (
-      <div style={{ width: 260, height: 396, display: 'flex', alignItems: 'center', justifyContent: 'center' }} >
+      <div style={{ width: 260, height: 339, marginTop: -8, display: 'flex', alignItems: 'center', justifyContent: 'center' }} >
         <CircularLoading />
       </div>
     )
   }
 
-  render () {
-    console.log('render this.props', this.props)
-    const { apis, selectedDevice } = this.props
-    if (!apis || !selectedDevice) return this.renderLoading()
-    const { space } = selectedDevice
-    const { stats } = apis
-    if (!space || !stats || !stats.data || !space.data) return this.renderLoading()
+  componentDidMount () {
+    this.reqDataAsync().then(({ space, stats }) => this.setState({ space, stats })).catch(e => this.setState({ error: e }))
+  }
 
-    const { audio, document, image, video } = stats.data
-    const other = stats.data.others || { totalSize: 0 }
+  render () {
+    const { space, stats } = this.state
+    if (!space || !stats) return this.renderLoading()
+
+    const { audio, document, image, video } = stats
+    const other = stats.others || { totalSize: 0 }
     if (!audio || !document || !image || !video) return (<div />)
-    const { available, used } = space.data
+    const { available, used } = space
     const usedPercent = used / (available + used)
     const countTotal = (video.totalSize + image.totalSize + audio.totalSize + document.totalSize + other.totalSize) / usedPercent
 
