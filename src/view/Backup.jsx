@@ -104,7 +104,7 @@ class Backup extends Home {
         const pos = { driveUUID: this.state.path[0].uuid, dirUUID: entry.uuid }
         this.enter(pos, err => err && console.error('listNavBySelect error', err))
         this.history.add(pos)
-      } else if (entry.type === 'backup') {
+      } else if (entry.type === 'backup' && entry.uuid !== 'fake-uuid') {
         this.rootDrive = entry
 
         const pos = { driveUUID: entry.uuid, dirUUID: entry.uuid }

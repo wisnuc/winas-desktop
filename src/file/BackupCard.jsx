@@ -108,7 +108,6 @@ class BackupCard extends React.PureComponent {
     }
 
     this.onMsg = (event, data) => {
-      console.log('this.onMsg', data)
       const { status, size, completeSize, count, finishCount, restTime } = data
       this.setState({ status, size, completeSize, count, finishCount, restTime })
     }

@@ -84,6 +84,8 @@ class FileContent extends React.Component {
     this.onRowDoubleClick = (e, index) => {
       if (index === -1) return
       const entry = this.props.entries[index]
+      // no backup drive
+      if (entry.uuid === 'fake-uuid') return
       this.props.listNavBySelect(entry)
       if (entry.type === 'file') {
         this.setState({ seqIndex: index, preview: true })

@@ -12,6 +12,7 @@ class HoverTip extends React.Component {
   render () {
     const { longHover, hover, entries, mouseY, mouseX } = this.props
     const entry = entries[longHover] || entries[hover] || {}
+    if (entry.type === 'backup') return <div />
     const top = Math.min(mouseY, window.innerHeight - 30 - (this.refBox ? this.refBox.offsetHeight : 0)) || 0
     const left = Math.min(mouseX, window.innerWidth - 10 - (this.refBox ? this.refBox.offsetWidth : 0)) || 0
     return (

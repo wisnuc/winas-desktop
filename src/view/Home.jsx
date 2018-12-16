@@ -899,7 +899,7 @@ class Home extends Base {
         {
           !this.state.showSearch ? this.renderBreadCrumbItem({ style: breadCrumbStyle })
             : (
-              <div style={{ fontSize: 18, height: 32, marginLeft: 24, display: 'flex', alignItems: 'center' }} >
+              <div style={{ fontSize: 18, height: 32, marginLeft: 18, display: 'flex', alignItems: 'center' }} >
                 { this.state.showSearch === true ? i18n.__('Search Results')
                   : i18n.__('Search Result of %s', this.state.showSearch) }
               </div>
