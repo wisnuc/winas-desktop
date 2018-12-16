@@ -10,7 +10,7 @@ import FlatButton from '../common/FlatButton'
 
 const hasThumb = (metadata) => {
   if (!metadata) return false
-  const arr = ['PNG', 'JPEG', 'GIF', 'BMP', 'TIFF', 'MOV', '3GP', 'MP4', 'RM', 'RMVB', 'WMV', 'AVI', 'MPEG', 'MP4', '3GP', 'MOV', 'FLV', 'MKV', 'PDF']
+  const arr = ['PNG', 'JPEG', 'GIF', 'BMP', 'TIFF', 'MOV', '3GP', 'MP4', 'RM', 'RMVB', 'WMV', 'AVI', 'MPEG', 'MP4', '3GP', 'MOV', 'FLV', 'MKV', 'PDF', 'PPTX', 'DOCX', 'XLSX']
   if (arr.includes(metadata.type)) return true
   return false
 }

@@ -8,7 +8,7 @@ import { LIButton } from '../common/Buttons'
 import { localMtime } from '../common/datetime'
 import renderFileIcon from '../common/renderFileIcon'
 import SimpleScrollBar from '../common/SimpleScrollBar'
-import { BackwardIcon, FolderIcon, PublicIcon, DesktopNoAccessIcon, MobileNoAccessIcon, PublishIcon, VersionsIcon, CloseIcon, DeleteIcon } from '../common/Svg'
+import { BackwardIcon, FolderIcon, PublicIcon, DesktopNoAccessIcon, MobileNoAccessIcon, PublishIcon, VersionsIcon, CloseIcon, DeleteIcon, AddCircleIcon } from '../common/Svg'
 
 const mtimeWidth = 144
 const sizeWidth = 144
@@ -369,6 +369,28 @@ class RenderListByRow extends React.Component {
         <AutoSizer>
           {({ height, width }) => (
             <SimpleScrollBar width={width} height={height} >
+              {
+                <div
+                  style={{
+                    width: 190,
+                    height: 48,
+                    margin: '8px 0px 8px 44px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    borderRadius: 24,
+                    boxShadow: '0px 1px 0.9px 0.1px rgba(0, 0, 0, 0.24), 0 0 2px 0px rgba(0, 0, 0, 0.16)'
+                  }}
+                  onClick={this.props.addBackupDir}
+                >
+                  <div style={{ margin: '0px 16px' }}>
+                    <AddCircleIcon style={{ width: 24, height: 24, color: '#009688' }} />
+                  </div>
+                  <div style={{ color: '#009688' }}>
+                    { i18n.__('Add Backup Directroy')}
+                  </div>
+                </div>
+              }
               {
                 entries.map((entry, index) => {
                   /* backgroud color */
