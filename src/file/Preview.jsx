@@ -1,7 +1,7 @@
 import i18n from 'i18n'
 import UUID from 'uuid'
 import React from 'react'
-import { Divider, RaisedButton } from 'material-ui'
+import { RaisedButton } from 'material-ui'
 import OpenIcon from 'material-ui/svg-icons/action/open-with'
 import DownloadIcon from 'material-ui/svg-icons/file/file-download'
 
@@ -44,6 +44,7 @@ class Preview extends React.Component {
           dirUUID,
           entryUUID,
           fileName,
+          hash: this.props.item.hash,
           domain: isPhy ? 'phy' : 'drive'
         })
         this.props.close()
@@ -81,6 +82,7 @@ class Preview extends React.Component {
         dirUUID,
         entryUUID,
         fileName,
+        hash: this.props.item.hash,
         domain: isMedia ? 'media' : isPhy ? 'phy' : 'drive'
       })
       this.props.ipcRenderer.on('TEMP_DOWNLOAD_SUCCESS', this.downloadSuccess)
@@ -107,7 +109,8 @@ class Preview extends React.Component {
         driveUUID,
         dirUUID,
         entryUUID,
-        fileName
+        fileName,
+        hash: this.props.hash
       })
       this.props.ipcRenderer.on('GET_TEXT_DATA_SUCCESS', this.getTextDataSuccess)
     }
