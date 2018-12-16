@@ -2,9 +2,9 @@ import i18n from 'i18n'
 import React from 'react'
 
 import { LIButton, RSButton } from '../common/Buttons'
-import { CloseIcon, AccountIcon, CheckedIcon, FailedIcon } from '../common/Svg'
+import { CloseIcon, AccountIcon, FailedIcon } from '../common/Svg'
 
-class BindEmail extends React.Component {
+class ChangeAvatar extends React.Component {
   constructor (props) {
     super(props)
 
@@ -114,6 +114,7 @@ class BindEmail extends React.Component {
         if (this.props.account && this.props.account.phi) {
           Object.assign(this.props.account.phi, { avatarUrl: res })
           this.props.wisnucLogin(this.props.account)
+          this.setState({ avatarUrl: res })
         }
       }
     })
@@ -130,7 +131,7 @@ class BindEmail extends React.Component {
         <div style={{ margin: '0 auto', maxWidth: 'fit-content', padding: '48px 0px 16px 0px' }}>
           {
             avatarUrl ? (
-              <div style={{ width: 72, height: 72, borderRadius: 36, overflow: 'hidden' }}>
+              <div style={{ width: 72, height: 72, borderRadius: 36, overflow: 'hidden', border: '1px solid rgba(0,0,0,.26)' }}>
                 <img src={avatarUrl} width={72} height={72} />
               </div>
             )
@@ -174,7 +175,7 @@ class BindEmail extends React.Component {
   }
 
   renderCrop () {
-    const style = { backgroundColor: 'rgba(0,0,0,.54)', pointerEvents: 'none', position: 'absolute' }
+    const style = { backgroundColor: 'rgba(122,122,122,.54)', pointerEvents: 'none', position: 'absolute' }
     return (
       <div style={{ height: 320, width: 560, position: 'relative', backgroundColor: 'rgba(96,125,139,.12)', overflow: 'hidden' }}>
         <div
@@ -187,6 +188,7 @@ class BindEmail extends React.Component {
             justifyContent: 'center',
             transition: ''
           }}
+          key="transition"
           ref={ref => (this.refTransition = ref)}
           onMouseDown={() => this.setState({ drag: true })}
           onMouseUp={this.dragOff}
@@ -228,8 +230,12 @@ class BindEmail extends React.Component {
         <div>
           <div style={{ margin: '0 auto', maxWidth: 'fit-content' }}>
             {
-              success ? <CheckedIcon style={{ color: '#4caf50', height: 72, width: 72 }} />
-                : <FailedIcon style={{ color: '#f44336', height: 72, width: 72 }} />
+              !success ? <FailedIcon style={{ color: '#f44336', height: 72, width: 72 }} />
+                : (
+                  <div style={{ height: 120, width: 120, borderRadius: 60, border: '1px solid rgba(0,0,0,.26)', overflow: 'hidden' }}>
+                    <img src={this.state.avatarUrl} style={{ height: 120, width: 120 }} />
+                  </div>
+                )
             }
           </div>
           <div style={{ height: 24 }} />
@@ -287,18 +293,28 @@ class BindEmail extends React.Component {
             padding: '0px 24px'
           }}
         >
-          <RSButton
-            label={i18n.__('Set Avatar')}
-            disabled={this.state.status !== 'crop'}
-            onClick={() => this.setAvatar()}
-          />
+          {
+            this.state.status !== 'success'
+              ? <RSButton
+                label={i18n.__('Set Avatar')}
+                disabled={this.state.status !== 'crop'}
+                onClick={() => this.setAvatar()}
+              />
+              : <RSButton
+                label={i18n.__('Confirm')}
+                onClick={this.props.onRequestClose}
+              />
+          }
           <div style={{ width: 24 }} />
-          <RSButton
-            alt
-            label={i18n.__('Cancel')}
-            disabled={this.state.status === 'success' || this.state.status === 'failed'}
-            onClick={this.props.onRequestClose}
-          />
+          {
+            this.state.status !== 'success' &&
+            <RSButton
+              alt
+              label={i18n.__('Cancel')}
+              disabled={this.state.status === 'success' || this.state.status === 'failed'}
+              onClick={this.props.onRequestClose}
+            />
+          }
           <div style={{ flexGrow: 1 }} />
           {
             this.state.status !== 'upload' &&
@@ -314,4 +330,4 @@ class BindEmail extends React.Component {
   }
 }
 
-export default BindEmail
+export default ChangeAvatar

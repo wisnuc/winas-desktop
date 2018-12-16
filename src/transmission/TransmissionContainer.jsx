@@ -378,7 +378,7 @@ class TrsContainer extends React.Component {
       </div>
     )
     return (
-      <div style={{ height: '100%', width: '100%', backgroundColor: '#f8f9fa' }}>
+      <div style={{ height: '100%', width: '100%', backgroundColor: '#FFF' }}>
         <AutoSizer>
           {({ height, width }) => (
             <ScrollBar
