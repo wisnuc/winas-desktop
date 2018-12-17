@@ -691,7 +691,7 @@ class Home extends Base {
       apis.request('listNavDir', { driveUUID, dirUUID })
       if (this.isBackup) this.rootDrive = { uuid: driveUUID }
       this.setState({ loading: true, showSearch: false })
-    } else this.refresh()
+    } else this.refresh({ noloading: true })
   }
 
   navLeave () {
