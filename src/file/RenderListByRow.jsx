@@ -332,7 +332,7 @@ class RenderListByRow extends React.Component {
   }
 
   renderTopDirs () {
-    const { select, path, apis } = this.props
+    const { select, path, apis, isCurrentTopDirs } = this.props
     const entries = this.props.entries.filter(e => e.metadata && !e.deleted)
     const drive = (path && path[1]) || {}
     const onRowMouseDown = (e, i) => {
@@ -370,26 +370,27 @@ class RenderListByRow extends React.Component {
           {({ height, width }) => (
             <SimpleScrollBar width={width} height={height} >
               {
-                <div
-                  style={{
-                    width: 190,
-                    height: 48,
-                    margin: '8px 0px 8px 44px',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    borderRadius: 24,
-                    boxShadow: '0px 1px 0.9px 0.1px rgba(0, 0, 0, 0.24), 0 0 2px 0px rgba(0, 0, 0, 0.16)'
-                  }}
-                  onClick={this.props.addBackupDir}
-                >
-                  <div style={{ margin: '0px 16px' }}>
-                    <AddCircleIcon style={{ width: 24, height: 24, color: '#009688' }} />
+                isCurrentTopDirs &&
+                  <div
+                    style={{
+                      width: 190,
+                      height: 48,
+                      margin: '8px 0px 8px 44px',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      borderRadius: 24,
+                      boxShadow: '0px 1px 0.9px 0.1px rgba(0, 0, 0, 0.24), 0 0 2px 0px rgba(0, 0, 0, 0.16)'
+                    }}
+                    onClick={this.props.addBackupDir}
+                  >
+                    <div style={{ margin: '0px 16px' }}>
+                      <AddCircleIcon style={{ width: 24, height: 24, color: '#009688' }} />
+                    </div>
+                    <div style={{ color: '#009688' }}>
+                      { i18n.__('Add Backup Directroy')}
+                    </div>
                   </div>
-                  <div style={{ color: '#009688' }}>
-                    { i18n.__('Add Backup Directroy')}
-                  </div>
-                </div>
               }
               {
                 entries.map((entry, index) => {

@@ -370,14 +370,15 @@ class FileContent extends React.Component {
     /* not get list yet */
     if (!this.props.path || !this.props.path.length || !this.props.select) return (<div />)
 
+    const isBackup = this.props.isBackup
+    const isTopDirs = isBackup && this.props.path && this.props.path.length === 2
+    const isCurrentTopDirs = isTopDirs && (this.props.path[1].uuid === this.props.currentDrive.uuid)
     /* dir is empty */
-    if (this.props.entries && !this.props.entries.length) return this.renderNoFile()
+    if (this.props.entries && !this.props.entries.length && !isCurrentTopDirs) return this.renderNoFile()
 
     /* lost connection to wisnuc */
     if (!window.navigator.onLine) return this.renderOffLine()
 
-    const isBackup = this.props.isBackup
-    const isTopDirs = isBackup && this.props.path && this.props.path.length === 2
     /* got list */
     return (
       <div style={{ width: '100%', height: '100%', position: 'relatvie', backgroundColor: '#FFF' }} >
@@ -402,6 +403,7 @@ class FileContent extends React.Component {
             : <RenderListByRow
               {...this.props}
               isTopDirs={isTopDirs}
+              isCurrentTopDirs={isCurrentTopDirs}
               onRowClick={this.onRowClick}
               onRowContextMenu={this.onRowContextMenu}
               onRowMouseEnter={this.onRowMouseEnter}
