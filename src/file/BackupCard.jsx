@@ -3,10 +3,11 @@ import React from 'react'
 import { ipcRenderer } from 'electron'
 import { Menu, MenuItem, Toggle, Popover, Checkbox, Dialog, CircularProgress } from 'material-ui'
 
-import { AllFileIcon, PCIcon, MobileIcon, SettingsIcon, FailedIcon, ChevronRightIcon, BackwardIcon } from '../common/Svg'
+import { ipcReq } from '../common/ipcReq'
 import FlatButton from '../common/FlatButton'
 import { LIButton } from '../common/Buttons'
 import SimpleScrollBar from '../common/SimpleScrollBar'
+import { AllFileIcon, PCIcon, MobileIcon, SettingsIcon, FailedIcon, ChevronRightIcon, BackwardIcon } from '../common/Svg'
 
 class BackupCard extends React.PureComponent {
   constructor (props) {
@@ -71,39 +72,21 @@ class BackupCard extends React.PureComponent {
     }
 
     this.updateDrive = (error, drive) => {
-      const { apis, openSnackBar } = this.props
-      if (error) {
-        this.setState({ toggleEnableLoading: false })
-        openSnackBar(i18n.__('Operation Failed'))
-      } else {
-        const { client } = drive
-        Object.assign(client, { disabled: !client.disabled })
-        apis.pureRequest('updateDrive', { driveUUID: drive.uuid, attr: { client, op: 'backup' } }, (e, d) => {
-          if (e) openSnackBar(i18n.__('Operation Failed'))
-          else this.setState({ drive: d })
-          this.setState({ toggleEnableLoading: false })
-        })
-      }
+      console.log('this.updateDrive', error, drive)
+      const { openSnackBar } = this.props
+      if (error) openSnackBar(i18n.__('Operation Failed'))
+      else this.setState({ drive })
+      this.setState({ toggleEnableLoading: false })
     }
 
     this.onToggleEnableBackup = () => {
       if (this.state.toggleEnableLoading) return
       this.setState(Object.assign(this.state, { toggleEnableLoading: true }))
       const drive = this.state.drive || this.props.drive
-      const { apis, openSnackBar } = this.props
-      if (drive.uuid !== 'fake-uuid') apis.pureRequest('drive', { driveUUID: drive.uuid }, this.updateDrive)
-      else {
-        const { hostname, machineId, platform } = window.config
-        const args = {
-          label: hostname,
-          machineId: machineId.slice(-8),
-          type: platform === 'drawin' ? 'Mac-PC' : platform === 'win32' ? 'Win-PC' : 'Linux-PC'
-        }
-        apis.pureRequest('createBackupDrive', args, (err, d) => {
-          if (err) openSnackBar(i18n.__('Operation Failed'))
-          else this.setState({ drive: d })
-          this.setState({ toggleEnableLoading: false })
-        })
+      if (drive.uuid !== 'fake-uuid') {
+        ipcReq('updateBackupDrive', { drive, attr: { disabled: !drive.client.disabled } }, this.updateDrive)
+      } else {
+        ipcReq('createBackupDrive', null, this.updateDrive)
       }
     }
 
@@ -309,6 +292,7 @@ class BackupCard extends React.PureComponent {
     const disabled = drive.uuid === 'fake-uuid' || client.disabled
     const { showDirs } = this.state
     const transition = 'left 450ms'
+    const hostname = label || window.config.hostname
     return (
       <div
         style={{
@@ -323,7 +307,7 @@ class BackupCard extends React.PureComponent {
         <div style={{ height: 32, width: '100%', display: 'flex', alignItems: 'center' }}>
           <div style={{ color: '#FFF' }}>
             <div style={{ fontSize: 16, fontWeight: 500 }}>
-              { label }
+              { hostname }
             </div>
             <div style={{ fontSize: 12, display: 'flex', alignItems: 'center', height: 16 }}>
               { this.state.status === 'Idle' ? i18n.__('Current Device') : i18n.__('Backuping') }

@@ -436,20 +436,6 @@ class Fruitmix extends EventEmitter {
         }
         break
 
-      case 'createBackupDrive':
-        r = this.apost('drives', {
-          op: 'backup',
-          label: args.label,
-          client: {
-            id: args.machineId,
-            type: args.type,
-            disabled: false,
-            lastBackupTime: 0,
-            status: 'Idle'
-          }
-        })
-        break
-
       /* task api */
       case 'copy':
         r = this.apost('tasks', args)

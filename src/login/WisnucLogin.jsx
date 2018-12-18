@@ -75,7 +75,7 @@ class WisnucLogin extends React.Component {
 
     this.login = () => {
       this.setState({ loading: true })
-      const clientId = window.config && window.config.machineId && window.config.machineId.slice(0, 8)
+      const clientId = window.config.machineId
       this.props.phi.req(
         'token',
         { phonenumber: this.state.pn, password: this.state.pwd, clientId },

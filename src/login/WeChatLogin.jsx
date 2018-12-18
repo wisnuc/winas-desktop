@@ -69,7 +69,7 @@ class WeChatLogin extends React.Component {
       /* init wx_code */
       this.wxiframe.contentWindow.wx_code = null
 
-      const clientId = window.config && window.config.machineId && window.config.machineId.slice(0, 8)
+      const clientId = window.config.machineId
 
       this.props.phi.req('wechatToken', { code, clientId }, (err, data) => {
         if (err || !data) {

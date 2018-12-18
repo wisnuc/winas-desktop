@@ -3,6 +3,7 @@ import React from 'react'
 import { remote, ipcRenderer } from 'electron'
 import Home from './Home'
 import sortByType from '../common/sort'
+import { ipcReq } from '../common/ipcReq'
 import { LIButton } from '../common/Buttons'
 import { RefreshAltIcon, BackupIcon, ListIcon, GridIcon, EyeOffIcon, EyeOpenIcon } from '../common/Svg'
 
@@ -35,7 +36,6 @@ class Backup extends Home {
             } else { // new backup dir
               const newDirName = remote.require('path').parse(localPath).base
               const dirs = entries ? entries.filter(e => !e.deleted && e.metadata && e.metadata.localPath) : []
-              // dirs.length = 0 // ignore previous top dirs TODO
               dirs.push({ metadata: { localPath }, name: newDirName })
               ipcRenderer.send('BACKUP_DIR', { dirs, drive })
               this.setState({ addingBackupDir: false })
@@ -49,13 +49,7 @@ class Backup extends Home {
       if (!this.currentDrive || this.state.addingBackupDir) return // should have current device's backup drive
       this.setState(Object.assign(this.state, { addingBackupDir: true }))
       if (this.currentDrive.uuid === 'fake-uuid') { // create backup drive
-        const { hostname, machineId, platform } = window.config
-        const args = {
-          label: hostname,
-          machineId: machineId.slice(-8),
-          type: platform === 'drawin' ? 'Mac-PC' : platform === 'win32' ? 'Win-PC' : 'Linux-PC'
-        }
-        this.ctx.props.apis.pureRequest('createBackupDrive', args, (err, drive) => {
+        ipcReq('createBackupDrive', null, (err, drive) => {
           if (err || !drive) {
             this.setState({ addingBackupDir: false })
             this.ctx.props.openSnackBar(i18n.__('Create Backup Drive Failed'))
@@ -167,8 +161,7 @@ class Backup extends Home {
       /* process path and entries, in root */
       const path = [{ name: i18n.__('Backup Devices'), uuid: null, type: 'backupRoot' }]
 
-      const machineId = window.config.machineId.slice(-8)
-      const hostname = window.config.hostname
+      const { machineId, hostname } = window.config
       const entries = this.state.drives.filter(d => d.type === 'backup' && d.client && (d.client.id !== machineId))
 
       /* backup drive created or not */
