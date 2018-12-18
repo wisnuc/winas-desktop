@@ -46,12 +46,18 @@ class ContextMenu extends PureComponent {
     const innerStyle = {
       position: 'relative',
       left: this.state.left,
+      width: 240,
+      paddingTop: 8,
+      paddingBottom: 8,
       backgroundColor: 'white',
       overflow: 'hidden',
-      boxShadow: '0 0 20px 0 rgba(23, 99, 207, 0.1)',
-      display: 'inline-block',
       transition: 'all 125ms cubic-bezier(0.0, 0.0, 0.2, 1)'
     }
+
+    const boxShadow = 
+      '0px 5px 5px -3px rgba(0, 0, 0, 0.2), ' +
+      '0px 8px 10px 1px rgba(0, 0, 0, 0.14), ' +
+      '0px 3px 14px 2px rgba(0, 0, 0, 0.12)'
 
     switch (this.state.stage) {
       case 1:
@@ -67,6 +73,7 @@ class ContextMenu extends PureComponent {
           top: this.state.top,
           maxHeight: 384,
           opacity: 1,
+          boxShadow,
           transition: 'all 125ms cubic-bezier(0.0, 0.0, 0.2, 1)'
         })
         break
@@ -75,6 +82,7 @@ class ContextMenu extends PureComponent {
           top: this.state.top,
           maxHeight: 384,
           opacity: 0,
+          boxShadow,
           transition: `all ${this.out}ms cubic-bezier(0.4, 0.0, 1, 1)`
         })
         break

@@ -149,7 +149,7 @@ class Tasks extends React.Component {
           </div>
 
           {/* Button */}
-          <div style={{ width: 8 }} />
+          <div style={{ width: 18 }} />
           {
             finished ? (<SIButton onClick={() => this.cancelTask(uuid)} tooltip={i18n.__('OK')} > <DoneIcon /> </SIButton>)
               : error.length ? (
@@ -163,7 +163,7 @@ class Tasks extends React.Component {
                 ? (
                   <SIButton
                     tooltip={i18n.__('Detail')}
-                    iconStyle={{ width: 24, height: 24 }}
+                    iconStyle={{ width: 18, height: 18 }}
                     onClick={() => this.handleConflict(uuid, type, conflict)}
                   >
                     <InfoIcon />

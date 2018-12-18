@@ -16,7 +16,7 @@ import DialogOverlay from '../common/PureDialog'
 import MenuItem from '../common/MenuItem'
 import sortByType from '../common/sort'
 import { BreadCrumbItem, BreadCrumbSeparator } from '../common/BreadCrumb'
-import { RefreshAltIcon, DeleteIcon, MoreIcon, ListIcon, GridIcon, ArrowIcon, FolderIcon, FolderOutlineIcon, AddIcon } from '../common/Svg'
+import { RefreshAltIcon, DeleteIcon, ListIcon, GridIcon, FolderIcon, FolderOutlineIcon, AddIcon, DownloadIcon, InfoIcon, EditIcon, ShareIcon, CopyIcon, MoveIcon, NewFolderIcon, UploadFold, UploadFile } from '../common/Svg'
 import renderFileIcon from '../common/renderFileIcon'
 import { xcopyMsg } from '../common/msg'
 import History from '../common/history'
@@ -439,7 +439,6 @@ class Home extends Base {
 
       if (this.select.state.ctrl || this.select.state.shift) return
       const containerDom = document.getElementById('content-container')
-      console.log('containerDom', containerDom.offsetLeft, containerDom.clientWidth)
       const maxLeft = containerDom.offsetLeft + containerDom.clientWidth - 24
       const x = clientX > maxLeft ? maxLeft : clientX
       /* calc positon of menu using height of menu which is related to number of selected items */
@@ -915,8 +914,8 @@ class Home extends Base {
 
         {
           !!itemSelected &&
-            <LIButton onClick={() => {}} tooltip={i18n.__('More')} >
-              <MoreIcon />
+            <LIButton onClick={this.download} tooltip={i18n.__('Download')} >
+              <DownloadIcon />
             </LIButton>
         }
 
@@ -1066,11 +1065,6 @@ class Home extends Base {
     const itemSelected = this.state.select && this.state.select.selected && this.state.select.selected.length
     const multiSelected = this.state.select && this.state.select.selected && (this.state.select.selected.length > 1)
 
-    const apis = this.ctx.props.apis
-    const isAdmin = apis && apis.account && apis.account.data && apis.account.data.isFirstUser
-
-    const pos = this.ctx.props.clipboard.get()
-    const pastable = pos && pos.action
     return (
       <ContextMenu
         open={open}
@@ -1079,154 +1073,88 @@ class Home extends Base {
         onRequestClose={this.hideContextMenu}
       >
         {
-          this.hasRoot && !this.phyDrive && !this.state.showSearch
+          !itemSelected
             ? (
               <div>
                 <MenuItem
-                  primaryText={i18n.__('Open')}
-                  onClick={() => this.fakeOpen()}
+                  primaryText={i18n.__('Create New Folder')}
+                  leftIcon={<NewFolderIcon style={{ height: 20, width: 20, marginTop: 6 }} />}
+                  onClick={() => this.toggleDialog('createNewFolder')}
+                />
+                <div style={{ height: 8 }} />
+                <Divider />
+                <div style={{ height: 8 }} />
+
+                <MenuItem
+                  primaryText={i18n.__('Upload Folder')}
+                  leftIcon={<UploadFold style={{ height: 20, width: 20, marginTop: 6 }} />}
+                  onClick={() => this.upload('directory')}
                 />
                 <MenuItem
+                  primaryText={i18n.__('Upload File')}
+                  leftIcon={<UploadFile style={{ height: 20, width: 20, marginTop: 6 }} />}
+                  onClick={() => this.upload('file')}
+                />
+              </div>
+            )
+            : (
+              <div>
+                <div>
+                  {
+                    this.title() !== i18n.__('Share Title') &&
+                    <MenuItem
+                      leftIcon={<ShareIcon style={{ height: 20, width: 20, marginTop: 6 }} />}
+                      primaryText={i18n.__('Share to Public')}
+                      onClick={() => this.toggleDialog('share')}
+                    />
+                  }
+                  <MenuItem
+                    leftIcon={<CopyIcon style={{ height: 20, width: 20, marginTop: 6 }} />}
+                    primaryText={i18n.__('Copy to')}
+                    onClick={() => this.toggleDialog('copy')}
+                  />
+                  <MenuItem
+                    leftIcon={<MoveIcon style={{ height: 20, width: 20, marginTop: 6 }} />}
+                    primaryText={i18n.__('Move to')}
+                    onClick={() => this.toggleDialog('move')}
+                  />
+                </div>
+                {
+                  !multiSelected &&
+                  <MenuItem
+                    leftIcon={<EditIcon style={{ height: 20, width: 20, marginTop: 6 }} />}
+                    primaryText={i18n.__('Rename')}
+                    onClick={() => this.toggleDialog('rename')}
+                  />
+                }
+                {
+                  !multiSelected && this.state.entries[this.state.select.selected[0]].type === 'file' &&
+                    <MenuItem
+                      leftIcon={<CopyIcon style={{ height: 20, width: 20, marginTop: 6 }} />}
+                      primaryText={i18n.__('Make a Copy')}
+                      onClick={this.dupFile}
+                    />
+                }
+                <div style={{ height: 8 }} />
+                <Divider />
+                <div style={{ height: 8 }} />
+                <MenuItem
+                  leftIcon={<DownloadIcon style={{ height: 20, width: 20, marginTop: 6 }} />}
+                  primaryText={i18n.__('Download')}
+                  onClick={this.download}
+                />
+                <MenuItem
+                  leftIcon={<DeleteIcon style={{ height: 20, width: 20, marginTop: 6 }} />}
+                  primaryText={i18n.__('Delete')}
+                  onClick={() => this.toggleDialog('delete')}
+                />
+                <MenuItem
+                  leftIcon={<InfoIcon style={{ height: 20, width: 20, marginTop: 6 }} />}
                   primaryText={i18n.__('Properties')}
                   onClick={() => this.setState({ detail: true })}
                 />
               </div>
             )
-            : this.state.inRoot && !this.state.showSearch
-              ? (
-                <div>
-                  <MenuItem
-                    primaryText={i18n.__('Modify')}
-                    onClick={this.modifyPublic}
-                    disabled={!isAdmin}
-                  />
-                  <MenuItem
-                    primaryText={i18n.__('Delete')}
-                    onClick={this.deletePublic}
-                    disabled={(itemSelected && !multiSelected && this.state.select.selected[0] === 0) || !isAdmin}
-                  />
-                  <MenuItem
-                    primaryText={i18n.__('Properties')}
-                    onClick={() => this.setState({ detail: true })}
-                  />
-                </div>
-              ) : !itemSelected ? (
-                <div>
-                  { !this.isMedia &&
-                  <div>
-                    <MenuItem
-                      primaryText={i18n.__('Upload File')}
-                      onClick={() => this.upload('file')}
-                      disabled={this.isMedia}
-                    />
-                    <MenuItem
-                      primaryText={i18n.__('Upload Folder')}
-                      onClick={() => this.upload('directory')}
-                      disabled={this.isMedia}
-                    />
-                    <MenuItem
-                      primaryText={i18n.__('Create New Folder')}
-                      onClick={() => this.toggleDialog('createNewFolder')}
-                      disabled={this.isMedia}
-                    />
-                    {
-                      !this.state.showSearch &&
-                      <MenuItem
-                        primaryText={i18n.__('Paste')}
-                        disabled={!pastable}
-                        onClick={this.onPaste}
-                      />
-                    }
-                    <Divider style={{ marginLeft: 10, marginTop: 2, marginBottom: 2, width: 'calc(100% - 20px)' }} />
-                  </div>
-                  }
-                  <MenuItem
-                    primaryText={i18n.__('Toggle View Mode')}
-                    onClick={() => this.toggleDialog('gridView')}
-                  />
-                  <MenuItem
-                    primaryText={i18n.__('Refresh')}
-                    onClick={() => this.refresh()}
-                  />
-                  <MenuItem
-                    primaryText={i18n.__('Sort')}
-                    onClick={(e) => { e.stopPropagation(); e.preventDefault() }}
-                    rightIcon={
-                      <ArrowIcon
-                        style={{
-                          position: 'absolute',
-                          color: '#505259',
-                          marginTop: 5,
-                          right: -16,
-                          transform: 'rotate(270deg)'
-                        }}
-                      />
-                    }
-                    menuItems={[
-                      <MenuItem
-                        style={{ marginTop: -8 }}
-                        primaryText={i18n.__('Name')}
-                        onClick={() => this.changeSortType('nameUp')}
-                      />,
-                      <MenuItem
-                        primaryText={i18n.__('Date Modified')}
-                        onClick={() => this.changeSortType('timeUp')}
-                      />,
-                      <MenuItem
-                        style={{ marginBottom: -8 }}
-                        primaryText={i18n.__('Size')}
-                        onClick={() => this.changeSortType('sizeUp')}
-                      />
-                    ]}
-                  />
-                </div>
-              ) : (
-                <div>
-                  {
-                    !multiSelected &&
-                    <MenuItem
-                      primaryText={i18n.__('Open')}
-                      onClick={() => this.fakeOpen()}
-                    />
-                  }
-                  {
-                    !multiSelected && (this.state.showSearch || this.isMedia) &&
-                    <MenuItem
-                      primaryText={i18n.__('Open In Folder')}
-                      onClick={() => this.openInFolder()}
-                    />
-                  }
-                  <MenuItem
-                    primaryText={i18n.__('Download')}
-                    onClick={this.download}
-                  />
-                  <Divider style={{ marginLeft: 10, marginTop: 2, marginBottom: 2, width: 'calc(100% - 20px)' }} />
-                  <MenuItem
-                    primaryText={i18n.__('Copy')}
-                    onClick={this.onCopy}
-                  />
-                  <MenuItem
-                    primaryText={i18n.__('Cut')}
-                    onClick={this.onCut}
-                  />
-                  {
-                    !multiSelected &&
-                    <MenuItem
-                      primaryText={i18n.__('Rename')}
-                      onClick={this.rename}
-                    />
-                  }
-                  <MenuItem
-                    primaryText={i18n.__('Delete')}
-                    onClick={() => this.toggleDialog('delete')}
-                  />
-                  <Divider style={{ marginLeft: 10, marginTop: 2, marginBottom: 2, width: 'calc(100% - 20px)' }} />
-                  <MenuItem
-                    primaryText={i18n.__('Properties')}
-                    onClick={() => this.setState({ detail: true })}
-                  />
-                </div>
-              )
         }
       </ContextMenu>
     )

@@ -58,8 +58,6 @@ export const FuncIcon = f('icon_func')
 /* Toolbar in home */
 export const ForwardIcon = f('icon_back')
 
-export const DownloadIcon = f('icon_download')
-
 export const UploadIcon = f('icon_upload')
 
 export const DeleteFileIcon = f('icon_delete_file')
@@ -229,3 +227,7 @@ export const DesktopNoAccessIcon = f('desktop-no-access')
 export const MobileNoAccessIcon = f('mobile-no-acceess')
 export const VersionsIcon = f('versions')
 export const AddCircleIcon = f('add-circle')
+export const CopyIcon = f('copy')
+export const EditIcon = f('edit')
+export const MoveIcon = f('move')
+export const DownloadIcon = f('download')
