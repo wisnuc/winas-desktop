@@ -131,9 +131,9 @@ class BackupCard extends React.PureComponent {
     }
 
     this.onMsg = (event, data) => {
-      const { status, size, completeSize, count, finishCount, restTime, drive } = data
-      this.setState({ status, size, completeSize, count, finishCount, restTime })
-      if (!this.state.drive || (drive.client.lastBackupTime > this.state.drive.client.lastBackupTime)) {
+      const { status, size, completeSize, count, finishCount, restTime, drive, bProgress } = data
+      this.setState({ status, size, completeSize, count, finishCount, restTime, bProgress })
+      if (drive && drive.client) {
         this.setState({ drive })
       }
     }
@@ -483,10 +483,10 @@ class BackupCard extends React.PureComponent {
           ) : (
             <div style={{ fontSize: 12, fontWeight: 500, color: '#FFF' }} key="Running">
               <div style={{ marginTop: 16, height: 16, display: 'flex', alignItems: 'center' }} >
-                { this.renderRestTime(this.state.restTime) }
+                { this.state.restTime }
               </div>
               <div style={{ height: 16, display: 'flex', alignItems: 'center' }}>
-                { !!this.state.finishCount && !!this.state.count && `${this.state.finishCount}/${this.state.count}` }
+                { this.state.bProgress }
               </div>
             </div>
           )

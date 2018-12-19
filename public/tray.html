@@ -9,7 +9,7 @@
     <meta name="keywords" content="null" />
     <meta name="description" content="null" />
   </head>
-  <body>
+  <body style="opacity: 0" id="root">
     <div style="height: 100%; width: 100%; border: solid 1px #808080; background-color: #ffffff; box-sizing: border-box">
       <div style="height: 64px; display: flex; align-items: center;">
         <div style="width: 150px; height: 64px; margin-left: 24px">
@@ -21,17 +21,41 @@
           </div>
         </div>
         <div style="width: 32px; height: 32px; margin-top: 16px, margin-left: 16px; border-radius: 16px; overflow: hidden">
-          <img
-             id="avatar"
-             width="32"
-             height="32"
-             src="https://wisnuc.s3.cn-north-1.amazonaws.com.cn/avatar/3d166b6f-2b36-46eb-88b3-e9517e78f17d"
-          >
+          <img id="avatar" width="32" height="32" src="./assets/images/avatar-default.png" />
         </div>
       </div>
 
-      <div style="height: 56px; display: flex; align-items: center;">
+      <div style="height: 1px; width: 100%; opacity: 0.06; background-color: #000000;"></div>
+      <div style="display: flex; align-items: center; height: 54px; margin-left: 24px;">
+        <div style="height: 54px; position: relative; width: 150px">
+          <div class="backup" id="noDrive">
+            无备份
+          </div>
+          <div class="backup" id="backupDisabled">
+            备份已关闭
+          </div>
+          <div class="backup" id="backupWorking">
+            <div>
+              <div class="backupText" id="bProgress"></div>
+              <div class="backupText" id="restTime"></div>
+            </div>
+          </div>
+          <div class="backup" id="backupFinished">
+            <div>
+              <div class="backupText" id="lastBackupTime"></div>
+              <div class="backupText">备份完成</div>
+            </div>
+          </div>
+        </div>
+        <div
+          style="height: 16px; width: 30px; background-color: #00695c; border-radius: 8px; text-align: right; display: none; cursor: pointer"
+          id="toggle"
+          onclick="onToggleDrive()"
+        >
+          <div style="display: inline-block; height: 12px; width: 12px; border-radius: 6px; margin: 2px; background-color: #FFF"></div>
+        </div>
       </div>
+      <div style="height: 1px; width: 100%; opacity: 0.06; background-color: #000000;"></div>
       <div class="buttonDiv" style="opacity: 0.5" onclick="openChangeDevice()" id="changeDeviceButton">
         <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" class="svg">
           <defs>
@@ -44,7 +68,7 @@
         </svg>
         <span>切换设备</span>
       </div>
-      <div class="buttonDiv" style="opacity: 0.5" onclick="openUpdate()" id="update">
+      <div class="buttonDiv" onclick="openUpdate()" id="update">
         <svg viewBox="0 0 1024 1024" class="svg">
           <path
             d="M341.333333 512L170.666667 512l341.333333-341.333333 341.333333 341.333333-170.666666 0L682.666667 853.333333 341.333333 853.333333z">
@@ -78,22 +102,107 @@
       .svg {
         fill: rgba(0,0,0,.38); height: 18px; width: 18px; margin-right: 16px;
       }
+      .backup {
+        height: 56px; width: 150px; position: absolute; top: 0px; left: 0px; color: rgba(0,0,0,.54); font-size: 13px; display: none; align-items: center
+      }
+      .backupText {
+        font-size: 12px; font-weight: 500; color: rgba(0,0,0,.54); height: 18px
+      }
     </style>
     <script>
+      const UUID = require('uuid')
       const { ipcRenderer } = require('electron')
       const openChangeDevice = () => ipcRenderer.send('OPEN_CHANGE_DEVICE')
       const openUpdate = () => ipcRenderer.send('OPEN_UPDATE')
       const openAbout = () => ipcRenderer.send('OPEN_ABOUT')
       const exit = () => ipcRenderer.send('POWEROFF')
-      const hasData = false
-      ipcRenderer.on('BACKUP_MSG', ({ status, size, completeSize, count, finishCount, restTime, lastBackupTime }) => {
 
+      /* request via ipc */
+      const ipcReq = (name, args, callback) => {
+        const uuid = UUID.v4()
+        ipcRenderer.send('COMMAND', name, Object.assign({ session: uuid }, args))
+        const handler = (event, data) => {
+          const { err, res, session } = data
+          if (session === uuid) {
+            callback(err, res)
+            ipcRenderer.removeListener('COMMAND_RES', handler)
+          }
+        }
+        ipcRenderer.on('COMMAND_RES', handler)
+      }
+
+      /* hidden backup div */
+      const hiddenAll = () => {
+        ['noDrive', 'backupDisabled', 'backupFinished', 'backupWorking', 'toggle']
+          .forEach(id => document.getElementById(id).style.display = 'none')
+      }
+
+      const disableToggle = () => {
+        hiddenAll()
+        const toggle = document.getElementById('toggle')
+        toggle.style.display = 'block'
+        toggle.style.textAlign = 'left'
+        toggle.style.backgroundColor = 'rgba(0,0,0,.38)'
+        document.getElementById('backupDisabled').style.display = 'flex'
+      }
+
+      const enableToggle = () => {
+        const toggle = document.getElementById('toggle')
+        toggle.style.display = 'block'
+        toggle.style.textAlign = 'right'
+        toggle.style.backgroundColor = '#00695c'
+      }
+
+      let currentDrive = null
+      let loading = false
+      const onToggleDrive = () => {
+        if (loading || !currentDrive) return
+        loading = true
+
+        ipcReq('updateBackupDrive', { drive: currentDrive, attr: { disabled: !currentDrive.client.disabled }}, (err, res) => {
+          if (!err && res) {
+            if (res.client && res.client.disabled) {
+              disableToggle()
+            } else {
+              enableToggle()
+            }
+          } 
+        })
+      }
+
+      ipcRenderer.on('BACKUP_MSG', (event, { status, count, finishCount, restTime, lastBackupTime, drive, bProgress }) => {
+        console.log('BACKUP_MSG', status, count, finishCount, restTime, lastBackupTime, drive)
+        currentDrive = drive
+        loading = false
+        if (!drive || (status === 'Idle' && !drive.client.lastBackupTime)) {
+          hiddenAll()
+          document.getElementById('noDrive').style.display = 'flex'
+        } else if (drive && drive.client && drive.client.disabled) {
+          disableToggle()
+        } else if (status === 'Idle' && lastBackupTime) {
+          hiddenAll()
+          const date = new Date(lastBackupTime || 0)
+          const localTime = !lastBackupTime ? ''
+            : `${date.toLocaleDateString('zh-CN')} ${date.toLocaleTimeString('zh-CN', { hour12: false })}`
+          document.getElementById('lastBackupTime').innerHTML = localTime
+          enableToggle()
+
+          document.getElementById('backupFinished').style.display = 'flex'
+        } else if (status === 'running') {
+          hiddenAll()
+          document.getElementById('bProgress').innerHTML = bProgress
+          document.getElementById('restTime').innerHTML = restTime
+          enableToggle()
+
+          document.getElementById('backupWorking').style.display = 'flex'
+        }
       })
       ipcRenderer.on('TRAY_DATA', (event, data) => {
         console.log('data', data)
-        const { logged, text, storageBar } = data
+        const { logged, text, avatarSrc } = data
         if (logged) {
           document.getElementById('changeDeviceButton').style.opacity = 1
+          if (avatarSrc) document.getElementById('avatar').src = avatarSrc
         } else {
           document.getElementById('changeDeviceButton').style.cursor = 'not-allowed'
           document.getElementById('changeDeviceButton').style['background-color'] = '#FFF'
@@ -107,6 +216,7 @@
           if (!value) ele.style.opacity = 0
           ele.innerHTML = value
         })
+        document.getElementById('root').style.opacity = 1
       })
       ipcRenderer.send('REQ_TRAY_DATA')
       console.log('script load')
