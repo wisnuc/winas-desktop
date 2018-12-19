@@ -79,9 +79,10 @@ class Home extends Base {
       const rUUID = this.state.path[0] && this.state.path[0].uuid
       const dUUID = this.state.path[0] && this.state.path[this.state.path.length - 1].uuid
       if (!rUUID || !dUUID) {
+        // home or public
         this.setState({ loading: true, showSearch: false })
         const drives = this.ctx.props.apis && this.ctx.props.apis.drives && this.ctx.props.apis.drives.data
-        const drive = drives.find(d => d.tag === 'built-in')
+        const drive = drives.find(d => (this.isPublic ? d.tag === 'built-in' : d.tag === 'home'))
         this.ctx.props.apis.request('listNavDir', { driveUUID: drive.uuid, dirUUID: drive.uuid })
       } else {
         this.ctx.props.apis.request('listNavDir', { driveUUID: rUUID, dirUUID: dUUID })
@@ -816,7 +817,7 @@ class Home extends Base {
         this.refresh()
       } else {
         this.setState({ loading: true })
-        if (node.type === 'backupRoot') { // public drives
+        if (node.type === 'backupRoot') { // backup drives
           this.rootDrive = null
           this.ctx.props.apis.request('users')
           this.ctx.props.apis.request('drives')
@@ -1101,7 +1102,7 @@ class Home extends Base {
               <div>
                 <div>
                   {
-                    this.title() !== i18n.__('Share Title') &&
+                    !this.isPublic &&
                     <MenuItem
                       leftIcon={<ShareIcon style={{ height: 20, width: 20, marginTop: 6 }} />}
                       primaryText={i18n.__('Share to Public')}

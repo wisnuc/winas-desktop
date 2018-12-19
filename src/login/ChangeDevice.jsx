@@ -4,7 +4,6 @@ import { AutoSizer } from 'react-virtualized'
 import { MenuItem } from 'material-ui'
 import Device from './Device'
 import ScrollBar from '../common/ScrollBar'
-import FlatButton from '../common/FlatButton'
 import { LIButton } from '../common/Buttons'
 import { BackwardIcon } from '../common/Svg'
 
@@ -54,7 +53,7 @@ class DeviceLogin extends React.Component {
     return (
       <div style={{ width: '100%', zIndex: 100, height: '100%', position: 'relative' }} >
         <div style={{ marginTop: 46, height: 24, display: 'flex', alignItems: 'center' }}>
-          <LIButton style={{ marginLeft: 48 }} onClick={() => this.props.back(this.state.dev)}>
+          <LIButton style={{ marginLeft: 12 }} onClick={() => this.props.back(this.state.dev)}>
             <BackwardIcon />
           </LIButton>
         </div>

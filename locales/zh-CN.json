@@ -1059,6 +1059,7 @@
   "No Device": "暂无设备",
   "No Storage Info": "暂无存储信息",
   "No User Info": "暂无用户信息",
+  "Not Logged" : "未登录",
 
   "==== node/lib/transmissionUpdate.js ====": "",
   "Transmission Finished": "文件传输完成",
