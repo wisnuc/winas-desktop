@@ -1,13 +1,13 @@
 import i18n from 'i18n'
 import React from 'react'
 import { ipcRenderer } from 'electron'
-import { Menu, MenuItem, Toggle, Popover, Checkbox, Dialog, CircularProgress } from 'material-ui'
+import { Menu, MenuItem, Toggle, Popover, Checkbox, Dialog, CircularProgress, RaisedButton } from 'material-ui'
 
 import { ipcReq } from '../common/ipcReq'
 import FlatButton from '../common/FlatButton'
 import { LIButton } from '../common/Buttons'
 import SimpleScrollBar from '../common/SimpleScrollBar'
-import { AllFileIcon, PCIcon, MobileIcon, SettingsIcon, FailedIcon, ChevronRightIcon, BackwardIcon } from '../common/Svg'
+import { AllFileIcon, PCIcon, MobileIcon, SettingsIcon, AddCircleIcon, ChevronRightIcon, BackwardIcon } from '../common/Svg'
 
 class BackupCard extends React.PureComponent {
   constructor (props) {
@@ -56,17 +56,18 @@ class BackupCard extends React.PureComponent {
       this.props.apis.pureRequest('delBackupFileOrDir', { name: dir.uuid, driveUUID: uuid, dirUUID: uuid }, (err, res) => {
         console.log('delBackupFileOrDir', err, res)
         this.setState({ confirmDelDir: false, dirDetail: null })
-        this.refresh()
+        this.refresh({ updateDirs: true })
       })
     }
 
-    this.refresh = () => {
-      console.log('refrsh', this.props)
+    this.refresh = (op) => {
       const driveUUID = this.props.drive.uuid
       this.props.apis.pureRequest('listNavDir', { driveUUID, dirUUID: driveUUID }, (err, res) => {
         if (err || !Array.isArray(res && res.entries)) console.error('refresh error', err, res)
         else {
-          this.setState({ topDirs: res.entries.filter(v => !v.deleted), loading: false })
+          const topDirs = res.entries.filter(e => !e.deleted)
+          if (op && op.updateDirs) ipcRenderer.send('BACKUP_DIR', { dirs: topDirs, drive: this.props.drive })
+          this.setState({ topDirs, loading: false })
         }
       })
     }
@@ -75,7 +76,10 @@ class BackupCard extends React.PureComponent {
       console.log('this.updateDrive', error, drive)
       const { openSnackBar } = this.props
       if (error) openSnackBar(i18n.__('Operation Failed'))
-      else this.setState({ drive })
+      else {
+        Object.assign(this.props.drive, drive)
+        this.setState({ drive })
+      }
       this.setState({ toggleEnableLoading: false })
     }
 
@@ -90,9 +94,48 @@ class BackupCard extends React.PureComponent {
       }
     }
 
+    this.onToggleDir = (dirDetail) => {
+      if (this.state.toggleDirLoading) return
+      this.setState(Object.assign(this.state, { toggleDirLoading: true }))
+      const drive = this.state.drive || this.props.drive
+      const attr = {
+        archived: false,
+        op: 'updateAttr',
+        metadata: {
+          status: 'Working',
+          disabled: !dirDetail.disabled,
+          localPath: dirDetail.localPath
+        }
+      }
+      const [driveUUID, dirUUID] = [drive.uuid, drive.uuid]
+
+      this.props.apis.pureRequest('updateTopDir', { attr, name: dirDetail.uuid, driveUUID, dirUUID }, (err, res) => {
+        console.log('delBackupFileOrDir', err, res)
+        const { openSnackBar } = this.props
+        if (err || !res) {
+          console.error('updateTopDir Failed', err || res)
+          openSnackBar(i18n.__('Operation Failed'))
+          this.setState({ toggleDirLoading: false })
+        } else {
+          const v = res[0]
+          const newDetail = {
+            name: dirDetail.name,
+            uuid: v.name,
+            disabled: v.metadata.disabled,
+            localPath: v.metadata.localPath
+          }
+          this.setState({ toggleDirLoading: false, dirDetail: newDetail })
+          this.refresh({ updateDirs: true })
+        }
+      })
+    }
+
     this.onMsg = (event, data) => {
-      const { status, size, completeSize, count, finishCount, restTime } = data
+      const { status, size, completeSize, count, finishCount, restTime, drive } = data
       this.setState({ status, size, completeSize, count, finishCount, restTime })
+      if (!this.state.drive || (drive.client.lastBackupTime > this.state.drive.client.lastBackupTime)) {
+        this.setState({ drive })
+      }
     }
   }
 
@@ -355,6 +398,7 @@ class BackupCard extends React.PureComponent {
                     </div>
                     <div style={{ flexGrow: 1 }} />
                     <Toggle
+                      onToggle={() => this.onToggleDir(this.state.dirDetail)}
                       toggled={!this.state.dirDetail.disabled}
                       labelStyle={{ maxWidth: 'fit-content' }}
                       style={{ marginRight: 16, maxWidth: 'fit-content' }}
@@ -451,23 +495,28 @@ class BackupCard extends React.PureComponent {
           !disabled &&
             <div
               style={{
-                height: 40,
                 position: 'absolute',
-                left: 16,
-                bottom: 0,
+                height: 40,
+                width: '100%',
+                left: 0,
+                bottom: -2,
                 display: 'flex',
                 alignItems: 'center',
                 cursor: 'pointer'
               }}
-              onClick={e => this.handleClickAdd(e, drive)}
-              onDoubleClick={(e) => { e.stopPropagation(); e.preventDefault() }}
             >
-              <div style={{ transform: 'rotate(45deg)' }}>
-                <FailedIcon style={{ color: '#FFF', height: 24, width: 24 }} />
-              </div>
-              <div style={{ fontSize: 12, fontWeight: 500, color: '#FFF', marginLeft: 16 }}>
-                { i18n.__('Add Backup Directroy') }
-              </div>
+              <RaisedButton
+                style={{ width: '100%' }}
+                buttonStyle={{ width: '100%', textAlign: 'left' }}
+                primary
+                label={i18n.__('Add Backup Directroy')}
+                labelStyle={{ fontSize: 12, width: '100%' }}
+                onClick={e => this.handleClickAdd(e, drive)}
+                onDoubleClick={(e) => { e.stopPropagation(); e.preventDefault() }}
+                icon={
+                  <AddCircleIcon style={{ color: '#FFF', height: 24, width: 24, margin: '0px 8px 0px 16px' }} />
+                }
+              />
             </div>
         }
         {

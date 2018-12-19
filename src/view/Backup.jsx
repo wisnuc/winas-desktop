@@ -13,7 +13,7 @@ class Backup extends Home {
     this.title = () => i18n.__('Backup')
     this.isBackup = true
     this.rootDrive = null
-    this.state = Object.assign(this.state, { inRoot: true })
+    this.state = Object.assign(this.state, { inRoot: true, showArchive: false })
 
     this.openAddDirDialog = (drive) => {
       remote.dialog.showOpenDialog({ properties: ['openDirectory'] }, (filePaths) => {
@@ -110,15 +110,12 @@ class Backup extends Home {
     this.toggleShowArchive = () => {
       console.log('this.toggleShowArchive', this.state)
       const { showArchive, listNavDir, sortType } = this.state
+      Object.assign(this.state, { showArchive: !showArchive })
       const entries = this.rearrange(listNavDir.entries)
       entries.sort((a, b) => sortByType(a, b, sortType))
       const select = this.select.reset(entries.length)
       this.setState({ entries, select, showArchive: !showArchive })
     }
-
-    ipcRenderer.on('BACKUP_STAT', (event, data) => {
-      console.log('BACKUP_STAT', data)
-    })
   }
 
   rearrange (entries) {
@@ -252,9 +249,9 @@ class Backup extends Home {
           !inRoot &&
             <LIButton
               onClick={this.toggleShowArchive}
-              tooltip={!this.state.showArchive ? i18n.__('Hide Archived') : i18n.__('Show Archived')}
+              tooltip={this.state.showArchive ? i18n.__('Hide Archived') : i18n.__('Show Archived')}
             >
-              { !this.state.showArchive ? <EyeOffIcon /> : <EyeOpenIcon /> }
+              { this.state.showArchive ? <EyeOffIcon /> : <EyeOpenIcon /> }
             </LIButton>
         }
         {

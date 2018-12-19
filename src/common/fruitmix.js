@@ -392,6 +392,11 @@ class Fruitmix extends EventEmitter {
         r = this.apatch(`drives/${args.driveUUID}`, args.attr)
         break
 
+      case 'updateTopDir':
+        r = this.apost(`drives/${args.driveUUID}/dirs/${args.dirUUID}/entries`)
+          .field(args.name, JSON.stringify(args.attr))
+        break
+
       case 'listNavDir':
         r = this.aget(`drives/${args.driveUUID}/dirs/${args.dirUUID}`, { metadata: 'true', counter: 'true' })
         break
