@@ -8,12 +8,9 @@ branches:
   only:
   - master
 
-before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
-
 install:
   - npm install
   - npm run webpack2
 
 script:
-  - npm run dist-mac
+  - "./node_modules/.bin/build --config ./electron-builder.yml --mac -p always"
