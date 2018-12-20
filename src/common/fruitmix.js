@@ -289,7 +289,7 @@ class Fruitmix extends EventEmitter {
       case 'deleteDirOrFile':
         r = this.apost(`drives/${args[0].driveUUID}/dirs/${args[0].dirUUID}/entries`, null, true)
         for (let i = 0; i < args.length; i++) {
-          r.field(args[i].entryName, JSON.stringify({ op: 'remove', uuid: args[i].entryUUID }))
+          r.field(args[i].entryName, JSON.stringify({ op: 'remove', uuid: args[i].entryUUID, hash: args[i].hash }))
         }
         break
 

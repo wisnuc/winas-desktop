@@ -308,7 +308,8 @@ class Home extends Base {
       for (let i = 0; i < selected.length; i++) {
         const entryName = entries[selected[i]].name
         const entryUUID = entries[selected[i]].uuid
-        op.push({ driveUUID, dirUUID, entryName, entryUUID })
+        const hash = entries[selected[i]].hash
+        op.push({ driveUUID, dirUUID, entryName, entryUUID: hash ? entryUUID : undefined, hash })
       }
       for (let j = 0; j <= (op.length - 1) / 512; j++) { // delete no more than 512 files per post
         await this.ctx.props.apis.requestAsync('deleteDirOrFile', op.filter((a, i) => (i >= j * 512) && (i < (j + 1) * 512)))
