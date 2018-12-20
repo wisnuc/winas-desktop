@@ -1,0 +1,19 @@
+sudo: true
+language: node_js
+node_js: '10'
+os: osx
+osx_image: xcode10.1
+
+branches:
+  only:
+  - master
+
+before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
+
+install:
+  - npm install
+  - npm run webpack2
+
+script:
+  - npm run dist-mac
