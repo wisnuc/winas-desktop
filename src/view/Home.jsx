@@ -367,6 +367,7 @@ class Home extends Base {
           this.setState({ deleteLoading: false, openDeleteVersion: false })
           this.ctx.props.openSnackBar(i18n.__('Delete Success'))
         }
+        this.refresh()
       })
     }
 
