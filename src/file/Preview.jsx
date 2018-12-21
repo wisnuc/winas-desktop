@@ -110,7 +110,7 @@ class Preview extends React.Component {
         dirUUID,
         entryUUID,
         fileName,
-        hash: this.props.hash
+        hash: this.props.item.hash
       })
       this.props.ipcRenderer.on('GET_TEXT_DATA_SUCCESS', this.getTextDataSuccess)
     }

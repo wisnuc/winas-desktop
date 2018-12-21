@@ -152,7 +152,7 @@ class ErrorTree extends React.PureComponent {
     return (
       <div
         style={{
-          width: expand ? 1080 : 780,
+          width: expand ? 912 : 780,
           height: expand ? 720 : 520,
           padding: '0px 24px 0px 24px',
           transition: 'all 225ms',
