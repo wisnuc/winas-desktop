@@ -143,10 +143,16 @@ class Preview extends React.Component {
         this.addPauseEvent(video)
       }, { once: true })
     }
+
+    this.isCenter = this.props.isCenter // 'true' in center
   }
 
   componentDidMount () {
-    this.forceUpdate()
+    const { hash, size, metadata } = this.props.item
+    const officeMagic = ['DOCX', 'DOC', 'XLSX', 'XLS', 'PPT', 'PPTX']
+    const isOffice = metadata && officeMagic.includes(metadata.type) && hash && size < 1024 * 1024 * 50
+    if (isOffice && this.isCenter) this.openByLocal()
+    else this.forceUpdate()
   }
 
   componentDidUpdate () {
@@ -334,19 +340,29 @@ class Preview extends React.Component {
     )
   }
 
+  renderLoading () {
+    return (
+      <div style={{ width: '100%', height: '100%' }} className="flexCenter">
+        <CircularLoading />
+      </div>
+    )
+  }
+
   render () {
     if (!this.props.item || !this.props.item.name) return (<div />)
     const isCloud = this.props && this.props.apis && this.props.apis.isCloud
     const isPhy = this.props.path && (this.props.path[0].isPhyRoot || this.props.path[0].isUSB || this.props.path[0].isPhy)
 
-    const { metadata, hash } = this.props.item
+    const { metadata, hash, size } = this.props.item
     const photoMagic = ['JPEG', 'GIF', 'PNG', 'BMP']
     const videoMagic = ['MP4', 'MOV', 'MKV'] // ['3GP', 'MP4', 'MOV', 'MKV', 'AVI']
     const audioMagic = ['MP3', 'FLAC']
+    const officeMagic = ['DOCX', 'DOC', 'XLSX', 'XLS', 'PPT', 'PPTX']
     const isPhoto = metadata && photoMagic.includes(metadata.type) && hash
     const isVideo = metadata && videoMagic.includes(metadata.type) && !isCloud && hash
     const isAudio = metadata && audioMagic.includes(metadata.type) && !isCloud && hash
-    const isPDF = metadata && metadata.type === 'PDF' && (this.props.item.size < 1024 * 1024 * 50) && hash
+    const isPDF = metadata && metadata.type === 'PDF' && (size < 1024 * 1024 * 50) && hash
+    const isOffice = metadata && officeMagic.includes(metadata.type) && hash && size < 1024 * 1024 * 50 && this.isCenter
 
     const extension = this.props.item.name.replace(/^.*\./, '').toUpperCase()
     const textExtension = ['TXT', 'MD', 'JS', 'JSX', 'TS', 'JSON', 'HTML', 'CSS', 'LESS', 'CSV', 'XML']
@@ -360,12 +376,13 @@ class Preview extends React.Component {
         className="flexCenter"
       >
         {
-          isPhoto ? this.renderPhoto(hash, metadata)
-            : isVideo ? this.renderKnownVideo()
-              : isAudio ? this.renderKnownAudio()
-                : isText ? this.renderDoc('text')
-                  : isPDF ? this.renderDoc('pdf')
-                    : this.renderOtherFiles()
+          isOffice ? this.renderLoading()
+            : isPhoto ? this.renderPhoto(hash, metadata)
+              : isVideo ? this.renderKnownVideo()
+                : isAudio ? this.renderKnownAudio()
+                  : isText ? this.renderDoc('text')
+                    : isPDF ? this.renderDoc('pdf')
+                      : this.renderOtherFiles()
         }
         {/* dialog */}
         <DialogOverlay open={this.state.alert} >

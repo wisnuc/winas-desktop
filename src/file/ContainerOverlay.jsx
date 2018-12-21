@@ -237,6 +237,7 @@ class ContainerOverlayInline extends React.Component {
                 }}
               >
                 <Preview
+                  isCenter={index === 1}
                   item={item}
                   ipcRenderer={this.props.ipcRenderer}
                   memoize={this.props.memoize}
