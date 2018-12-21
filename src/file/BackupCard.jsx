@@ -51,11 +51,11 @@ class BackupCard extends React.PureComponent {
     }
 
     this.delDir = (dir) => {
-      console.log('this.delDir', dir)
       const { uuid } = this.state.drive || this.props.drive
+      this.setState({ deleteLoading: true })
       this.props.apis.pureRequest('delBackupFileOrDir', { name: dir.uuid, driveUUID: uuid, dirUUID: uuid }, (err, res) => {
         console.log('delBackupFileOrDir', err, res)
-        this.setState({ confirmDelDir: false, dirDetail: null })
+        this.setState({ confirmDelDir: false, dirDetail: null, deleteLoading: false })
         this.refresh({ updateDirs: true })
       })
     }
@@ -427,10 +427,20 @@ class BackupCard extends React.PureComponent {
               style={{ zIndex: 4000 }}
               contentStyle={{ width: 326 }}
               open={!!this.state.confirmDelDir}
-              onRequestClose={() => this.setState({ confirmDelDir: null })}
+              onRequestClose={() => this.setState({ confirmDelDir: null, deleteLoading: false })}
               actions={[
-                <FlatButton primary label={i18n.__('Cancel')} onClick={() => this.setState({ confirmDelDir: null })} />,
-                <FlatButton primary label={i18n.__('Confirm')} onClick={() => this.delDir(this.state.confirmDelDir)} />
+                <FlatButton
+                  primary
+                  label={i18n.__('Cancel')}
+                  onClick={() => this.setState({ confirmDelDir: null })}
+                  disabled={this.state.deleteLoading}
+                />,
+                <FlatButton
+                  primary
+                  label={i18n.__('Confirm')}
+                  onClick={() => this.delDir(this.state.confirmDelDir)}
+                  disabled={this.state.deleteLoading}
+                />
               ]}
             >
               {
