@@ -52,9 +52,8 @@ class WisnucLogin extends React.Component {
       this.props.phi.req('checkUser', { phone: this.state.pn }, (err, res) => {
         if (err || !res || !res.userExist) this.setState({ pnError: i18n.__('User Not Exist'), loading: false })
         else {
-          const accounts = this.state.accounts || []
-
           // replace previous accounts
+          const accounts = this.state.accounts || []
           const index = accounts.findIndex(user => user.pn === this.state.pn)
           if (index > -1) accounts.splice(index, 1)
           accounts.unshift(Object.assign({ pn: this.state.pn }, res))
@@ -88,15 +87,21 @@ class WisnucLogin extends React.Component {
             else if (msg) this.setState({ pwdError: msg, loading: false })
             else this.setState({ failed: true, loading: false, pwdError: i18n.__('Login Failed') })
           } else {
+            // replace previous accounts
+            const accounts = this.state.accounts || []
+            const index = accounts.findIndex(user => user.pn === this.state.pn)
+            if (index > -1) accounts.splice(index, 1)
+            accounts.unshift(Object.assign({ pn: this.state.pn }, res))
+
             this.props.phi.req('stationList', null, (e, r, cookie) => {
               if (e || !r) {
                 this.setState({ failed: true, loading: false })
               } else {
                 const phi = Object.assign({}, res, {
                   cookie,
+                  accounts,
                   pn: this.state.pn,
                   winasUserId: res.id,
-                  accounts: this.state.accounts,
                   autoLogin: !!this.state.autoLogin,
                   token: this.state.autoLogin ? res.token : null
                 })
