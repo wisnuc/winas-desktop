@@ -9,58 +9,42 @@
     <meta name="keywords" content="null" />
     <meta name="description" content="null" />
   </head>
-  <body style="background: url('assets/images/about-bg.png')">
-    <div style="position: relative; height: 100%; width: 100%; padding: 0px 20px; box-sizing: border-box; -webkit-app-region: drag">
-      <div style="position: absolute; height: 24px; width: 24px; right: 13px; top: 13px; -webkit-app-region: no-drag">
+  <body>
+    <div style="position: relative; height: 100%; width: 100%; box-sizing: border-box; -webkit-app-region: drag">
+      <div style="position: absolute; height: 24px; width: 24px; right: 8px; top: 8px; -webkit-app-region: no-drag">
         <button style="background-color: transparent; cursor: pointer" onclick="window.close()">
-          <svg viewBox="0 0 24 24" style="fill: #FFFFFF; opacity: 0.7; height: 24px; width: 24px">
+          <svg viewBox="0 0 24 24" style="fill:#000000; opacity:.54; height: 24px; width: 24px">
             <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
           </svg>
         </button>
       </div>
-      <div style="position: absolute; left: 20px; top: 20px; -webkit-app-region: drag">
-        <img src="assets/images/about-logo.png" alt="about-logo" width="90" height="12" />
-      </div>
-      <div style="height: 85px"></div>
-      <div style="display: flex; align-items: center">
-        <img src="assets/images/about-app.png" width="70" height="70" alt="about-app" />
-        <div style="margin-left: 20px">
-          <div id="name" style="height: 30px; font-size: 24px; color: #505259; display: flex; align-items: center" >
+      <div style="height: 72px"></div>
+      <div style="display: flex; align-items: center; margin-left:48px">
+        <div style="width:56px; height:56px;border-radius:28px; overflow:hidden">
+          <img src="assets/images/icon.png" width="56" height="56" alt="about-app" />
+        </div>
+        <div style="margin-left: 32px; color:rgba(0,0,0,.76)">
+          <div id="name" style="font-size: 24px; font-weight:500; display: flex; align-items: center" >
           </div>
-          <div id="model" style="height: 20px; font-size: 14px; color: rgba(133,134,140,.8); display: flex; align-items: center" >
-          </div>
-          <div id="version" style="height: 20px; font-size: 14px; color: rgba(80,82,89,.8); display: flex; align-items: center">
+          <div id="version" style="font-size: 14px; display: flex; align-items: center">
           </div>
         </div>
       </div>
-      <div style="height: 45px"></div>
-      <div id="copyrightCn" style="height: 20px; font-size: 12px; color: rgba(80,82,89,.6); display: flex; align-items: center" >
+      <div style="height: 22px"></div>
+      <div id="description" style="width: 210px; font-size: 14px; color: rgba(0,0,0,.54); line-height: 1.57;margin-left:135px" >
       </div>
-      <div id="copyrightEn" style="height: 20px; font-size: 12px; color: rgba(80,82,89,.6); display: flex; align-items: center" >
-      </div>
-      <div style="height: 20px; font-size: 12px; display: flex; align-items: center">
-        <div id="telephone" style="color: #505259; line-height: 20px">
-        </div>
-        <div style="flex-grow: 1"></div>
-        <div
-          id="homepage"
-          onclick="openHomepage()"
-          style="line-height: 20px; text-decoration: underline; cursor: pointer; color: rgba(49,160,245,.8); -webkit-app-region: no-drag"
-        >
-        </div>
-        <div style="flex-grow: 1"></div>
+      <div style="height: 20px; display: flex; align-items: center; margin: 84px auto 0px auto; max-width:fit-content">
+        <div id="copyright" style="font-size: 12px; color: rgba(0,0,0,.38); margin-right: 16px" > </div> 
         <div
           id="agreement"
           onclick="openAgreement()"
-          style="line-height: 20px; text-decoration: underline; cursor: pointer; color: rgba(49,160,245,.8); -webkit-app-region: no-drag"
-        >
+          style="text-decoration:underline; cursor:pointer; color:#009688; font-size:12px; -webkit-app-region:no-drag" >
         </div>
       </div>
     </div>
     <link rel="stylesheet" href="assets/app.css" type='text/css'>
     <script>
       const { ipcRenderer } = require('electron')
-      const openHomepage = () => ipcRenderer.send('OPEN_HOMEPAGE')
       const openAgreement = () => ipcRenderer.send('OPEN_AGREEMENT')
       ipcRenderer.on('ABOUT_DATA', (event, data) => {
         const { text } = data

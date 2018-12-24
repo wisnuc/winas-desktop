@@ -214,6 +214,7 @@ class NavViews extends React.Component {
     }
 
     this.exitSearchMode = () => {
+      this.views[this.state.nav].clearSearch()
       this.setState({ searchMode: false, searchText: '', types: [] })
       this.navTo(this.preNav)
     }

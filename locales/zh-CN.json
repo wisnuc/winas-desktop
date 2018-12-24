@@ -1168,7 +1168,7 @@
   "Change Disk Text": "请关机后插入或拔出磁盘",
   "Select Disk Mode": "选择磁盘模式",
   "Show Disk Mode": "磁盘模式演示",
-  "Client Version %s": "版本号V%s",
+  "Client Version %s": "版本号 V%s",
   "Set LAN Pwd": "本地密码设置",
   "LAN Password Hint": "请输入本地密码",
   "Password Again Hint": "确认密码",
