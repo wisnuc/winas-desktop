@@ -10,6 +10,7 @@ import { RefreshAltIcon, BackupIcon, ListIcon, GridIcon, EyeOffIcon, EyeOpenIcon
 class Backup extends Home {
   constructor (ctx) {
     super(ctx)
+    this.type = 'backup'
     this.title = () => i18n.__('Backup')
     this.isBackup = true
     this.rootDrive = null

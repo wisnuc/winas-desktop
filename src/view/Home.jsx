@@ -1183,7 +1183,7 @@ class Home extends Base {
 
   renderContent ({ openSnackBar, navTo, pin }) {
     return (
-      <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+      <div style={{ position: 'relative', width: '100%', height: '100%' }} key={this.type}>
         <FileContent
           {...this.state}
           pin={pin}

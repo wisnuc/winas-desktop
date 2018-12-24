@@ -10,6 +10,7 @@ class Public extends Home {
     this.title = () => i18n.__('Public Drive')
 
     this.isPublic = true
+    this.type = 'public'
   }
 
   menuName () {
