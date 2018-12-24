@@ -13,7 +13,7 @@ import { BackwardIcon, FolderIcon, PublicIcon, DesktopNoAccessIcon, MobileNoAcce
 const mtimeWidth = 144
 const sizeWidth = 144
 const versionWidth = 108
-const deltaWidth = 86
+const deltaWidth = 60
 
 class FolderSize extends React.PureComponent {
   constructor (props) {
@@ -115,7 +115,7 @@ class Row extends React.PureComponent {
 
     const isMobile = false // TODO
     const Icon = isMobile ? MobileNoAccessIcon : DesktopNoAccessIcon
-    const otherWidth = sizeWidth + mtimeWidth + deltaWidth + ((this.props.isBackup && versionWidth) || 0)
+    const otherWidth = sizeWidth + mtimeWidth + deltaWidth + ((this.props.isBackup && versionWidth) || 26)
     const nameWidth = `calc(100% - ${otherWidth}px)`
 
     return (
@@ -277,6 +277,12 @@ class RenderListByRow extends React.Component {
       : this.props.sortType === h.up
         ? <BackwardIcon style={Object.assign({ transform: 'rotate(90deg)' }, dStyle)} />
         : <div />
+    const onClick = (e) => {
+      e.stopPropagation()
+      e.preventDefault()
+      if (this.props.sortType === h.up) this.props.changeSortType(h.down)
+      else this.props.changeSortType(h.up)
+    }
     return (
       <div
         key={h.title}
@@ -284,31 +290,32 @@ class RenderListByRow extends React.Component {
           width: h.width,
           flexGrow: h.flexGrow,
           position: 'relative',
+          zIndex: h.zIndex,
           display: 'flex',
-          alignItems: 'center',
-          cursor: this.state.type === h.title ? 'pointer' : 'default'
-        }}
-        onMouseMove={() => this.enterDiv(h.title)}
-        onMouseLeave={() => this.leaveDiv(h.title)}
-        onClick={() => {
-          this.props.sortType === h.up ? this.props.changeSortType(h.down) : this.props.changeSortType(h.up)
+          alignItems: 'center'
         }}
       >
         <div
           style={{
             fontSize: 14,
             width: '100%',
-            color: 'rgba(0,0,0,.54)',
+            color: 'rgba(0,0,0,.87)',
             textAlign: h.textAlign,
             display: h.textAlign === 'left' ? 'flex' : undefined,
-            alignItems: 'center',
-            opacity: this.state.type === h.title ? 1 : 0.7
+            alignItems: 'center'
           }}
         >
-          { h.title }
+          <span
+            onClick={onClick}
+            style={{ cursor: 'pointer', opacity: this.state.type === h.title ? 1 : 0.44 }}
+            onMouseMove={() => this.enterDiv(h.title)}
+            onMouseLeave={() => this.leaveDiv(h.title)}
+          >
+            { h.title }
+          </span>
           {
             h.textAlign === 'left' &&
-              <div style={{ marginLeft: 8 }} className="flexCenter">
+              <div style={{ marginLeft: 8, zIndex: h.zIndex, cursor: 'pointer' }} className="flexCenter" onClick={onClick}>
                 { Icon }
               </div>
           }
@@ -321,8 +328,11 @@ class RenderListByRow extends React.Component {
                 alignItems: 'center',
                 height: '100%',
                 position: 'absolute',
+                zIndex: h.zIndex,
+                cursor: 'pointer',
                 right: h.textAlign === 'right' ? -26 : 0
               }}
+              onClick={onClick}
             >
               { Icon }
             </div>
@@ -555,11 +565,11 @@ class RenderListByRow extends React.Component {
             backgroundColor: '#FFF'
           }}
         >
-          { this.renderHeader({ title: i18n.__('Name'), flexGrow: 1, up: 'nameUp', down: 'nameDown', textAlign: 'left' }) }
-          { this.renderHeader({ title: i18n.__('Date Modified'), width: mtimeWidth, up: 'timeUp', down: 'timeDown', textAlign: 'right' }) }
-          { this.renderHeader({ title: i18n.__('Size'), width: sizeWidth, up: 'sizeUp', down: 'sizeDown', textAlign: 'right' }) }
+          { this.renderHeader({ title: i18n.__('Name'), flexGrow: 1, up: 'nameUp', down: 'nameDown', textAlign: 'left', zIndex: 40 }) }
+          { this.renderHeader({ title: i18n.__('Date Modified'), width: mtimeWidth, up: 'timeUp', down: 'timeDown', textAlign: 'right', zIndex: 30 }) }
+          { this.renderHeader({ title: i18n.__('Size'), width: sizeWidth, up: 'sizeUp', down: 'sizeDown', textAlign: 'right', zIndex: 20 }) }
           { this.props.isBackup &&
-              this.renderHeader({ title: i18n.__('Versions'), width: versionWidth, down: 'versionDown', up: 'versionUp', textAlign: 'center' }) }
+              this.renderHeader({ title: i18n.__('Versions'), width: versionWidth, down: 'versionDown', up: 'versionUp', textAlign: 'center', zIndex: 10 }) }
           <div style={{ width: this.props.isBackup ? 22 : 48 }} />
         </div>
 
