@@ -112,7 +112,7 @@ class GridView extends React.Component {
 
   calcGridInfo (height, width, entries) {
     if (height !== this.preHeight || width !== this.preWidth || entries !== this.preEntries || !this.preData) { // singleton
-      const MAX = Math.floor((width - (24 - 16)) / (200 + 16)) // Min Size: 200, margin-between: 16, margin-right: 24
+      const MAX = Math.floor((width - (24 - 16)) / (184 + 16)) // Min Size: 180, margin-between: 16, margin-right: 24
       const size = Math.floor((width - (24 - 16)) / MAX - 16)
       let MaxItem = 0
       let lineIndex = 0

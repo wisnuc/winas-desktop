@@ -131,7 +131,8 @@ class FileContent extends React.Component {
     this.selectBox = null
 
     this.selectStart = (event, scrollTop) => {
-      if (this.props.isBackup) return
+      const { isBackup, path } = this.props
+      if (isBackup && path.length < 3) return
       /* disabled in public root */
       if (this.props.inPublicRoot) return
 
@@ -174,8 +175,8 @@ class FileContent extends React.Component {
 
     /* draw select box */
     this.drawBox = (event) => {
-      if (this.isBackup) return
-      if (this.props.isBackup) return
+      const { isBackup, path } = this.props
+      if (isBackup && path.length < 3) return
       const s = this.refSelectBox.style
       const dx = event.clientX - this.selectBox.x
       const dy = event.clientY - this.selectBox.y

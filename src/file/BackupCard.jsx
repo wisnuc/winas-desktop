@@ -598,7 +598,7 @@ class BackupCard extends React.PureComponent {
         >
           <Icon style={{ color: '#FFF' }} />
         </div>
-        <div style={{ fontSize: 14, fontWeight: 500, color: this.props.selected ? '#009688' : undefined }}>
+        <div style={{ fontSize: 13, fontWeight: 500, color: this.props.selected ? '#009688' : undefined }}>
           { label }
         </div>
         <div style={{ fontSize: 12, color, margin: '16px 0 0 0' }}>
