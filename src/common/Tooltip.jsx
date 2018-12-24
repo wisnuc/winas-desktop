@@ -16,7 +16,7 @@ class Tooltip extends React.PureComponent {
       if (['closing', 'closed'].includes(this.state.status)) return
       clearTimeout(this.timer)
       this.setState({ status: 'closing' })
-      this.timer = setTimeout(() => this.setState({ status: 'closed' }), this.dur)
+      this.timer = setTimeout(() => !this.isUnmount && this.setState({ status: 'closed' }), this.dur)
     }
 
     this.enter = () => {
@@ -36,6 +36,10 @@ class Tooltip extends React.PureComponent {
       this.marginLeft = (this.rootRef.offsetWidth - this.tooltipRef.offsetWidth) / 2
       this.tooltipRef.style.marginLeft = this.marginLeft
     }
+  }
+
+  componentWillUnmount () {
+    this.isUnmount = true
   }
 
   render () {

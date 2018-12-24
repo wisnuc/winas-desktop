@@ -66,6 +66,7 @@ class TrsContainer extends React.Component {
     }
 
     this.openMenu = (event, obj) => {
+      console.log('this.openMenu', event, obj)
       const containerDom = document.getElementById('content-container')
       const maxLeft = containerDom.offsetLeft + containerDom.clientWidth - 168
       const x = event.clientX > maxLeft ? maxLeft : event.clientX
@@ -275,14 +276,14 @@ class TrsContainer extends React.Component {
             {
               allPaused
                 ? <LIButton
-                  label={i18n.__('Resume All')}
+                  tooltip={i18n.__('Resume All')}
                   disabled={!userTasks.length}
                   onClick={() => this.handleAll(userTasks, 'RESUME')}
                 >
                   <PlaySvg />
                 </LIButton>
                 : <LIButton
-                  label={i18n.__('Pause All')}
+                  tooltip={i18n.__('Pause All')}
                   disabled={!userTasks.length}
                   onClick={() => this.handleAll(userTasks, 'PAUSE')}
                 >
@@ -290,7 +291,7 @@ class TrsContainer extends React.Component {
                 </LIButton>
             }
             <LIButton
-              label={i18n.__('Clear All')}
+              tooltip={i18n.__('Clear All')}
               disabled={!userTasks.length}
               onClick={() => this.toggleDialog('clearRunningDialog')}
             >
@@ -329,6 +330,7 @@ class TrsContainer extends React.Component {
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <FlatButton
               label={i18n.__('Clear All Record')}
+              labelStyle={{ fontSize: 12 }}
               disabled={!finishTasks.length}
               onClick={() => this.toggleDialog('clearFinishedDialog')}
             />
@@ -457,7 +459,6 @@ class TrsContainer extends React.Component {
                   <div style={{ height: 52, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginRight: -24 }}>
                     <FlatButton
                       primary
-                      keyboardFocused
                       label={i18n.__('Cancel')}
                       onClick={() => this.toggleDialog('deleteRunningDialog')}
                     />
@@ -492,7 +493,6 @@ class TrsContainer extends React.Component {
                   <div style={{ height: 52, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginRight: -24 }}>
                     <FlatButton
                       primary
-                      keyboardFocused
                       label={i18n.__('Cancel')}
                       onClick={() => this.toggleDialog('clearRunningDialog')}
                     />
@@ -529,7 +529,6 @@ class TrsContainer extends React.Component {
                       label={i18n.__('Cancel')}
                       primary
                       onClick={() => this.toggleDialog('clearFinishedDialog')}
-                      keyboardFocused
                     />
                     <FlatButton
                       label={i18n.__('Clear')}

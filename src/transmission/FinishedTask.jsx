@@ -64,6 +64,7 @@ class FinishedTask extends Component {
 
   render () {
     const task = this.props.task
+    const border = this.state.hover ? '1px solid rgba(0,150,136,.38)' : '1px solid transparent'
     return (
       <div
         style={{
@@ -71,13 +72,14 @@ class FinishedTask extends Component {
           alignItems: 'center',
           margin: '0px 16px 0px 32px',
           width: 'calc(100% - 48px)',
+          border,
           height: 56,
           fontSize: 12,
-          color: 'rgba(0,0,0,0.87)',
-          backgroundColor: this.state.isSelected ? '#f4f4f4' : ''
+          backgroundColor: this.state.isSelected ? 'rgba(0,150,136,.08)' : ''
         }}
-        role="presentation"
         onMouseUp={this.selectFinishItem}
+        onMouseMove={() => this.setState({ hover: true })}
+        onMouseLeave={() => this.setState({ hover: false })}
         onDoubleClick={this.openFileLocation}
       >
         {/* task type */}

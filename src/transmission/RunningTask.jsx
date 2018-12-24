@@ -34,6 +34,7 @@ class RunningTask extends React.Component {
 
     this.toggleTask = () => {
       const task = this.props.task
+      if (task.waiting) return
       if (task.paused) this.props.resume(task.uuid)
       else this.props.pause(task.uuid)
     }
@@ -105,10 +106,11 @@ class RunningTask extends React.Component {
   render () {
     const task = this.props.task
     const pColor = task.paused ? 'rgba(0,0,0,.12)' : '#43a047'
-    const pBgColor = task.paused ? 'rgba(0,0,0,.06)' : 'rgba(0,200,83,.12)'
+    const pBgColor = task.paused ? 'rgba(0,0,0,.06)' : 'rgba(0,150,136,.12)'
     let pWidth = task.completeSize / task.size * 100
     if (pWidth === Infinity || !pWidth) pWidth = 0
 
+    const border = this.state.hover ? '1px solid rgba(0,150,136,.38)' : '1px solid transparent'
     return (
       <div
         style={{
@@ -117,11 +119,15 @@ class RunningTask extends React.Component {
           margin: '0px 16px 0px 32px',
           width: 'calc(100% - 48px)',
           height: 56,
+          boxSizing: 'border-box',
           fontSize: 12,
-          color: 'rgba(0,0,0,0.87)',
-          backgroundColor: this.state.isSelected ? '#f4f4f4' : ''
+          border,
+          backgroundColor: this.state.isSelected ? 'rgba(0,150,136,.08)' : ''
         }}
-        onClick={this.selectTaskItem}
+        onMouseDown={this.selectTaskItem}
+        onMouseMove={() => this.setState({ hover: true })}
+        onMouseLeave={() => this.setState({ hover: false })}
+        onDoubleClick={this.toggleTask}
       >
         {/* task type */}
         <div style={{ width: 18, margin: '0 16px' }}>
@@ -184,28 +190,32 @@ class RunningTask extends React.Component {
         <div style={{ width: 120, textAlign: 'right', marginRight: 24 }}>{ this.renderSpeedOrStatus(task) }</div>
 
         {/* Pause, resume and delete task */}
-        <div style={{ display: 'flex', alignItems: 'center', width: 96 }} >
-          {
-            task.state === 'failed' && (
-              <LIButton onClick={this.checkError} tooltip={i18n.__('Detail')}>
-                { task.errors.length ? <InfoSvg color="#F44336" /> : <WarningIcon color="#FB8C00" /> }
-              </LIButton>
-            )
-          }
-          {
-            task.state !== 'failed' && !task.waiting ? (
-              <LIButton iconStyle={svgStyle} onClick={this.toggleTask} tooltip={task.paused ? i18n.__('Resume') : i18n.__('Pause')}>
-                { task.paused ? <PlaySvg /> : <PauseSvg /> }
-              </LIButton>
-            ) : <div style={{ width: 48 }} />
-          }
-          {
-            task.paused &&
-              <LIButton iconStyle={svgStyle} onClick={this.props.delete} tooltip={i18n.__('Delete')}>
-                <DeleteSvg />
-              </LIButton>
-          }
-        </div>
+        {
+          this.state.hover ? (
+            <div style={{ display: 'flex', alignItems: 'center', width: 96 }} >
+              {
+                task.state === 'failed' && (
+                  <LIButton onClick={this.checkError} tooltip={i18n.__('Detail')}>
+                    { task.errors.length ? <InfoSvg color="#F44336" /> : <WarningIcon color="#FB8C00" /> }
+                  </LIButton>
+                )
+              }
+              {
+                task.state !== 'failed' && !task.waiting ? (
+                  <LIButton iconStyle={svgStyle} onClick={this.toggleTask} tooltip={task.paused ? i18n.__('Resume') : i18n.__('Pause')}>
+                    { task.paused ? <PlaySvg /> : <PauseSvg /> }
+                  </LIButton>
+                ) : <div style={{ width: 48 }} />
+              }
+              {
+                task.paused &&
+                <LIButton iconStyle={svgStyle} onClick={this.props.delete} tooltip={i18n.__('Delete')}>
+                  <DeleteSvg />
+                </LIButton>
+              }
+            </div>
+          ) : <div style={{ width: 96 }} />
+        }
       </div>
     )
   }

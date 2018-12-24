@@ -14,29 +14,10 @@ import RenderDevice from './RenderDevice'
 
 import Home from '../view/Home'
 import Search from '../view/Search'
-import Music from '../view/Music'
-import Docs from '../view/Docs'
-import Video from '../view/Video'
 import Public from '../view/Public'
-import USB from '../view/USB'
 import Backup from '../view/Backup'
-
 import Transfer from '../view/Transfer'
-import Finished from '../view/Finished'
 
-import Settings from '../view/Settings'
-import CacheClean from '../view/CacheClean'
-import Device from '../view/Device'
-import DiskInfo from '../view/DiskInfo'
-import PT from '../view/PT'
-import Sleep from '../view/Sleep'
-import ClientUpdate from '../view/ClientUpdate'
-import FirmwareUpdate from '../view/FirmwareUpdate'
-import LANPassword from '../view/LANPassword'
-import Power from '../view/Power'
-import Samba from '../view/Samba'
-import DLNA from '../view/DLNA'
-import ResetDevice from '../view/ResetDevice'
 import UpdateFirmDialog from '../settings/UpdateFirmDialog'
 import SearchButton from '../common/Search'
 
@@ -62,30 +43,11 @@ class NavViews extends React.Component {
 
     this.install([
       { name: 'home', View: Home },
-      { name: 'music', View: Music },
-      { name: 'docs', View: Docs },
-      { name: 'video', View: Video },
       { name: 'public', View: Public },
-      { name: 'usb', View: USB },
       { name: 'backup', View: Backup },
       { name: 'search', View: Search },
 
-      { name: 'transfer', View: Transfer },
-      { name: 'finished', View: Finished },
-
-      { name: 'settings', View: Settings },
-      { name: 'device', View: Device },
-      { name: 'diskInfo', View: DiskInfo },
-      { name: 'sleep', View: Sleep },
-      { name: 'cacheClean', View: CacheClean },
-      { name: 'samba', View: Samba },
-      { name: 'dlna', View: DLNA },
-      { name: 'clientUpdate', View: ClientUpdate },
-      { name: 'firmwareUpdate', View: FirmwareUpdate },
-      { name: 'lanPassword', View: LANPassword },
-      { name: 'pt', View: PT },
-      { name: 'power', View: Power },
-      { name: 'resetDevice', View: ResetDevice }
+      { name: 'transfer', View: Transfer }
     ])
 
     this.navTo = (nav, target) => {
