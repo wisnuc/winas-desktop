@@ -1,9 +1,9 @@
 import React from 'react'
 import i18n from 'i18n'
-import prettysize from 'prettysize'
 
-import CircularLoading from '../common/CircularLoading'
 import FlatButton from '../common/FlatButton'
+import prettySize from '../common/prettySize'
+import CircularLoading from '../common/CircularLoading'
 
 class Disk extends React.PureComponent {
   constructor (props) {
@@ -115,7 +115,7 @@ class Disk extends React.PureComponent {
               <div style={{ height: 40, display: 'flex', alignItems: 'center', width: '100%' }} key={title}>
                 <div style={{ fontWeight: 500, color: 'rgba(0,0,0,.76)' }}> { title }</div>
                 <div style={{ flexGrow: 1 }} />
-                <div style={{ fontWeight: 500, color: 'rgba(0,0,0,.29)' }}> { prettysize(size) } </div>
+                <div style={{ fontWeight: 500, color: 'rgba(0,0,0,.29)' }}> { prettySize(size) } </div>
               </div>
             ))
           }

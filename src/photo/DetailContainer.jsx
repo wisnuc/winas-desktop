@@ -1,6 +1,5 @@
 import React from 'react'
 import i18n from 'i18n'
-import prettysize from 'prettysize'
 import { IconButton } from 'material-ui'
 import CheckIcon from 'material-ui/svg-icons/action/check-circle'
 import DateIcon from 'material-ui/svg-icons/action/today'
@@ -17,11 +16,13 @@ import keycode from 'keycode'
 import EventListener from 'react-event-listener'
 import { TweenMax } from 'gsap'
 import ReactTransitionGroup from 'react-transition-group/TransitionGroup'
-import DialogOverlay from '../common/DialogOverlay'
-import FlatButton from '../common/FlatButton'
-import Map from '../common/map'
+
 import PhotoDetail from './PhotoDetail'
 import VideoDetail from './VideoDetail'
+import Map from '../common/map'
+import prettySize from '../common/prettySize'
+import FlatButton from '../common/FlatButton'
+import DialogOverlay from '../common/DialogOverlay'
 
 const mousePosition = (ev) => {
   if (ev.pageX || ev.pageY) {
@@ -420,7 +421,7 @@ class DetailContainerInline extends React.Component {
               { this.digest.slice(0, 9) }
             </div>
             <div style={{ color: 'rgba(0,0,0,0.54)', fontSize: 14, lineHeight: '20px' }}>
-              { `${getResolution(h, w)} ${prettysize(size)}` }
+              { `${getResolution(h, w)} ${prettySize(size)}` }
             </div>
           </div>
         </div>

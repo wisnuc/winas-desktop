@@ -1,10 +1,10 @@
 import React from 'react'
 import i18n from 'i18n'
-import prettysize from 'prettysize'
 import { AutoSizer } from 'react-virtualized'
 import Dialog from '../common/PureDialog'
 import ScrollBar from '../common/ScrollBar'
 import { LIButton } from '../common/Buttons'
+import prettySize from '../common/prettySize'
 import { localMtime } from '../common/datetime'
 import renderFileIcon from '../common/renderFileIcon'
 import SimpleScrollBar from '../common/SimpleScrollBar'
@@ -13,7 +13,7 @@ import { BackwardIcon, FolderIcon, PublicIcon, DesktopNoAccessIcon, MobileNoAcce
 const mtimeWidth = 144
 const sizeWidth = 144
 const versionWidth = 108
-const deltaWidth = 60
+const deltaWidth = 86
 
 class FolderSize extends React.PureComponent {
   constructor (props) {
@@ -46,7 +46,7 @@ class FolderSize extends React.PureComponent {
   render () {
     return (
       <div style={{ color: 'rgba(0,0,0,.54)', fontSize: 12, width: 100, textAlign: 'right' }}>
-        { this.state.loading ? '--' : prettysize(this.state.fileTotalSize) }
+        { this.state.loading ? '--' : prettySize(this.state.fileTotalSize) }
       </div>
     )
   }
@@ -166,7 +166,7 @@ class Row extends React.PureComponent {
             style={Object.assign({ width: sizeWidth }, textStyle)}
             onMouseDown={e => onContentMouseDown(e, index)}
           >
-            { entry.type === 'file' && entry.size && prettysize(entry.size) }
+            { entry.type === 'file' && prettySize(entry.size) }
           </div>
 
           {
@@ -510,7 +510,7 @@ class RenderListByRow extends React.Component {
                     { localMtime(bmtime) }
                   </div>
                   <div style={{ fontSize: 12, color: 'rgba(0,0,0,.54)', textAlign: 'right', width: 77 }}>
-                    { prettysize(size) }
+                    { prettySize(size) }
                   </div>
                   <div style={{ width: 23 }} />
                   <LIButton onClick={() => this.onDownload([entry])} iconStyle={{ transform: 'rotate(180deg)' }}>

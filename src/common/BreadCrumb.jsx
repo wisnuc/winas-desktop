@@ -29,7 +29,7 @@ export class BreadCrumbItem extends React.PureComponent {
           paddingLeft: 2,
           paddingRight: 2,
           fontSize: 18,
-          color: this.state.hover ? '#000000' : last ? '#505259' : '#85868c',
+          color: this.state.hover ? '#000000' : last ? 'rgba(0,0,0,.76)' : 'rgba(0,0,0,.54)',
           display: 'flex',
           alignItems: 'center',
           backgroundColor: this.state.hover ? 'rgba(207,216,220,.26)' : 'transparent'

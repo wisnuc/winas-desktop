@@ -14,6 +14,7 @@ import FlatButton from '../common/FlatButton'
 import DialogOverlay from '../common/DialogOverlay'
 import PureDialog from '../common/PureDialog'
 import ScrollBar from '../common/ScrollBar'
+import { LIButton } from '../common/Buttons'
 
 class TrsContainer extends React.Component {
   constructor (props) {
@@ -246,16 +247,11 @@ class TrsContainer extends React.Component {
     const titileStyle = {
       display: 'flex',
       alignItems: 'center',
-      padding: '0 48px',
+      padding: '8px 16px 8px 48px',
+      height: 40,
       fontWeight: 500,
-      color: 'rgba(0,0,0,0.87)'
-    }
-
-    const hrStyle = {
-      boxSizing: 'border-box',
-      height: '1px',
-      backgroundColor: '#b8b8b8',
-      margin: '8px 48px 12px 48px'
+      fontSize: 12,
+      color: 'rgba(0,0,0,0.38)'
     }
 
     /* show resumeAll button when allPaused = true */
@@ -271,7 +267,6 @@ class TrsContainer extends React.Component {
     /* running task title */
     const runningTaskTitle = () => (
       <div>
-        <div style={{ height: 24 }} />
         <div style={titileStyle} >
           <div style={{ flexGrow: 1 }}>
             { i18n.__('Running Task Title %s', userTasks.length) }
@@ -279,28 +274,30 @@ class TrsContainer extends React.Component {
           <div style={{ display: 'flex', alignItems: 'center' }}>
             {
               allPaused
-                ? <FlatButton
+                ? <LIButton
                   label={i18n.__('Resume All')}
                   disabled={!userTasks.length}
-                  icon={<PlaySvg style={{ color: '#000', opacity: 0.54 }} />}
                   onClick={() => this.handleAll(userTasks, 'RESUME')}
-                />
-                : <FlatButton
+                >
+                  <PlaySvg />
+                </LIButton>
+                : <LIButton
                   label={i18n.__('Pause All')}
                   disabled={!userTasks.length}
-                  icon={<PauseSvg style={{ color: '#000', opacity: 0.54 }} />}
                   onClick={() => this.handleAll(userTasks, 'PAUSE')}
-                />
+                >
+                  <PauseSvg />
+                </LIButton>
             }
-            <FlatButton
+            <LIButton
               label={i18n.__('Clear All')}
               disabled={!userTasks.length}
-              icon={<DeleteSvg style={{ color: '#000', opacity: 0.54 }} />}
               onClick={() => this.toggleDialog('clearRunningDialog')}
-            />
+            >
+              <DeleteSvg />
+            </LIButton>
           </div>
         </div>
-        <div style={hrStyle} />
       </div>
     )
 
@@ -322,8 +319,6 @@ class TrsContainer extends React.Component {
       />
     )))
 
-    list.push(<div style={{ height: 56 }} />)
-
     /* finished task title */
     const finishedTaskTitle = () => (
       <div>
@@ -335,12 +330,10 @@ class TrsContainer extends React.Component {
             <FlatButton
               label={i18n.__('Clear All Record')}
               disabled={!finishTasks.length}
-              icon={<DeleteSvg style={{ color: '#000', opacity: 0.54 }} />}
               onClick={() => this.toggleDialog('clearFinishedDialog')}
             />
           </div>
         </div>
-        <div style={hrStyle} />
       </div>
     )
 
@@ -360,16 +353,13 @@ class TrsContainer extends React.Component {
       />
     )))
 
+    list.push(<div style={{ height: 56 }} />)
+
     /* rowCount */
     const rowCount = userTasks.length + finishTasks.length + 3
 
     /* rowHeight */
-    const allHeight = []
-    allHeight.length = rowCount
-    allHeight.fill(56)
-    allHeight[0] = 80
-    const rowHeight = ({ index }) => allHeight[index]
-    const heightSum = allHeight.reduce((cur, acc) => acc + cur, 0)
+    const rowHeight = 56
 
     /* rowRenderer */
     const rowRenderer = ({ key, index, style }) => (
@@ -378,21 +368,30 @@ class TrsContainer extends React.Component {
       </div>
     )
     return (
-      <div style={{ height: '100%', width: '100%', backgroundColor: '#FFF' }}>
-        <AutoSizer>
-          {({ height, width }) => (
-            <ScrollBar
-              allHeight={heightSum}
-              height={height}
-              width={width}
-              rowHeight={rowHeight}
-              rowRenderer={rowRenderer}
-              rowCount={rowCount}
-              overscanRowCount={3}
-              style={{ outline: 'none' }}
-            />
-          )}
-        </AutoSizer>
+      <div style={{ height: '100%', width: '100%', backgroundColor: '#FFF', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ height: 73 }}>
+          <div style={{ paddingLeft: 48, fontSize: 18, fontWeight: 500, height: 64, display: 'flex', alignItems: 'center' }}>
+            { i18n.__('Transfer') }
+          </div>
+        </div>
+        <div style={{ height: 1, backgroundColor: '#e8eaed', width: '100%', marginLeft: 32 }} />
+        <div style={{ height: 8 }} />
+        <div style={{ height: 'calc(100% - 82px)', position: 'relative' }}>
+          <AutoSizer>
+            {({ height, width }) => (
+              <ScrollBar
+                allHeight={rowHeight * rowCount}
+                height={height}
+                width={width}
+                rowHeight={rowHeight}
+                rowRenderer={rowRenderer}
+                rowCount={rowCount}
+                overscanRowCount={3}
+                style={{ outline: 'none' }}
+              />
+            )}
+          </AutoSizer>
+        </div>
 
         {/* menu */}
         {

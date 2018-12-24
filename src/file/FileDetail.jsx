@@ -1,10 +1,10 @@
 import i18n from 'i18n'
 import React from 'react'
-import prettysize from 'prettysize'
 import { Divider } from 'material-ui'
 import { LIButton } from '../common/Buttons'
-import { TypeSmallIcon, LocationSmallIcon, SizeSmallIcon, ContentSmallIcon, MTimeSmallIcon, CloseIcon, AllFileIcon, PublicIcon } from '../common/Svg'
+import prettySize from '../common/prettySize'
 import renderFileIcon from '../common/renderFileIcon'
+import { TypeSmallIcon, LocationSmallIcon, SizeSmallIcon, ContentSmallIcon, MTimeSmallIcon, CloseIcon, AllFileIcon, PublicIcon } from '../common/Svg'
 
 const phaseDate = (time) => {
   const a = new Date(time)
@@ -92,7 +92,7 @@ class FileDetail extends React.PureComponent {
   }
 
   getSize () {
-    return this.state.loading ? i18n.__('Loading') : prettysize(this.state.fileTotalSize, false, true, 2)
+    return this.state.loading ? i18n.__('Loading') : prettySize(this.state.fileTotalSize)
   }
 
   getContent () {
@@ -165,7 +165,7 @@ class FileDetail extends React.PureComponent {
     const Values = [
       isMultiple ? i18n.__('Multiple Items') : getType(entry),
       !isSearch ? getPath(path) : !isMultiple ? getSearchPath(path, entry) : '',
-      isUSB ? '' : isFile ? prettysize(entry.size, false, true, 2) : this.getSize(),
+      isUSB ? '' : isFile ? prettySize(entry.size) : this.getSize(),
       isUSB ? '' : !isFile ? this.getContent() : '',
       !isMultiple ? phaseDate(entry.mtime) : ''
     ]

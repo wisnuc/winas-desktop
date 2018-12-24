@@ -1,7 +1,6 @@
 import i18n from 'i18n'
 import React from 'react'
 import Promise from 'bluebird'
-import prettysize from 'prettysize'
 import { ipcRenderer } from 'electron'
 import { FlatButton, Menu, Popover } from 'material-ui'
 import LockIcon from 'material-ui/svg-icons/action/lock'
@@ -41,8 +40,9 @@ import ResetDevice from '../view/ResetDevice'
 import UpdateFirmDialog from '../settings/UpdateFirmDialog'
 import SearchButton from '../common/Search'
 
-import { SIButton } from '../common/Buttons'
 import Fruitmix from '../common/fruitmix'
+import { SIButton } from '../common/Buttons'
+import prettySize from '../common/prettySize'
 import WindowAction from '../common/WindowAction'
 import DialogOverlay from '../common/PureDialog'
 import { BackIcon, WisnucLogo, DeviceIcon, ArrowDownIcon, CloseIcon, PDFIcon, WORDIcon, EXCELIcon, PPTIcon, PhotoIcon, VideoIcon, AudioIcon, ExitSearchIcon } from '../common/Svg'
@@ -475,8 +475,8 @@ class NavViews extends React.Component {
     let [total, used, percent] = ['--', '--', 0]
     try {
       const space = this.props.selectedDevice.space.data
-      total = prettysize(space.total * 1024)
-      used = prettysize(space.used * 1024)
+      total = prettySize(space.total * 1024)
+      used = prettySize(space.used * 1024)
       percent = space.used / space.total
     } catch (e) {
       // console.error('parse error')

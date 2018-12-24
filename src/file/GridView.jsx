@@ -1,11 +1,11 @@
 import i18n from 'i18n'
 import React from 'react'
-import prettysize from 'prettysize'
 import { AutoSizer } from 'react-virtualized'
 
 import Row from './RowInGrid'
 import HoverTip from './HoverTip'
 import ScrollBar from '../common/ScrollBar'
+import prettySize from '../common/prettySize'
 import { formatMtime } from '../common/datetime'
 
 class GridView extends React.Component {
@@ -95,7 +95,7 @@ class GridView extends React.Component {
         {
           entry.type !== 'directory' && (
             <div>
-              { `${i18n.__('Size')}: ${prettysize(entry.size, false, true, 2).toUpperCase()}` }
+              { `${i18n.__('Size')}: ${prettySize(entry.size)}` }
             </div>
           )
         }

@@ -1,10 +1,10 @@
 import i18n from 'i18n'
 import React from 'react'
 import Promise from 'bluebird'
-import prettysize from 'prettysize'
 import { CircularProgress } from 'material-ui'
 import DeviceAPI from '../common/device'
 import FlatButton from '../common/FlatButton'
+import prettySize from '../common/prettySize'
 import { RRButton, FLButton, LIButton } from '../common/Buttons'
 import { CheckOutlineIcon, CheckedIcon, BackwardIcon, DeviceIcon, FailedIcon } from '../common/Svg'
 
@@ -251,8 +251,8 @@ class DeviceLogin extends React.Component {
     let [total, used, percent] = ['', '', '', 0]
     try {
       const space = this.device.state.space.data
-      total = prettysize(space.total * 1024)
-      used = prettysize(space.used * 1024)
+      total = prettySize(space.total * 1024)
+      used = prettySize(space.used * 1024)
       percent = space.used / space.total
     } catch (e) {
       // console.error('parse error')

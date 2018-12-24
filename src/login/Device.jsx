@@ -1,6 +1,6 @@
 import i18n from 'i18n'
 import React from 'react'
-import prettysize from 'prettysize'
+import prettySize from '../common/prettySize'
 import DeviceAPI from '../common/device'
 import { DeviceIcon } from '../common/Svg'
 
@@ -152,8 +152,8 @@ class Device extends React.Component {
     let [total, used, percent] = ['', '', '', 0]
     try {
       const space = this.device.state.space.data
-      total = prettysize(space.total * 1024)
-      used = prettysize(space.used * 1024)
+      total = prettySize(space.total * 1024)
+      used = prettySize(space.used * 1024)
       percent = space.used / space.total
     } catch (e) {
       // console.error('parse error')

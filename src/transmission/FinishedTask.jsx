@@ -7,8 +7,10 @@ import DownloadSvg from 'material-ui/svg-icons/file/file-download'
 import UploadSvg from 'material-ui/svg-icons/file/file-upload'
 import MultiSvg from 'material-ui/svg-icons/content/content-copy'
 import { LIButton } from '../common/Buttons'
+import prettySize from '../common/prettySize'
 
-const svgStyle = { color: '#000', opacity: 0.54 }
+const svgStyle = { color: 'rgba(0,0,0,.54)' }
+const svgStyleSmall = { color: '#000', opacity: 0.38, height: 18, width: 18 }
 
 class FinishedTask extends Component {
   constructor (props) {
@@ -67,9 +69,10 @@ class FinishedTask extends Component {
         style={{
           display: 'flex',
           alignItems: 'center',
-          padding: '0 48px',
+          margin: '0px 16px 0px 32px',
+          width: 'calc(100% - 48px)',
           height: 56,
-          fontSize: 14,
+          fontSize: 12,
           color: 'rgba(0,0,0,0.87)',
           backgroundColor: this.state.isSelected ? '#f4f4f4' : ''
         }}
@@ -78,20 +81,21 @@ class FinishedTask extends Component {
         onDoubleClick={this.openFileLocation}
       >
         {/* task type */}
-        <div style={{ flex: '0 0 48px' }}>
-          { task.trsType === 'download' ? <DownloadSvg style={svgStyle} /> : <UploadSvg style={svgStyle} /> }
+        <div style={{ width: 18, margin: '0 16px' }}>
+          { task.trsType === 'download' ? <DownloadSvg style={svgStyleSmall} /> : <UploadSvg style={svgStyleSmall} /> }
         </div>
 
         {/* task item type */}
-        <div style={{ flex: '0 0 32px' }}>
-          { task.entries.length > 1 ? <MultiSvg style={svgStyle} /> : task.taskType === 'file' ? <FileSvg style={svgStyle} /> : <FolderSvg style={svgStyle} /> }
+        <div style={{ width: 24, marginRight: 16 }}>
+          { task.entries.length > 1 ? <MultiSvg style={svgStyle} /> : task.taskType === 'file' ? <FileSvg style={svgStyle} />
+            : <FolderSvg style={Object.assign({ fill: '#f9a825' }, svgStyle)} /> }
         </div>
 
         {/* task item name */}
         <div style={{ display: 'flex', flexGrow: 1, alignItems: 'center' }}>
           <div
             style={{
-              maxWidth: 540,
+              maxWidth: 240,
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap'
@@ -104,12 +108,16 @@ class FinishedTask extends Component {
           </div>
         </div>
 
-        <div style={{ flex: '0 0 32px' }} />
+        <div style={{ width: 120, textAlign: 'right' }}>
+          { prettySize(task.completeSize) }
+        </div>
+
         {/* task finishDate */}
-        <div style={{ flex: '0 0 288px', color: 'rgba(0, 0, 0, 0.54)' }} >
+        <div style={{ width: 126, marginRight: 24, textAlign: 'right' }} >
           { this.getFinishDate(task.finishDate) }
         </div>
-        <div style={{ flex: '0 0 60px', display: 'flex', alignItems: 'center', marginRight: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', width: 96 }} >
+          <div style={{ flexGrow: 1 }} />
           {
             task.warnings && !!task.warnings.length &&
             <LIButton onClick={this.checkError} tooltip={i18n.__('Detail')}>

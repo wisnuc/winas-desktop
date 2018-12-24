@@ -1,13 +1,13 @@
 import i18n from 'i18n'
 import React from 'react'
-import prettysize from 'prettysize'
 import { Divider } from 'material-ui'
 import ContentCopyIcon from 'material-ui/svg-icons/content/content-copy'
 import { remote, ipcRenderer } from 'electron'
-import renderFileIcon from '../common/renderFileIcon'
-import { RSButton } from '../common/Buttons'
-import { FolderIcon } from '../common/Svg'
 import Dialog from '../common/PureDialog'
+import { FolderIcon } from '../common/Svg'
+import { RSButton } from '../common/Buttons'
+import prettySize from '../common/prettySize'
+import renderFileIcon from '../common/renderFileIcon'
 
 class DownloadDialog extends React.PureComponent {
   constructor (props) {
@@ -70,12 +70,12 @@ class DownloadDialog extends React.PureComponent {
     if (!data || !data.entries || !Array.isArray(data.entries) || !data.entries.length) return ''
     const isTask = data.entries.length > 1
     const entry = (data && data.entries && data.entries[0]) || {}
-    if (!isTask && entry.type === 'file') return i18n.__('File Size %s', prettysize(entry.size))
+    if (!isTask && entry.type === 'file') return i18n.__('File Size %s', prettySize(entry.size))
 
     const { loading, dirCount, fileCount, fileTotalSize } = this.state
     if (loading) return i18n.__('Loading')
-    if (!dirCount) return i18n.__('File Count %s, Size: %s', fileCount, prettysize(fileTotalSize, false, true, 2))
-    return i18n.__('Content %s %s, Size: %s', dirCount, fileCount, prettysize(fileTotalSize, false, true, 2))
+    if (!dirCount) return i18n.__('File Count %s, Size: %s', fileCount, prettySize(fileTotalSize))
+    return i18n.__('Content %s %s, Size: %s', dirCount, fileCount, prettySize(fileTotalSize))
   }
 
   render () {
