@@ -1,7 +1,7 @@
 import React from 'react'
 import { PhotoIcon, TXTIcon, WORDIcon, EXCELIcon, PPTIcon, PDFIcon, VideoIcon, AudioIcon, TypeUnknownIcon } from '../common/Svg'
 
-const renderFileIcon = (name, metadata, setSize) => {
+const renderFileIcon = (name, metadata, setSize, inDark) => {
   /* PDF, TXT, Word, Excel, PPT */
   let extension = name.replace(/^.*\./, '')
   if (!extension || extension === name) extension = 'OTHER'
@@ -89,10 +89,10 @@ const renderFileIcon = (name, metadata, setSize) => {
   if (!iconArray[type]) type = 'OTHER'
 
   const Icon = iconArray[type]
-  const color = colorArray[type] || 'rgba(0,0,0,.54)'
+  const color = colorArray[type] || (inDark ? '#FFF' : 'rgba(0,0,0,.54)')
   const size = setSize || 24
 
-  return (<Icon style={{ width: size, height: size, color }} />)
+  return (<Icon style={{ width: size, height: size, color, fill: color }} />)
 }
 
 export default renderFileIcon

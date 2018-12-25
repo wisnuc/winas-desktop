@@ -393,7 +393,7 @@ class Fruitmix extends EventEmitter {
         break
 
       case 'updateTopDir':
-        r = this.apost(`drives/${args.driveUUID}/dirs/${args.dirUUID}/entries`)
+        r = this.apost(`drives/${args.driveUUID}/dirs/${args.dirUUID}/entries`, null, true)
           .field(args.name, JSON.stringify(args.attr))
         break
 
@@ -402,7 +402,7 @@ class Fruitmix extends EventEmitter {
         break
 
       case 'delBackupFileOrDir':
-        r = this.apost(`drives/${args.driveUUID}/dirs/${args.dirUUID}/entries`)
+        r = this.apost(`drives/${args.driveUUID}/dirs/${args.dirUUID}/entries`, null, true)
           .field(args.name, JSON.stringify(args.hash ? { op: 'remove', uuid: args.uuid, hash: args.hash } : { op: 'remove' }))
         break
 

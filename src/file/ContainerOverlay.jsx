@@ -208,7 +208,7 @@ class ContainerOverlayInline extends React.Component {
             width: '100%',
             top: 0,
             left: 0,
-            backgroundColor: 'rgba(0, 0, 0, 1)'
+            backgroundColor: 'rgba(0, 0, 0, .87)'
           }}
         />
 
@@ -292,7 +292,7 @@ class ContainerOverlayInline extends React.Component {
                 entry.type === 'public' || entry.type === 'directory'
                   ? <FileFolder style={{ color: 'rgba(0,0,0,0.54)' }} />
                   : entry.type === 'file'
-                    ? renderFileIcon(entry.name, entry.metadata, 24, true) // name, metadata, size, dark
+                    ? renderFileIcon(entry.name, entry.metadata, 24, true) // name, metadata, size, inDark
                     : <ErrorIcon style={{ color: 'rgba(0,0,0,0.54)' }} />
               }
               <div style={{ width: 16 }} />
