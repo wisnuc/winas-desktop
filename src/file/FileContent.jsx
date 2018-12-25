@@ -1,5 +1,5 @@
-import React from 'react'
 import i18n from 'i18n'
+import React from 'react'
 import EventListener from 'react-event-listener'
 import ErrorIcon from 'material-ui/svg-icons/alert/error'
 import ContainerOverlay from './ContainerOverlay'
@@ -81,13 +81,35 @@ class FileContent extends React.Component {
       this.props.showContextMenu(e.nativeEvent.clientX, e.nativeEvent.clientY)
     }
 
+    this.openByLocal = (entry) => {
+      const { uuid, name, pdrv, pdir } = entry
+      const driveUUID = pdrv || this.props.path[0].uuid
+      const dirUUID = pdir || this.props.path.slice(-1)[0].uuid
+      const entryUUID = uuid
+      const fileName = name
+
+      this.props.ipcRenderer.send('OPEN_FILE', {
+        driveUUID,
+        dirUUID,
+        entryUUID,
+        fileName,
+        hash: entry.hash,
+        domain: 'drive'
+      })
+    }
+
     this.onRowDoubleClick = (e, index) => {
       if (index === -1) return
       const entry = this.props.entries[index]
+      const { hash, size, metadata, uuid, type } = entry
       // no backup drive
-      if (entry.uuid === 'fake-uuid') return
+      if (uuid === 'fake-uuid') return
       this.props.listNavBySelect(entry)
-      if (entry.type === 'file') {
+      const officeMagic = ['DOCX', 'DOC', 'XLSX', 'XLS', 'PPT', 'PPTX']
+      const isOffice = metadata && officeMagic.includes(metadata.type) && hash && size < 1024 * 1024 * 50
+      if (isOffice) {
+        this.openByLocal(entry)
+      } else if (type === 'file') {
         this.setState({ seqIndex: index, preview: true })
       } else {
         this.setState({ loading: true })

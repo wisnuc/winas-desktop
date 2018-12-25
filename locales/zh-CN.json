@@ -1081,6 +1081,7 @@
 
   "==== node/lib/newDownload.js ====": "",
   "Read Download Failed": "读取下载目录失败",
+  "Open Via Local Failed": "打开文件失败",
 
   "==== node/app.js ====": "",
   "New Client Version Detected": "检测到新版本的WISNUC客户端",
