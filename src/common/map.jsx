@@ -80,8 +80,8 @@ class Map extends React.Component {
   }
 
   render () {
-    const height = this.props.height || 360
-    const width = this.props.height || 360
+    const height = this.props.height || 280
+    const width = this.props.height || 280
     return (
       <div
         style={{

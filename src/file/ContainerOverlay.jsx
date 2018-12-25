@@ -5,14 +5,16 @@ import { IconButton } from 'material-ui'
 import ErrorIcon from 'material-ui/svg-icons/alert/error'
 import FileFolder from 'material-ui/svg-icons/file/folder'
 import DownloadIcon from 'material-ui/svg-icons/file/file-download'
+import InfoIcon from 'material-ui/svg-icons/action/info'
 import RenderToLayer from 'material-ui/internal/RenderToLayer'
 import keycode from 'keycode'
 import EventListener from 'react-event-listener'
 import { TweenMax } from 'gsap'
 import ReactTransitionGroup from 'react-transition-group/TransitionGroup'
 import Preview from './Preview'
+import DetailInfo from './DetailInfo'
 import renderFileIcon from '../common/renderFileIcon'
-import { WinFullIcon, WinNormalIcon, CloseIcon } from '../common/Svg'
+import { WinFullIcon, WinNormalIcon } from '../common/Svg'
 
 class ContainerOverlayInline extends React.Component {
   constructor (props) {
@@ -136,6 +138,10 @@ class ContainerOverlayInline extends React.Component {
     }
 
     this.toggleMax = () => ipcRenderer.send('TOGGLE_MAX')
+
+    this.toggleDetail = () => {
+      this.setState({ detailInfo: !this.state.detailInfo })
+    }
   }
 
   componentWillMount () {
@@ -202,7 +208,7 @@ class ContainerOverlayInline extends React.Component {
             width: '100%',
             top: 0,
             left: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.87)'
+            backgroundColor: 'rgba(0, 0, 0, 1)'
           }}
         />
 
@@ -211,12 +217,13 @@ class ContainerOverlayInline extends React.Component {
           ref={ref => (this.refBackground = ref)}
           style={{
             position: 'relative',
-            width: this.state.detailInfo ? 'calc(100% - 360px)' : '100%',
+            width: this.state.detailInfo ? 'calc(100% - 280px)' : '100%',
+            overflow: 'hidden',
             height: '100%',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            transition: 'all 225ms cubic-bezier(0.0, 0.0, 0.2, 1)'
+            transition: 'all 450ms'
           }}
           onClick={this.close}
         >
@@ -233,12 +240,13 @@ class ContainerOverlayInline extends React.Component {
                   zIndex: index === 1 ? 1 : 0,
                   height: '100%',
                   width: '100%',
-                  transition: 'all 200ms cubic-bezier(0.0, 0.0, 0.2, 1)'
+                  transition: 'all 450ms'
                 }}
               >
                 <Preview
                   isCenter={index === 1}
                   item={item}
+                  detailInfo={this.state.detailInfo}
                   ipcRenderer={this.props.ipcRenderer}
                   memoize={this.props.memoize}
                   download={this.props.download}
@@ -260,10 +268,11 @@ class ContainerOverlayInline extends React.Component {
                 zIndex: 100,
                 top: 0,
                 left: 0,
-                width: this.state.detailInfo ? 'calc(100% - 376px)' : 'calc(100% - 16px)',
+                width: this.state.detailInfo ? 'calc(100% - 280px)' : '100%',
                 height: 64,
                 display: 'flex',
                 alignItems: 'center',
+                WebkitAppRegion: 'drag',
                 background: 'linear-gradient(0deg, rgba(0,0,0,0), rgba(0,0,0,0.54))'
               }}
               onClick={(e) => { e.preventDefault(); e.stopPropagation() }}
@@ -271,7 +280,7 @@ class ContainerOverlayInline extends React.Component {
               {/* return Button */}
               <IconButton
                 onClick={this.close}
-                style={{ margin: 12 }}
+                style={{ margin: 12, WebkitAppRegion: 'no-drag' }}
               >
                 <div ref={ref => (this.refReturn = ref)} >
                   <svg width={24} height={24} viewBox="0 0 24 24" fill="white">
@@ -303,22 +312,21 @@ class ContainerOverlayInline extends React.Component {
               <div style={{ flexGrow: 1 }} />
 
               {/* toolbar */}
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <IconButton tooltip={i18n.__('Download')} onClick={this.props.download}
-                >
+              <div style={{ WebkitAppRegion: 'no-drag', display: 'flex', alignItems: 'center' }}>
+                <IconButton tooltip={i18n.__('Detail')} onClick={this.toggleDetail} iconStyle={{ color: '#FFF' }}>
+                  <InfoIcon />
+                </IconButton>
+                <IconButton tooltip={i18n.__('Download')} onClick={this.props.download} >
                   <DownloadIcon color="#FFF" />
                 </IconButton>
+                <IconButton
+                  onClick={this.toggleMax}
+                  tooltip={!isMaximized ? i18n.__('Full Winodw') : i18n.__('Normal Window')}
+                  iconStyle={{ color: '#FFF' }}
+                >
+                  { !isMaximized ? <WinFullIcon /> : <WinNormalIcon /> }
+                </IconButton>
               </div>
-              <IconButton
-                onClick={this.toggleMax}
-                tooltip={!isMaximized ? i18n.__('Full Winodw') : i18n.__('Normal Window')}
-                iconStyle={{ color: '#FFF' }}
-              >
-                { !isMaximized ? <WinFullIcon /> : <WinNormalIcon /> }
-              </IconButton>
-              <IconButton tooltip={i18n.__('Close')} onClick={this.close} iconStyle={{ color: '#FFF' }}>
-                <CloseIcon />
-              </IconButton>
               <div style={{ width: 24 }} />
             </div>
           }
@@ -368,6 +376,20 @@ class ContainerOverlayInline extends React.Component {
               <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z" />
             </svg>
           </IconButton>
+        </div>
+        <div
+          style={{
+            position: 'absolute',
+            backgroundColor: '#FFF',
+            width: 280,
+            top: 0,
+            right: this.state.detailInfo ? 0 : -280,
+            height: '100%',
+            zIndex: 100,
+            transition: 'all 450ms'
+          }}
+        >
+          <DetailInfo entry={entry} toggleDetail={this.toggleDetail} />
         </div>
       </div>
     )

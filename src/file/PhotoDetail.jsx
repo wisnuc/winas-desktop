@@ -68,8 +68,8 @@ class PhotoDetail extends React.Component {
 
     /* calculate size of image */
     this.calcSize = () => {
-      this.clientHeight = window.innerHeight - 160
-      this.clientWidth = window.innerWidth - 200
+      this.clientHeight = window.innerHeight
+      this.clientWidth = this.props.detailInfo ? window.innerWidth - 280 : window.innerWidth
 
       /* handle the exifOrientation */
       this.exifOrientation = this.photo.orient || 1
@@ -240,7 +240,7 @@ class PhotoDetail extends React.Component {
                   alt="DetailImage"
                   src={this.state.detailPath}
                   ref={ref => (this.refDetailImage = ref)}
-                  style={{ zoom: 1, transition: 'translate .5s cubic-bezier(0.0, 0.0, 0.2, 1)' }}
+                  style={{ zoom: 1, transition: 'all 450ms' }}
                   draggable={false}
                 />
             }

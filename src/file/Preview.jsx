@@ -173,6 +173,7 @@ class Preview extends React.Component {
     return (
       <PhotoDetail
         item={item}
+        detailInfo={this.props.detailInfo}
         ipcRenderer={this.props.ipcRenderer}
         updateContainerSize={this.props.updateContainerSize}
       />
