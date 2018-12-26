@@ -1153,23 +1153,24 @@ class Home extends Base {
   renderMenu ({ open }) {
     const itemSelected = this.state.select && this.state.select.selected && this.state.select.selected.length
     const multiSelected = this.state.select && this.state.select.selected && (this.state.select.selected.length > 1)
+    const style = { height: 24, width: 24, color: 'rgba(0,0,0,.54)', marginTop: 8, paddingLeft: 8 }
 
     const commonAction = [
       <MenuItem
         key="Download"
-        leftIcon={<DownloadIcon style={{ height: 20, width: 20, marginTop: 6 }} />}
+        leftIcon={<DownloadIcon style={style} />}
         primaryText={i18n.__('Download')}
         onClick={this.download}
       />,
       <MenuItem
         key="delete"
-        leftIcon={<DeleteIcon style={{ height: 20, width: 20, marginTop: 6 }} />}
+        leftIcon={<DeleteIcon style={style} />}
         primaryText={i18n.__('Delete')}
         onClick={() => this.toggleDialog('delete')}
       />,
       <MenuItem
         key="Properties"
-        leftIcon={<InfoIcon style={{ height: 20, width: 20, marginTop: 6 }} />}
+        leftIcon={<InfoIcon style={style} />}
         primaryText={i18n.__('Properties')}
         onClick={() => this.setState({ detail: true })}
       />
@@ -1189,7 +1190,7 @@ class Home extends Base {
                 <div>
                   <MenuItem
                     primaryText={i18n.__('Create New Folder')}
-                    leftIcon={<NewFolderIcon style={{ height: 20, width: 20, marginTop: 6 }} />}
+                    leftIcon={<NewFolderIcon style={style} />}
                     onClick={() => this.toggleDialog('createNewFolder')}
                   />
                   <div style={{ height: 8 }} />
@@ -1198,12 +1199,12 @@ class Home extends Base {
 
                   <MenuItem
                     primaryText={i18n.__('Upload Folder')}
-                    leftIcon={<UploadFold style={{ height: 20, width: 20, marginTop: 6 }} />}
+                    leftIcon={<UploadFold style={style} />}
                     onClick={() => this.upload('directory')}
                   />
                   <MenuItem
                     primaryText={i18n.__('Upload File')}
-                    leftIcon={<UploadFile style={{ height: 20, width: 20, marginTop: 6 }} />}
+                    leftIcon={<UploadFile style={style} />}
                     onClick={() => this.upload('file')}
                   />
                 </div>
@@ -1214,18 +1215,18 @@ class Home extends Base {
                     {
                       !this.isPublic &&
                       <MenuItem
-                        leftIcon={<ShareIcon style={{ height: 20, width: 20, marginTop: 6 }} />}
+                        leftIcon={<ShareIcon style={style} />}
                         primaryText={i18n.__('Share to Public')}
                         onClick={this.shareToAll}
                       />
                     }
                     <MenuItem
-                      leftIcon={<CopyIcon style={{ height: 20, width: 20, marginTop: 6 }} />}
+                      leftIcon={<CopyIcon style={style} />}
                       primaryText={i18n.__('Copy to')}
                       onClick={() => this.toggleDialog('copy')}
                     />
                     <MenuItem
-                      leftIcon={<MoveIcon style={{ height: 20, width: 20, marginTop: 6 }} />}
+                      leftIcon={<MoveIcon style={style} />}
                       primaryText={i18n.__('Move to')}
                       onClick={() => this.toggleDialog('move')}
                     />
@@ -1233,7 +1234,7 @@ class Home extends Base {
                   {
                     !multiSelected &&
                     <MenuItem
-                      leftIcon={<EditIcon style={{ height: 20, width: 20, marginTop: 6 }} />}
+                      leftIcon={<EditIcon style={style} />}
                       primaryText={i18n.__('Rename')}
                       onClick={() => this.toggleDialog('rename')}
                     />

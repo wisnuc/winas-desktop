@@ -95,8 +95,8 @@ class PhiAPI extends RequestManager {
         r = request
           .get(`${cloudAddress}/user/password/token`)
           .timeout({
-            response: 10000, // Wait 30 seconds for the server to start sending,
-            deadline: 20000 // but allow 1 minute for the file to finish loading.
+            response: 30000, // Wait 30 seconds for the server to start sending,
+            deadline: 30000 // but allow 1 minute for the file to finish loading.
           })
           .query({
             clientId: args.clientId || 'qwert',
@@ -110,8 +110,8 @@ class PhiAPI extends RequestManager {
         r = request
           .get(`${cloudAddress}/wechat/token`)
           .timeout({
-            response: 10000, // Wait 30 seconds for the server to start sending,
-            deadline: 20000 // but allow 1 minute for the file to finish loading.
+            response: 30000, // Wait 30 seconds for the server to start sending,
+            deadline: 30000 // but allow 1 minute for the file to finish loading.
           })
           .query({
             type: 'pc',
@@ -124,8 +124,8 @@ class PhiAPI extends RequestManager {
       case 'stationList':
         r = this.aget('station')
           .timeout({
-            response: 10000, // Wait 30 seconds for the server to start sending,
-            deadline: 20000 // but allow 1 minute for the file to finish loading.
+            response: 30000, // Wait 30 seconds for the server to start sending,
+            deadline: 30000 // but allow 1 minute for the file to finish loading.
           })
         break
 

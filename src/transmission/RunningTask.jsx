@@ -207,12 +207,9 @@ class RunningTask extends React.Component {
                   </LIButton>
                 ) : <div style={{ width: 48 }} />
               }
-              {
-                task.paused &&
-                <LIButton iconStyle={svgStyle} onClick={this.props.delete} tooltip={i18n.__('Delete')}>
-                  <DeleteSvg />
-                </LIButton>
-              }
+              <LIButton iconStyle={svgStyle} onClick={this.props.delete} tooltip={i18n.__('Delete')}>
+                <DeleteSvg />
+              </LIButton>
             </div>
           ) : <div style={{ width: 96 }} />
         }

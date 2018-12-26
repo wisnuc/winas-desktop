@@ -74,7 +74,7 @@ class FinishedTask extends Component {
           width: 'calc(100% - 48px)',
           border,
           height: 56,
-          fontSize: 12,
+          fontSize: 14,
           backgroundColor: this.state.isSelected ? 'rgba(0,150,136,.08)' : ''
         }}
         onMouseUp={this.selectFinishItem}

@@ -2,7 +2,7 @@ import React from 'react'
 import i18n from 'i18n'
 import { ipcRenderer } from 'electron'
 import { AutoSizer } from 'react-virtualized'
-import { Paper, Menu, MenuItem } from 'material-ui'
+import { Paper, Menu } from 'material-ui'
 import DeleteSvg from 'material-ui/svg-icons/action/delete'
 import PlaySvg from 'material-ui/svg-icons/av/play-arrow'
 import PauseSvg from 'material-ui/svg-icons/av/pause'
@@ -15,6 +15,7 @@ import DialogOverlay from '../common/DialogOverlay'
 import PureDialog from '../common/PureDialog'
 import ScrollBar from '../common/ScrollBar'
 import { LIButton } from '../common/Buttons'
+import MenuItem from '../common/MenuItem'
 
 class TrsContainer extends React.Component {
   constructor (props) {
