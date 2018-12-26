@@ -83,7 +83,7 @@ class MoveDialog extends React.PureComponent {
     this.state = {
       list: this.props.entries,
       currentDir: Object.assign({}, this.path[this.path.length - 1], { type: 'directory' }),
-      path: [{ name: i18n.__('Box Title'), uuid: this.path[0].uuid, type: 'root' }, ...this.path],
+      path: [{ name: i18n.__('All Files'), uuid: this.path[0].uuid, type: 'root' }, ...this.path],
       loading: false,
       noView: false,
       currentSelectedIndex: -1,
@@ -159,7 +159,7 @@ class MoveDialog extends React.PureComponent {
         const drives = this.props.apis.drives.value()
         const list = [
           { name: i18n.__('Home Title'), type: 'directory', uuid: drives.find(d => d.tag === 'home').uuid, tag: 'home' },
-          { name: i18n.__('Share Title'), type: 'built-in', uuid: drives.find(d => d.tag === 'built-in').uuid, tag: 'built-in' }
+          { name: i18n.__('Public Drive'), type: 'built-in', uuid: drives.find(d => d.tag === 'built-in').uuid, tag: 'built-in' }
         ]
         setImmediate(() => this.updateState(path, currentDir, list))
       }
@@ -358,7 +358,7 @@ class MoveDialog extends React.PureComponent {
       : type === 'publicRoot'
         ? i18n.__('Public Drive')
         : type === 'root'
-          ? i18n.__('Box Title')
+          ? i18n.__('All Files')
           : this.state.currentDir.name || this.state.currentDir.label
   }
 
