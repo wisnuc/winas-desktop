@@ -10,6 +10,7 @@ import FileDetail from '../file/FileDetail'
 import ListSelect from '../file/ListSelect'
 import FileContent from '../file/FileContent'
 import NewFolderDialog from '../file/NewFolderDialog'
+import MoveDialog from '../file/MoveDialog'
 import RenameDialog from '../file/RenameDialog'
 import ContextMenu from '../common/ContextMenu'
 import DialogOverlay from '../common/PureDialog'
@@ -247,7 +248,32 @@ class Home extends Base {
         srcDir: pos.srcPath,
         dstDir: this.state.path.slice(-1)[0]
       }
+      console.log('xcopy', args)
       this.ctx.props.apis.pureRequest('copy', args, (err, res) => this.finish(err, res, pos.action))
+    }
+
+    /* share to built-in drive */
+    this.shareToAll = () => {
+      /* set parameter */
+      const type = 'copy'
+      const builtIn = this.ctx.props.apis.drives.value().find(d => d.tag === 'built-in')
+      const src = { drive: this.state.path[0].uuid, dir: this.state.path[this.state.path.length - 1].uuid }
+      const dst = { drive: builtIn.uuid, dir: builtIn.uuid }
+
+      const selected = this.state.select.selected
+      if (!selected && !selected.length) return
+      const entries = selected.map(i => this.state.entries[i].name)
+
+      const policies = { dir: ['rename', 'rename'], file: ['rename', 'rename'] }
+
+      this.xcopyData = {
+        type: 'share',
+        srcDir: this.state.path[this.state.path.length - 1],
+        dstDir: builtIn,
+        entries: selected.map(i => this.state.entries[i])
+      }
+
+      this.ctx.props.apis.pureRequest('copy', { type, src, dst, entries, policies }, this.finish)
     }
 
     this.rename = () => {
@@ -1035,6 +1061,48 @@ class Home extends Base {
           text={() => this.deleteText()}
         />
 
+        <DialogOverlay open={!!this.state.move} onRequestClose={() => this.toggleDialog('move')}>
+          {
+            this.state.move && (
+              <MoveDialog
+                onRequestClose={() => this.toggleDialog('move')}
+                title={this.title}
+                apis={this.ctx.props.apis}
+                path={this.state.path}
+                entries={this.state.entries}
+                select={this.state.select}
+                openSnackBar={openSnackBar}
+                primaryColor={this.groupPrimaryColor()}
+                refresh={this.refresh}
+                navTo={navTo}
+                type="move"
+                operation="move"
+              />
+            )
+          }
+        </DialogOverlay>
+
+        <DialogOverlay open={!!this.state.copy} onRequestClose={() => this.toggleDialog('copy')}>
+          {
+            this.state.copy && (
+              <MoveDialog
+                onRequestClose={() => this.toggleDialog('copy')}
+                title={this.title}
+                apis={this.ctx.props.apis}
+                path={this.state.path}
+                entries={this.state.entries}
+                select={this.state.select}
+                openSnackBar={openSnackBar}
+                primaryColor={this.groupPrimaryColor()}
+                refresh={this.refresh}
+                navTo={navTo}
+                type="copy"
+                operation="copy"
+              />
+            )
+          }
+        </DialogOverlay>
+
         <ConfirmDialog
           open={!!this.state.openDeleteVersion}
           onCancel={() => this.setState({ openDeleteVersion: false })}
@@ -1148,7 +1216,7 @@ class Home extends Base {
                       <MenuItem
                         leftIcon={<ShareIcon style={{ height: 20, width: 20, marginTop: 6 }} />}
                         primaryText={i18n.__('Share to Public')}
-                        onClick={() => this.toggleDialog('share')}
+                        onClick={this.shareToAll}
                       />
                     }
                     <MenuItem
