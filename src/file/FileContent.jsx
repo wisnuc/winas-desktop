@@ -275,10 +275,10 @@ class FileContent extends React.Component {
       this.calcRow(this.scrollTop)
     }
 
-    /* calc rows should be selected */
+    /* calc Grid should be selected */
     this.calcGrid = (data) => {
       if (!data) return
-      const { scrollTop, allHeight, mapData, indexHeightSum } = data
+      const { scrollTop, allHeight, mapData, indexHeightSum, cellWidth } = data
       const s = this.refSelectBox.style
       const top = parseInt(s.top, 10)
       const height = parseInt(s.height, 10)
@@ -291,12 +291,12 @@ class FileContent extends React.Component {
         .filter((v, i) => {
           if (!mapData) return false
           const lineNum = mapData[i]
-          const lineHeight = allHeight[lineNum] // 112, 64, 248, 200
-          const head = (lineNum > 0 ? indexHeightSum[lineNum - 1] + ((lineHeight === 248) && 48) : 48) + 24 - scrollTop
-          const tail = head + (lineHeight < 200 ? 48 : 184)
+          const lineHeight = allHeight[lineNum] // 112, 64, cellWidth + 48, cellWidth
+          const head = (lineNum > 0 ? indexHeightSum[lineNum - 1] + ((lineHeight === cellWidth + 16 + 48) && 48) : 48) - scrollTop
+          const tail = head + (lineHeight <= 112 ? 48 : cellWidth)
           if (!(tail > top) || !(head < top + height)) return false
-          const start = (i - mapData.findIndex(va => va === lineNum)) * 200 + 48
-          const end = start + 180
+          const start = (i - mapData.findIndex(va => va === lineNum)) * (cellWidth + 16) + 48
+          const end = start + cellWidth
           /* grid.tail > top && grid.head < top + height && grid.end > left && grid.start < left + width */
           return ((end > left) && (start < left + width))
         })

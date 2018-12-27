@@ -100,7 +100,7 @@
         background-color: #f5f5f5;
       }
       .svg {
-        fill: rgba(0,0,0,.38); height: 18px; width: 18px; margin-right: 16px;
+        fill: rgba(0,0,0,.54); height: 18px; width: 18px; margin-right: 16px;
       }
       .backup {
         height: 56px; width: 150px; position: absolute; top: 0px; left: 0px; color: rgba(0,0,0,.54); font-size: 13px; display: none; align-items: center
@@ -171,7 +171,6 @@
       }
 
       ipcRenderer.on('BACKUP_MSG', (event, { status, count, finishCount, restTime, lastBackupTime, drive, bProgress }) => {
-        console.log('BACKUP_MSG', status, count, finishCount, restTime, lastBackupTime, drive)
         currentDrive = drive
         loading = false
         if (!drive || (status === 'Idle' && !drive.client.lastBackupTime)) {
@@ -198,7 +197,6 @@
         }
       })
       ipcRenderer.on('TRAY_DATA', (event, data) => {
-        console.log('data', data)
         const { logged, text, avatarSrc } = data
         if (logged) {
           document.getElementById('changeDeviceButton').style.opacity = 1
@@ -212,14 +210,12 @@
           const value = t[1]
           const ele = document.getElementById(id)
           if (!ele) return
-          console.log(id, value)
           if (!value) ele.style.opacity = 0
           ele.innerHTML = value
         })
         document.getElementById('root').style.opacity = 1
       })
       ipcRenderer.send('REQ_TRAY_DATA')
-      console.log('script load')
     </script>
   </body>
 </html>

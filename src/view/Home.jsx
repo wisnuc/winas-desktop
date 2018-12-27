@@ -3,6 +3,7 @@ import React from 'react'
 import Promise from 'bluebird'
 import { ipcRenderer } from 'electron'
 import { Divider } from 'material-ui'
+import OpenInFolderIcon from 'material-ui/svg-icons/action/open-in-new'
 
 import Base from './Base'
 import DownloadDialog from '../file/DownloadDialog'
@@ -269,7 +270,7 @@ class Home extends Base {
       this.xcopyData = {
         type: 'share',
         srcDir: this.state.path[this.state.path.length - 1],
-        dstDir: builtIn,
+        dstDir: Object.assign({}, builtIn, { type: 'public' }),
         entries: selected.map(i => this.state.entries[i])
       }
 
@@ -486,21 +487,22 @@ class Home extends Base {
       /* in backup, no selected, in drive or topDirs */
       if (this.isBackup && (!length || depth < 2)) return
 
+      /* in search, no selected */
+      if (this.isSearch && !length) return
+
       const containerDom = document.getElementById('content-container')
-      const maxLeft = containerDom.offsetLeft + containerDom.clientWidth - 160
+      const maxLeft = containerDom.offsetLeft + containerDom.clientWidth - 256
       const x = clientX > maxLeft ? maxLeft : clientX
       /* calc positon of menu using height of menu which is related to number of selected items */
       let itemNum = 7
-      if (this.isBackup) {
+      if (this.isSearch && length === 1) {
+        itemNum = 4
+      } else if (this.isBackup || this.isSearch || !length) {
         itemNum = 3
-      } else if (this.isMedia || this.state.showSearch) {
-        if (!length) itemNum = 3
-        else if (length === 1) itemNum = 8
-        else itemNum = 5
-      } else if (length > 1) itemNum = 5
+      } else if (length > 1) itemNum = 6
       else itemNum = 7
 
-      const maxTop = containerDom.offsetTop + containerDom.offsetHeight - itemNum * 30
+      const maxTop = containerDom.offsetTop + containerDom.offsetHeight - itemNum * 40 - 48
       const y = clientY > maxTop ? maxTop : clientY
       this.setState({
         contextMenuOpen: true,
@@ -1176,6 +1178,15 @@ class Home extends Base {
       />
     ]
 
+    if (this.isSearch && itemSelected && !multiSelected) {
+      commonAction.unshift(<MenuItem
+        key="OpenInFolder"
+        leftIcon={<OpenInFolderIcon style={style} />}
+        primaryText={i18n.__('Open In Folder')}
+        onClick={() => this.openInFolder()}
+      />)
+    }
+
     return (
       <ContextMenu
         open={open}
@@ -1184,7 +1195,7 @@ class Home extends Base {
         onRequestClose={this.hideContextMenu}
       >
         {
-          this.isBackup ? commonAction
+          (this.isBackup || this.isSearch) ? commonAction
             : !itemSelected
               ? (
                 <div>

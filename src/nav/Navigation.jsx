@@ -65,8 +65,11 @@ class NavViews extends React.Component {
       const drives = this.props.apis.drives && this.props.apis.drives.data
       const drive = drives && drives.find(d => d.uuid === driveUUID)
       if (!drive) return
+      this.views[this.state.nav].clearSearch()
+      this.setState({ searchMode: false, searchText: '', types: [] })
       if (drive.tag === 'home') this.navTo('home', { driveUUID, dirUUID })
-      else if (drive.type === 'public') this.navTo('public', { driveUUID, dirUUID })
+      else if (drive.tag === 'built-in') this.navTo('public', { driveUUID, dirUUID })
+      else if (drive.type === 'backup') this.navTo('backup', { driveUUID, dirUUID })
     }
 
     this.navGroup = (group) => {
@@ -276,7 +279,7 @@ class NavViews extends React.Component {
           <div style={{ backgroundColor: '#e8eaed', height: 1, width: '100%', margin: '8px 0px 8px 32px' }} />
 
           {/* File Content */}
-          <div style={{ height: 'calc(100% - 88px)', width: '100%' }} id="content-container">
+          <div style={{ height: 'calc(100% - 88px)', width: '100%' }} >
             { this.renderView() }
           </div>
         </div>
@@ -326,7 +329,7 @@ class NavViews extends React.Component {
 
   renderTrans () {
     return (
-      <div style={{ height: '100%', width: '100%', position: 'relative' }} id="content-container">
+      <div style={{ height: '100%', width: '100%', position: 'relative' }} >
         {/* Toolbar */}
         { this.renderView() }
       </div>
@@ -697,6 +700,7 @@ class NavViews extends React.Component {
             marginLeft: this.state.pin || this.state.searchMode ? 224 : 88,
             transition: 'margin 225ms'
           }}
+          id="content-container"
         >
           <div style={{ height: 34, backgroundColor: '#FFF', WebkitAppRegion: 'drag' }} />
           <div style={{ height: 'calc(100% - 38px)', width: '100%', position: 'relative' }} >

@@ -253,7 +253,7 @@ class MoveDialog extends React.PureComponent {
           this.setState({ loading: false })
           this.closeDialog()
           this.props.refresh()
-          let text = 'Working'
+          let text = i18n.__('Working')
           if (res === 'Finished') text = xcopyMsg(this.xcopyData)
           this.props.openSnackBar(text, res !== 'Finished' ? { showTasks: true } : null)
         }).catch((e) => {

@@ -7,6 +7,7 @@ class Search extends Home {
     super(ctx)
     this.title = () => i18n.__('Search Results')
     this.name = ''
+    this.isSearch = true
     this.types = []
     this.refresh = () => {
       this.search(this.name, this.types)
