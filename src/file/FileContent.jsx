@@ -18,7 +18,7 @@ class FileContent extends React.Component {
 
     this.state = {
       seqIndex: -1,
-      loading: false,
+      loading: true,
       preview: false
     }
 

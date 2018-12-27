@@ -148,7 +148,7 @@ class RunningTask extends React.Component {
           <div style={{ width: '100%', display: 'flex', alignItems: 'center' }}>
             <div
               style={{
-                maxWidth: 240,
+                maxWidth: this.props.pin ? 120 : 240,
                 fontSize: 14,
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
@@ -185,6 +185,8 @@ class RunningTask extends React.Component {
             { this.renderPercent(task) }
           </div>
         </div>
+
+        <div style={{ width: 'calc(20% - 160px)' }} />
 
         {/* percent */}
         <div style={{ width: 120, textAlign: 'right', marginRight: 24 }}>{ this.renderSpeedOrStatus(task) }</div>

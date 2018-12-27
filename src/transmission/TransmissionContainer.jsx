@@ -308,6 +308,7 @@ class TrsContainer extends React.Component {
     /* running task list */
     list.push(...userTasks.map((task, index) => (
       <RunningTask
+        pin={this.props.pin}
         ref={ref => (this.taskRefs[task.uuid] = ref)}
         key={task.uuid}
         trsType={task.trsType}
@@ -346,6 +347,7 @@ class TrsContainer extends React.Component {
     list.push(...finishTasks.map((task, index) => (
       <FinishedTask
         ref={ref => (this.taskRefs[task.uuid] = ref)}
+        pin={this.props.pin}
         key={task.uuid}
         index={index}
         task={task}

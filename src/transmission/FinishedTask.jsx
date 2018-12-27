@@ -97,7 +97,7 @@ class FinishedTask extends Component {
         <div style={{ display: 'flex', flexGrow: 1, alignItems: 'center' }}>
           <div
             style={{
-              maxWidth: 240,
+              maxWidth: this.props.pin ? 120 : 240,
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap'
@@ -113,6 +113,8 @@ class FinishedTask extends Component {
         <div style={{ width: 120, textAlign: 'right' }}>
           { prettySize(task.completeSize) }
         </div>
+
+        <div style={{ width: 'calc(20% - 160px)' }} />
 
         {/* task finishDate */}
         <div style={{ width: 126, marginRight: 24, textAlign: 'right' }} >

@@ -248,7 +248,7 @@ class NavViews extends React.Component {
       navTo: this.navTo,
       navToDrive: this.navToDrive,
       openSnackBar: this.props.openSnackBar,
-      pin: this.state.pin,
+      pin: this.state.pin || this.state.searchMode,
       primaryColor: this.state.primaryColor
     })
   }
@@ -466,7 +466,7 @@ class NavViews extends React.Component {
         }}
       >
         <div style={{ height: 34, width: '100%', display: 'flex', alignItems: 'center' }}>
-          <div style={{ height: 34, width: 34, margin: 4 }} className="flexCenter">
+          <div style={{ height: 34, width: 34, margin: 4, display: this.state.searchMode ? 'none' : undefined }} className="flexCenter">
             <SIButton
               onClick={() => this.setState({ pin: !this.state.pin })}
               iconStyle={{ color: 'rgba(0,0,0,.26)' }}
@@ -668,7 +668,7 @@ class NavViews extends React.Component {
             height: '100%',
             width: shrinked ? 88 : 224,
             backgroundColor: '#000000',
-            opacity: this.state.pin ? 0 : 0.02,
+            opacity: !shrinked ? 0 : 0.02,
             zIndex: 103,
             pointerEvents: 'none'
           }}

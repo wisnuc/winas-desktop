@@ -39,10 +39,10 @@ class Transmission extends Base {
     )
   }
 
-  renderContent ({ navToDrive }) {
+  renderContent ({ navToDrive, pin }) {
     return (
       <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>
-        <TrsContainer navToDrive={navToDrive} />
+        <TrsContainer navToDrive={navToDrive} pin={pin} />
       </div>
     )
   }
