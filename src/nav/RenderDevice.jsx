@@ -25,12 +25,21 @@ class Disk extends React.PureComponent {
     )
   }
 
+  renderFailed () {
+    return (
+      <div style={{ width: 260, height: 339, marginTop: -8, display: 'flex', alignItems: 'center', justifyContent: 'center' }} >
+        { i18n.__('Error in Base Text') }
+      </div>
+    )
+  }
+
   componentDidMount () {
     this.reqDataAsync().then(({ space, stats }) => this.setState({ space, stats })).catch(e => this.setState({ error: e }))
   }
 
   render () {
-    const { space, stats } = this.state
+    const { space, stats, error } = this.state
+    if (error) return this.renderFailed()
     if (!space || !stats) return this.renderLoading()
 
     const { audio, document, image, video } = stats

@@ -1,7 +1,7 @@
 import i18n from 'i18n'
 import React from 'react'
 import { ipcRenderer } from 'electron'
-import { Menu, MenuItem, Toggle, Popover, Checkbox, Dialog, CircularProgress, RaisedButton } from 'material-ui'
+import { Menu, MenuItem, Toggle, Popover, Checkbox, Dialog, CircularProgress, RaisedButton, LinearProgress } from 'material-ui'
 
 import { ipcReq } from '../common/ipcReq'
 import FlatButton from '../common/FlatButton'
@@ -164,10 +164,18 @@ class BackupCard extends React.PureComponent {
     )
   }
 
+  renderActionLoading (top) {
+    return (
+      <div style={{ position: 'absolute', width: '100%', left: 0, top }}>
+        <LinearProgress mode="indeterminate" />
+      </div>
+    )
+  }
+
   renderSettings (showDirs, transition) {
     const { topDirs } = this.state
     const drive = this.state.drive || this.props.drive
-    const enabled = drive && drive.uuid !== 'fake-uuid' && !drive.client.disabled && !this.state.toggleEnableLoading
+    const enabled = drive && drive.uuid !== 'fake-uuid' && !drive.client.disabled
     const color = enabled ? 'rgba(0,0,0,.76)' : 'rgba(0,0,0,.38)'
     return (
       <div style={{ position: 'absolute', height: '100%', width: '100%', left: showDirs ? '-100%' : 0, top: 0, transition }}>
@@ -175,6 +183,7 @@ class BackupCard extends React.PureComponent {
           <div style={{ marginLeft: 24 }}> { i18n.__('Current Device Backup') } </div>
           <div style={{ flexGrow: 1 }} />
           <Toggle
+            disabled={this.state.toggleEnableLoading}
             toggled={enabled}
             onToggle={this.onToggleEnableBackup}
             labelStyle={{ maxWidth: 'fit-content' }}
@@ -321,14 +330,6 @@ class BackupCard extends React.PureComponent {
     )
   }
 
-  renderRestTime (restTime) {
-    if (!(restTime > 0)) return i18n.__('Calculating Rest Time')
-    const hour = Math.floor(restTime / 3600)
-    const minute = Math.ceil((restTime - hour * 3600) / 60)
-    if (!hour) return i18n.__('Rest Time By Minute %s', minute)
-    return i18n.__('Rest Time By Hour And Minute %s, %s', hour, minute)
-  }
-
   renderCurrentBackup (drive) {
     const { label, client } = drive
     const { lastBackupTime } = client
@@ -365,6 +366,8 @@ class BackupCard extends React.PureComponent {
               <SettingsIcon />
             </LIButton>
           </div>
+
+          {/* backup settings */}
           <Popover
             open={this.state.openBS}
             anchorEl={this.state.anchorSetting}
@@ -376,9 +379,12 @@ class BackupCard extends React.PureComponent {
               <div style={{ position: 'relative', height: 354, width: 306, backgroundColor: '#FFF', overflow: 'hidden' }}>
                 { this.state.loading ? this.renderLoading() : this.renderSettings(showDirs, transition) }
                 { this.renderBackupDirs(showDirs, transition) }
+                { !!this.state.toggleEnableLoading && this.renderActionLoading(0) }
               </div>
             </Menu>
           </Popover>
+
+          {/* backup detail */}
           <Popover
             open={!!this.state.dirDetail}
             anchorEl={this.state.anchorDir}
@@ -388,7 +394,7 @@ class BackupCard extends React.PureComponent {
           >
             {
               !!this.state.dirDetail &&
-                <Menu style={{ maxWidth: 280, fontSize: 14, marginTop: -8, width: 280 }} >
+                <Menu style={{ maxWidth: 280, fontSize: 14, marginTop: -8, width: 280, position: 'relative' }} >
                   <div style={{ height: 56, display: 'flex', alignItems: 'center', borderBottom: '1px solid #e8eaed' }}>
                     <div style={{ display: 'flex', alignItems: 'center', marginLeft: 24 }}>
                       <AllFileIcon style={{ width: 24, height: 24, color: '#ffa93e', marginRight: 16 }} />
@@ -398,6 +404,7 @@ class BackupCard extends React.PureComponent {
                     </div>
                     <div style={{ flexGrow: 1 }} />
                     <Toggle
+                      disabled={this.state.toggleDirLoading}
                       onToggle={() => this.onToggleDir(this.state.dirDetail)}
                       toggled={!this.state.dirDetail.disabled}
                       labelStyle={{ maxWidth: 'fit-content' }}
@@ -420,6 +427,7 @@ class BackupCard extends React.PureComponent {
                       label={i18n.__('Remove Dir And Backup Data')}
                     />
                   </div>
+                  { this.state.toggleDirLoading && this.renderActionLoading(8) }
                 </Menu>
             }
             <Dialog
@@ -464,6 +472,8 @@ class BackupCard extends React.PureComponent {
               }
             </Dialog>
           </Popover>
+
+          {/* policy */}
           <Popover
             open={!!this.state.selectPolicy}
             anchorEl={this.state.anchorPolicy}
