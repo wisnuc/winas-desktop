@@ -92,16 +92,14 @@ class Login extends React.Component {
             />
           </div>
           <div style={Object.assign({ left: deviceL }, baseStyle)} >
-            {
-              <DeviceLogin
-                {...this.props}
-                cdev={this.state.dev}
-                list={this.state.list}
-                status={this.state.status}
-                changeDevice={() => this.setState({ status: 'changeDevice' })}
-                backToLogin={() => this.setState({ status: 'wisnucLogin' })}
-              />
-            }
+            <DeviceLogin
+              {...this.props}
+              cdev={this.state.dev}
+              list={this.state.list}
+              status={this.state.status}
+              changeDevice={() => this.setState({ status: 'changeDevice' })}
+              backToLogin={() => this.setState({ status: 'wisnucLogin' })}
+            />
           </div>
           <div style={Object.assign({ left: changeDevL }, baseStyle)} >
             {

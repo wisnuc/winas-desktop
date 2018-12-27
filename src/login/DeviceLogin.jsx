@@ -19,14 +19,13 @@ class DeviceLogin extends React.Component {
 
     this.initDevice = () => {
       const { cdev, list } = this.props
-      console.log('this.onSuccess', list)
       if (!list || !list.length) {
         this.setState({ status: 'noDevice' })
       } else if (!cdev) {
         this.setState({ status: 'error' })
       } else {
         const dev = Object.assign(
-          { address: cdev.LANIP, domain: 'phiToLoacl', deviceSN: cdev.sn, stationName: 'test station' },
+          { address: cdev.LANIP, domain: 'phiToLoacl', deviceSN: cdev.sn, stationName: cdev.name },
           cdev
         )
         this.device = new DeviceAPI(dev)
@@ -85,7 +84,7 @@ class DeviceLogin extends React.Component {
     this.getLANTokenAsync = async () => {
       const { account } = this.props
       const { dev } = this.state
-      const { cookie }  = this.props.phi
+      const { cookie } = this.props.phi
       const args = { deviceSN: dev.mdev.deviceSN }
       const [tokenRes, users] = await Promise.all([
         this.props.phi.reqAsync('LANToken', args),
@@ -118,7 +117,7 @@ class DeviceLogin extends React.Component {
       const { account } = this.props
       const { dev } = this.state
       const args = { deviceSN: dev.mdev.deviceSN }
-      const { token, cookie }  = this.props.phi
+      const { token, cookie } = this.props.phi
       const [boot, users] = await Promise.all([
         this.props.phi.reqAsync('boot', args),
         this.props.phi.reqAsync('localUsers', args),
@@ -160,6 +159,7 @@ class DeviceLogin extends React.Component {
 
   componentDidUpdate (prevProps, prevState) {
     if (prevProps && prevProps.status !== 'connectDev' && this.props && this.props.status === 'connectDev') {
+      this.once = false
       this.initDevice()
     }
   }
@@ -259,7 +259,8 @@ class DeviceLogin extends React.Component {
     }
     const info = this.device && this.device.state && this.device.state.info && this.device.state.info.data
     const sn = info && info.device && info.device.sn && info.device.sn.slice(-4)
-    const deviceName = sn ? `Winas-${sn}` : 'Winas'
+    const name = this.props.cdev && this.props.cdev.name
+    const deviceName = name || (sn ? `Winas-${sn}` : 'Winas')
     return (
       <div style={{ marginTop: 54, height: 80, display: 'flex', alignItems: 'center', width: '100%', position: 'relative' }}>
         <div style={{ width: 64, marginLeft: 16 }} className="flexCenter">

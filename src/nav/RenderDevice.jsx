@@ -54,14 +54,16 @@ class Disk extends React.PureComponent {
       { color: '#00c853', progress: otherSize, title: i18n.__('Others'), size: other.totalSize }
     ]
 
+    const name = this.props.selectedDevice.mdev.name || 'Winas'
+
     return (
       <div style={{ width: 260, height: 339, marginTop: -8, overflow: 'hidden' }}>
         <div style={{ height: 56, position: 'relative', paddingLeft: 24, paddingTop: 16 }}>
           <div style={{ height: 24, fontSize: 18, fontWeight: 500, color: 'rgba(0,0,0,.76)' }}>
-            Wisnuc Office
+            { name }
           </div>
           <div style={{ height: 22, fontSize: 12, color: 'rgba(14,5,10,.29)' }}>
-            当前设备
+            { i18n.__('Current Device') }
           </div>
           <div style={{ position: 'absolute', top: 16, right: 8 }}>
             <FlatButton

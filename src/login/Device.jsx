@@ -160,7 +160,8 @@ class Device extends React.Component {
     }
     const info = this.device && this.device.state && this.device.state.info && this.device.state.info.data
     const sn = info && info.device && info.device.sn && info.device.sn.slice(-4)
-    const deviceName = sn ? `Winas-${sn}` : 'Winas'
+    const name = this.props.cdev && this.props.cdev.name
+    const deviceName = name || (sn ? `Winas-${sn}` : 'Winas')
     return (
       <div style={{ height: 80, display: 'flex', alignItems: 'center', width: '100%', position: 'relative', lineHeight: 'normal' }}>
         <div style={{ width: 56, marginLeft: 8, display: 'flex', alignItems: 'center' }}>
