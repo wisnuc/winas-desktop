@@ -5,6 +5,7 @@ import sortByType from '../common/sort'
 class Search extends Home {
   constructor (ctx) {
     super(ctx)
+    this.type = 'search'
     this.title = () => i18n.__('Search Results')
     this.name = ''
     this.isSearch = true
@@ -12,6 +13,11 @@ class Search extends Home {
     this.refresh = () => {
       this.search(this.name, this.types)
     }
+
+    const userConfig = Array.isArray(window.config.users) && window.config.users.find(u => u.userUUID === this.userUUID)
+    const gridView = userConfig && userConfig[`gridViewIn${this.type}`]
+
+    this.state = Object.assign(this.state, { gridView })
   }
 
   willReceiveProps () {

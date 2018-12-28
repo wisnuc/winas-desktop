@@ -41,9 +41,14 @@ class Home extends Base {
     this.select = new ListSelect(this)
     this.select.on('updated', next => this.setState({ select: next }))
 
+    this.userUUID = ctx.props.account.winasUserId
+
+    const userConfig = Array.isArray(window.config.users) && window.config.users.find(u => u.userUUID === this.userUUID)
+    const gridView = userConfig && userConfig[`gridViewIn${this.type}`]
+
     this.state = {
       isMedia: false,
-      gridView: false, // false: list, true: grid
+      gridView: !!gridView, // false: list, true: grid
       sortType: 'nameUp', // nameUp, nameDown, timeUp, timeDown, sizeUp, sizeDown, takenUp, takenDown
       select: this.select.state,
       listNavDir: null, // save a reference
@@ -73,6 +78,12 @@ class Home extends Base {
 
     this.toggleDialog = (type) => {
       this.setState({ [type]: !this.state[type] })
+    }
+
+    this.toggleGridView = () => {
+      this.preGridView = this.state.gridView
+      this.setState({ gridView: !this.preGridView })
+      ipcRenderer.send('UPDATE_USER_CONFIG', this.userUUID, { [`gridViewIn${this.type}`]: !this.preGridView })
     }
 
     /* op: scrollTo file */
@@ -1073,7 +1084,7 @@ class Home extends Base {
         {
           !!hasEntries &&
             <LIButton
-              onClick={() => this.toggleDialog('gridView')}
+              onClick={this.toggleGridView}
               tooltip={this.state.gridView ? i18n.__('List View') : i18n.__('Grid View')}
             >
               { this.state.gridView ? <ListIcon style={iconStyle} /> : <GridIcon style={iconStyle} /> }

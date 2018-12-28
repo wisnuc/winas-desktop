@@ -14,7 +14,11 @@ class Backup extends Home {
     this.title = () => i18n.__('Backup')
     this.isBackup = true
     this.rootDrive = null
-    this.state = Object.assign(this.state, { inRoot: true, showArchive: false })
+
+    const userConfig = Array.isArray(window.config.users) && window.config.users.find(u => u.userUUID === this.userUUID)
+    const gridView = userConfig && userConfig[`gridViewIn${this.type}`]
+
+    this.state = Object.assign(this.state, { inRoot: true, showArchive: false, gridView })
 
     this.openAddDirDialog = (drive) => {
       remote.dialog.showOpenDialog({ properties: ['openDirectory'] }, (filePaths) => {
