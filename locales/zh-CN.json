@@ -654,6 +654,7 @@
   "Current Device": "本机",
   "Backup Success": "备份完成",
   "Backup Not Finished": "备份未完成",
+  "No Backup": "无备份",
   "Add Backup Directroy": "添加备份文件夹",
   "Other Device": "其它设备",
   "Get Backup Dirs Failed": "获取备份文件夹失败",
@@ -1130,6 +1131,7 @@
   "Connecting to Device": "正在连接设备",
   "Connection Failed": "连接设备失败",
   "Send Code To Email Error" : "发送验证码失败",
+  "Not Image Error": "请选择JPG或PNG图片上传",
 
   "==== login/DeviceLogin.jsx====": "",
   "Offline": "远程",

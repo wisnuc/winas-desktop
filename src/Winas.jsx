@@ -192,6 +192,7 @@ class Winas extends React.Component {
                     account={this.state.account}
                     logout={() => this.logout()}
                     device={this.state.selectedDevice}
+                    openSnackBar={msg => this.openSnackBar(msg)}
                     wisnucLogin={user => this.wisnucLogin(user)}
                   />
                 </div>

@@ -549,6 +549,27 @@ class Home extends Base {
 
     /* drag row */
     this.dragRow = (e) => {
+      if (this.isBackup || this.isSearch) return
+      const s = this.refDragedItems.style
+      if (!this.state.select.selected.includes(this.RDSI)) {
+        if (this.RDSI > -1) this.state.select.addByArray([this.RDSI], (new Date()).getTime())
+      } else if (s.display !== 'flex') {
+        s.display = 'flex'
+      } else {
+        s.width = '180px'
+        s.opacity = 1
+
+        const RDTop = `${this.RDSI * 48 + 176 - (this.scrollTop || 0)}px`
+        if (!s.top || s.top === RDTop) s.top = `${e.clientY + 2}px`
+        else s.marginTop = `${e.clientY + 2 - parseInt(s.top, 10)}px`
+
+        if (!s.left || s.left === '75px') s.left = `${e.clientX + 2}px`
+        else s.marginLeft = `${e.clientX + 2 - parseInt(s.left, 10)}px`
+      }
+      if (!this.entry.type) this.forceUpdate()
+    }
+
+    this.dragRow2 = (e) => {
       if (this.isBackup) return
       const s = this.refDragedItems.style
       if (!this.state.select.selected.includes(this.RDSI)) {
@@ -556,10 +577,10 @@ class Home extends Base {
       } else if (s.display !== 'flex') {
         s.display = 'flex'
       } else {
-        s.width = '108px'
+        s.width = '180px'
         s.opacity = 1
 
-        const RDTop = `${this.RDSI * 40 + DRAGTOP - (this.scrollTop || 0)}px`
+        const RDTop = `${this.RDSI * 48 + DRAGTOP - (this.scrollTop || 0)}px`
         if (!s.top || s.top === RDTop) s.top = `${e.clientY + 2}px`
         else s.marginTop = `${e.clientY + 2 - parseInt(s.top, 10)}px`
 
@@ -570,6 +591,68 @@ class Home extends Base {
     }
 
     this.dragEnd = () => {
+      document.removeEventListener('mousemove', this.dragGrid)
+      document.removeEventListener('mousemove', this.dragRow)
+      document.removeEventListener('mouseup', this.dragEnd)
+      if (!this.refDragedItems || this.RDSI < 0) return
+      const hover = this.state.select.hover
+      const shouldFire = this.shouldFire()
+      const dropHeader = this.dropHeader()
+      if (shouldFire || dropHeader) {
+        const type = this.isUSB ? 'nmove' : 'move'
+
+        const path = this.state.path
+        const dir = this.isUSB ? path.filter(p => p.type === 'directory').map(p => p.name).join('/') : path[path.length - 1].uuid
+        const drive = this.isUSB ? this.phyDrive.id : path[0].uuid
+
+        const dstEntry = this.state.entries[hover]
+        const dstDir = this.isUSB ? (dir ? [dir, dstEntry.name].join('/') : dstEntry.name) : dstEntry.uuid
+
+        const args = {
+          type,
+          policies: { dir: ['keep', null] },
+          entries: this.state.select.selected.map(i => this.state.entries[i].name),
+          src: { drive, dir },
+          dst: { drive, dir: dstDir }
+        }
+
+        this.xcopyData = {
+          type: 'move',
+          srcDir: path[path.length - 1],
+          dstDir: shouldFire ? this.state.entries[hover] : dropHeader,
+          entries: this.state.select.selected.map(i => this.state.entries[i])
+        }
+
+        this.ctx.props.apis.pureRequest('copy', args, this.finish)
+      }
+      const s = this.refDragedItems.style
+      s.transition = 'all 225ms cubic-bezier(.4,0,1,1)'
+
+      if (this.state.gridView) {
+        const { top, left } = this.getPosition(this.gridData, this.RDSI)
+        s.top = `${top}px`
+        s.left = `${left}px`
+        s.width = '180px'
+      } else {
+        s.top = `${this.RDSI * 48 + 176 - (this.scrollTop || 0)}px`
+        s.left = '75px'
+        s.width = '100%'
+      }
+      s.marginTop = '0px'
+      s.marginLeft = '0px'
+      s.opacity = 0
+
+      this.RDSI = -1
+      this.state.select.toggleDrag([])
+
+      setTimeout(() => {
+        s.display = 'none'
+        s.transition = 'all 225ms cubic-bezier(.4,0,1,1)'
+        s.transitionProperty = 'top, left, width, opacity'
+      }, shouldFire || dropHeader ? 0 : 225)
+    }
+
+    this.dragEnd2 = () => {
       document.removeEventListener('mousemove', this.dragGrid)
       document.removeEventListener('mousemove', this.dragRow)
       document.removeEventListener('mouseup', this.dragEnd)
@@ -791,33 +874,45 @@ class Home extends Base {
       <div
         ref={ref => (this.refDragedItems = ref)}
         style={{
-          position: 'fixed',
+          position: 'absolute',
           zIndex: 1000,
           top: 0,
           left: 0,
           marginLeft: 0,
           opacity: 0,
-          width: 108,
-          height: 108,
+          width: '100%',
+          height: 48,
           transition: 'all 225ms cubic-bezier(.4,0,1,1)',
           transitionProperty: 'top, left, width, opacity',
           display: 'none',
           alignItems: 'center',
-          backgroundColor: '#FFF',
-          boxShadow: '0 0 20px 0 rgba(23, 99, 207, 0.1)'
+          color: '#FFF',
+          boxShadow: '2px 2px 2px rgba(0,0,0,0.27)',
+          backgroundColor: this.groupPrimaryColor()
         }}
       >
+        <div style={{ flexGrow: 1, maxWidth: 48 }} />
         {/* file type may be: folder, public, directory, file, unsupported */}
-        <div style={{ width: 108, height: 108 }} className="flexCenter">
-          {
-            this.entry.type === 'directory'
-              ? <FolderIcon style={{ width: 64, height: 64 }} />
-              : this.entry.type === 'file'
-                ? renderFileIcon(this.entry.name, this.entry.metadata, 64)
-                : <div />
-          }
+        <div style={{ width: 36, height: 36, display: 'flex', alignItems: 'center', margin: 12 }}>
+          <div
+            style={{
+              backgroundColor: 'white',
+              width: 36,
+              height: 36,
+              borderRadius: 18,
+              overflow: 'hidden'
+            }}
+            className="flexCenter"
+          >
+            {
+              this.entry.type === 'directory'
+                ? <FolderIcon style={{ color: 'rgba(0,0,0,0.54)', width: 24, height: 24 }} />
+                : this.entry.type === 'file'
+                  ? renderFileIcon(this.entry.name, this.entry.metadata, 24)
+                  : <div />
+            }
+          </div>
         </div>
-        {/*
         <div
           style={{
             width: 114,
@@ -829,7 +924,6 @@ class Home extends Base {
         >
           { this.entry.name }
         </div>
-        */}
         {
           this.state.select.selected.length > 1 &&
             <div
@@ -841,7 +935,8 @@ class Home extends Base {
                 height: 24,
                 borderRadius: 12,
                 boxSizing: 'border-box',
-                backgroundColor: this.shouldFire() || this.dropHeader() ? '#31a0f5' : '#e63939',
+                backgroundColor: this.shouldFire() || this.dropHeader() ? this.groupPrimaryColor() : '#FF4081',
+                border: '1px solid rgba(0,0,0,0.18)',
                 color: '#FFF',
                 fontWeight: 500,
                 fontSize: 14,

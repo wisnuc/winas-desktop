@@ -80,10 +80,7 @@ class Row extends React.PureComponent {
     const onRowMouseDown = (e, i) => {
       e.stopPropagation()
       if (isSelected) this.props.rowDragStart(e, i)
-      else {
-        this.props.onRowClick(e, i)
-        this.props.selectStart(e)
-      }
+      else this.props.selectStart(e)
     }
 
     const onContentMouseDown = (e, i) => {

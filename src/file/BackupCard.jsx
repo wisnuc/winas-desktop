@@ -20,12 +20,6 @@ class BackupCard extends React.PureComponent {
       loading: this.hasDrive
     }
 
-    this.openSettings = (e, drive) => {
-      e.stopPropagation()
-      e.preventDefault()
-      console.log('this.openSettings', drive)
-    }
-
     this.handleClickAdd = (e, drive) => {
       e.stopPropagation()
       e.preventDefault()
@@ -62,6 +56,7 @@ class BackupCard extends React.PureComponent {
 
     this.refresh = (op) => {
       const driveUUID = this.props.drive.uuid
+      if (!op || !op.noloading) this.setState({ loading: true })
       this.props.apis.pureRequest('listNavDir', { driveUUID, dirUUID: driveUUID }, (err, res) => {
         if (err || !Array.isArray(res && res.entries)) console.error('refresh error', err, res)
         else {
@@ -137,6 +132,10 @@ class BackupCard extends React.PureComponent {
         this.setState({ drive })
       }
     }
+
+    ipcRenderer.on('updateBackupRoot', () => {
+      if (!this.props.index) this.refresh({ noloading: true })
+    })
   }
 
   componentDidMount () {
@@ -148,6 +147,7 @@ class BackupCard extends React.PureComponent {
 
   componentWillUnmount () {
     ipcRenderer.removeAllListeners('BACKUP_MSG')
+    ipcRenderer.removeAllListeners('updateBackupRoot')
   }
 
   calcTime (time) {
@@ -159,7 +159,7 @@ class BackupCard extends React.PureComponent {
   renderLoading () {
     return (
       <div style={{ height: '100%', width: '100%' }} className="flexCenter">
-        <CircularProgress size={64} thickness={3} />
+        <CircularProgress size={24} thickness={2} />
       </div>
     )
   }

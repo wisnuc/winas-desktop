@@ -26,8 +26,20 @@ class ChangeAvatar extends React.Component {
 
     this.handleUpload = (files) => {
       console.log('this.handleUpload', files)
-      const src = files[0].path
-      this.setState({ src, status: 'crop' }, this.resetImage)
+      const name = files[0].name
+      let ext = ''
+      try {
+        ext = name && name.split('.').slice(-1)[0].toUpperCase()
+      } catch (e) {
+        console.error('parse extension error', e)
+        ext = ''
+      }
+      if (!['PNG', 'JPG'].includes(ext)) {
+        this.props.openSnackBar(i18n.__('Not Image Error'))
+      } else {
+        const src = files[0].path
+        this.setState({ src, status: 'crop' }, this.resetImage)
+      }
     }
 
     this.dragPosition = { x: 0, y: 0, left: 0, top: 0 }
