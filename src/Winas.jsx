@@ -202,6 +202,21 @@ class Winas extends React.Component {
 
           {/* snackBar */}
           { this.renderSnackBar() }
+
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              zIndex: 100001,
+              overflow: 'hidden',
+              pointerEvents: 'none',
+              boxSizing: 'border-box',
+              border: '1px solid #eeeeee'
+            }}
+          />
         </div>
       </MuiThemeProvider>
     )
