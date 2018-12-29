@@ -153,7 +153,7 @@ class ErrorTree extends React.PureComponent {
       <div
         style={{
           width: expand ? 912 : 780,
-          height: expand ? 720 : 520,
+          height: expand ? 600 : 520,
           padding: '0px 24px 0px 24px',
           transition: 'all 225ms',
           overflow: 'hidden'
@@ -173,7 +173,7 @@ class ErrorTree extends React.PureComponent {
         <div style={{ fontSize: 14, marginBottom: 16, height: 20 }}> { i18n.__('Error Dialog Text') } </div>
 
         {/* list of errors */}
-        <div style={{ width: '100%', height: expand ? 574 : 374, overflowY: 'auto', border: 'solid #ccc 1px' }} >
+        <div style={{ width: '100%', height: expand ? 454 : 374, overflowY: 'auto', border: 'solid #ccc 1px' }} >
           {
             this.state.expand ? this.renderSource(this.props.errors)
               : this.props.errors.map((node, index) => this.renderRow(node, index.toString()))

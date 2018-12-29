@@ -17,9 +17,13 @@ class Disk extends React.PureComponent {
     }
   }
 
+  componentDidMount () {
+    this.reqDataAsync().then(({ space, stats }) => this.setState({ space, stats })).catch(e => this.setState({ error: e }))
+  }
+
   renderLoading () {
     return (
-      <div style={{ width: 260, height: 339, marginTop: -8, display: 'flex', alignItems: 'center', justifyContent: 'center' }} >
+      <div style={{ width: '100%', height: 200 }} className="flexCenter" >
         <CircularLoading />
       </div>
     )
@@ -27,17 +31,13 @@ class Disk extends React.PureComponent {
 
   renderFailed () {
     return (
-      <div style={{ width: 260, height: 339, marginTop: -8, display: 'flex', alignItems: 'center', justifyContent: 'center' }} >
+      <div style={{ width: '100%', height: 200 }} className="flexCenter" >
         { i18n.__('Error in Base Text') }
       </div>
     )
   }
 
-  componentDidMount () {
-    this.reqDataAsync().then(({ space, stats }) => this.setState({ space, stats })).catch(e => this.setState({ error: e }))
-  }
-
-  render () {
+  renderStorage () {
     const { space, stats, error } = this.state
     if (error) return this.renderFailed()
     if (!space || !stats) return this.renderLoading()
@@ -63,25 +63,8 @@ class Disk extends React.PureComponent {
       { color: '#00c853', progress: otherSize, title: i18n.__('Others'), size: other.totalSize }
     ]
 
-    const name = this.props.selectedDevice.mdev.name || 'Winas'
-
     return (
-      <div style={{ width: 260, height: 339, marginTop: -8, overflow: 'hidden' }}>
-        <div style={{ height: 56, position: 'relative', paddingLeft: 24, paddingTop: 16 }}>
-          <div style={{ height: 24, fontSize: 18, fontWeight: 500, color: 'rgba(0,0,0,.76)' }}>
-            { name }
-          </div>
-          <div style={{ height: 22, fontSize: 12, color: 'rgba(14,5,10,.29)' }}>
-            { i18n.__('Current Device') }
-          </div>
-          <div style={{ position: 'absolute', top: 16, right: 8 }}>
-            <FlatButton
-              primary
-              label={i18n.__('Change Device')}
-              onClick={this.props.deviceLogout}
-            />
-          </div>
-        </div>
+      <div>
         <div
           style={{
             height: 16,
@@ -131,6 +114,30 @@ class Disk extends React.PureComponent {
             ))
           }
         </div>
+      </div>
+    )
+  }
+
+  render () {
+    const name = this.props.selectedDevice.mdev.name || 'Winas'
+    return (
+      <div style={{ width: 260, height: 339, marginTop: -8, overflow: 'hidden' }}>
+        <div style={{ height: 56, position: 'relative', paddingLeft: 24, paddingTop: 16 }}>
+          <div style={{ height: 24, fontSize: 18, fontWeight: 500, color: 'rgba(0,0,0,.76)' }}>
+            { name }
+          </div>
+          <div style={{ height: 22, fontSize: 12, color: 'rgba(14,5,10,.29)' }}>
+            { i18n.__('Current Device') }
+          </div>
+          <div style={{ position: 'absolute', top: 16, right: 8 }}>
+            <FlatButton
+              primary
+              label={i18n.__('Change Device')}
+              onClick={this.props.deviceLogout}
+            />
+          </div>
+        </div>
+        { this.renderStorage() }
       </div>
     )
   }

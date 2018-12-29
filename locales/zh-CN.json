@@ -915,6 +915,7 @@
   "Folder Not Found": "文件夹未找到",
   "Search Failed": "搜索失败",
   "Open Folder Error": "打开文件夹失败",
+  "No Search Result Text": "无搜索结果",
 
   "==== file/FileDetail.jsx ====": "",
   "Parse Date Time %s %s %s %s %s": "%s-%s-%s %s:%s",

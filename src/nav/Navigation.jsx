@@ -62,7 +62,7 @@ class NavViews extends React.Component {
       const drives = this.props.apis.drives && this.props.apis.drives.data
       const drive = drives && drives.find(d => d.uuid === driveUUID)
       if (!drive) return
-      this.views[this.state.nav].clearSearch()
+      if (typeof this.views[this.state.nav].clearSearch === 'function') this.views[this.state.nav].clearSearch()
       this.setState({ searchMode: false, searchText: '', types: [] })
       if (drive.tag === 'home') this.navTo('home', { driveUUID, dirUUID })
       else if (drive.tag === 'built-in') this.navTo('public', { driveUUID, dirUUID })
