@@ -2,7 +2,9 @@ import React from 'react'
 import { CircularProgress } from 'material-ui'
 
 const CircularLoading = () => (
-  <CircularProgress thickness={2} size={24} />
+  <div style={{ width: 24, height: 24 }}>
+    <CircularProgress thickness={2} size={24} />
+  </div>
 )
 
 export default CircularLoading

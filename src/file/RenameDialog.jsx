@@ -56,6 +56,8 @@ class RenameDialog extends React.PureComponent {
 
   render () {
     const disabled = !!this.state.errorText || this.state.value.length === 0 || this.state.value === this.value
+    const { entries, select } = this.props
+    const isFile = entries[select.selected[0]].type === 'file'
     return (
       <div style={{ width: 280, padding: '24px 24px 0px 24px' }}>
         <div style={{ fontSize: 20 }}>
@@ -73,7 +75,7 @@ class RenameDialog extends React.PureComponent {
               if (tf && tf.input && !this.notFirst) {
                 const input = tf.input
                 input.focus()
-                const end = input.value.lastIndexOf('.')
+                const end = isFile ? input.value.lastIndexOf('.') : -1
                 input.selectionStart = 0
                 input.selectionEnd = end > -1 ? end : input.value.length
                 this.notFirst = true
