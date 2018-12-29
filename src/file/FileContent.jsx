@@ -127,7 +127,7 @@ class FileContent extends React.Component {
     /* handle files */
     this.drop = (e) => {
       if (this.props.isBackup) return
-      if (this.props.isMedia || this.props.showSearch) return
+      if (this.props.isMedia) return
       const files = [...e.dataTransfer.files].map(f => f.path)
       const isPhy = this.props.path[0].isPhy || this.props.path[0].isPhyRoot
       const dir = this.props.path
@@ -445,7 +445,7 @@ class FileContent extends React.Component {
           this.state.seqIndex > -1 &&
             <ContainerOverlay
               onRequestClose={() => this.setState({ preview: false })}
-              isMedia={this.props.isMedia || this.props.showSearch}
+              isMedia={this.props.isMedia}
               open={this.state.preview}
               items={this.props.entries}
               seqIndex={this.state.seqIndex}

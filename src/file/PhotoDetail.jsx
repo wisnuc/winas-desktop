@@ -254,7 +254,7 @@ class PhotoDetail extends React.Component {
     }
 
     return (
-      <CircularProgress size={64} thickness={5} />
+      <CircularProgress size={24} thickness={2} />
     )
   }
 

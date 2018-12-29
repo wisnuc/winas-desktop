@@ -47,7 +47,6 @@ class Home extends Base {
     const gridView = userConfig && userConfig[`gridViewIn${this.type}`]
 
     this.state = {
-      isMedia: false,
       gridView: !!gridView, // false: list, true: grid
       sortType: 'nameUp', // nameUp, nameDown, timeUp, timeDown, sizeUp, sizeDown, takenUp, takenDown
       select: this.select.state,
@@ -126,7 +125,7 @@ class Home extends Base {
     }
 
     this.downloadFire = ({ entries, path, downloadPath }) => {
-      if (this.state.showSearch) { // search result
+      if (this.isSearch) { // search result
         const entriesByDir = entries.sort((a, b) => a.pdir.localeCompare(b.pdir)).reduce((acc, cur) => {
           if (!acc[0]) acc.push([cur])
           else if (acc.slice(-1)[0][0].pdir === cur.pdir) acc.slice(-1)[0].push(cur)
@@ -1372,6 +1371,7 @@ class Home extends Base {
       <div style={{ position: 'relative', width: '100%', height: '100%' }} key={this.type}>
         <FileContent
           {...this.state}
+          isMedia={this.isSearch}
           pin={pin}
           apis={this.ctx.props.apis}
           showUsers={this.ctx.props.showUsers}

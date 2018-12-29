@@ -26,31 +26,6 @@ class Preview extends React.Component {
 
     this.toggleDialog = op => this.setState({ [op]: !this.state[op] })
 
-    this.openByLocal = () => {
-      if (this.props.item.size > 50 * 1024 * 1024) this.setState({ alert: true })
-      else {
-        const isPhy = this.props.path && (this.props.path[0].isPhyRoot || this.props.path[0].isUSB || this.props.path[0].isPhy)
-        let path = this.props.path.filter(p => p.type === 'directory').map(p => p.name).join('/')
-        if (path) path = `${path}/`
-
-        this.session = UUID.v4()
-        const driveUUID = isPhy ? this.props.path.slice(-1)[0].id : (this.props.item.pdrv || this.props.path[0].uuid)
-        const dirUUID = isPhy ? (this.props.item.fullpath || path) : (this.props.item.pdir || this.props.path.slice(-1)[0].uuid)
-        const entryUUID = this.props.item.uuid || this.session
-        const fileName = this.props.item.name
-
-        this.props.ipcRenderer.send('OPEN_FILE', {
-          driveUUID,
-          dirUUID,
-          entryUUID,
-          fileName,
-          hash: this.props.item.hash,
-          domain: isPhy ? 'phy' : 'drive'
-        })
-        this.props.close()
-      }
-    }
-
     this.downloadSuccess = (event, session, path) => {
       if (this.session === session) {
         clearTimeout(this.time)
@@ -65,26 +40,28 @@ class Preview extends React.Component {
       }
     }
 
-    this.startDownload = () => {
-      const isMedia = this.props.isMedia
-      const isPhy = this.props.path && (this.props.path[0].isPhyRoot || this.props.path[0].isUSB || this.props.path[0].isPhy)
-      let path = this.props.path.filter(p => p.type === 'directory').map(p => p.name).join('/')
-      if (path) path = `${path}/`
-
+    this.getArgs = () => {
       this.session = UUID.v4()
-      const driveUUID = isMedia ? 'media' : isPhy ? this.props.path[this.props.path.length - 1].id : this.props.path[0].uuid
-      const dirUUID = isMedia ? 'media' : isPhy ? path : this.props.path[this.props.path.length - 1].uuid
-      const entryUUID = isMedia ? this.props.item.hash : isPhy ? this.session : this.props.item.uuid
+      const session = this.session
+      const driveUUID = this.props.item.pdrv || this.props.path[0].uuid
+      const dirUUID = this.props.item.pdir || this.props.path.slice(-1)[0].uuid
+      const entryUUID = this.props.item.uuid || this.session
       const fileName = this.props.item.name
-      this.props.ipcRenderer.send('TEMP_DOWNLOADING', {
-        session: this.session,
-        driveUUID,
-        dirUUID,
-        entryUUID,
-        fileName,
-        hash: this.props.item.hash,
-        domain: isMedia ? 'media' : isPhy ? 'phy' : 'drive'
-      })
+      const hash = this.props.item.hash
+      const domain = this.props.isMedia ? 'media' : 'drive'
+      return ({ driveUUID, dirUUID, entryUUID, fileName, hash, domain, session })
+    }
+
+    this.openByLocal = () => {
+      if (this.props.item.size > 50 * 1024 * 1024) this.setState({ alert: true })
+      else {
+        this.props.ipcRenderer.send('OPEN_FILE', this.getArgs())
+        this.props.close()
+      }
+    }
+
+    this.startDownload = () => {
+      this.props.ipcRenderer.send('TEMP_DOWNLOADING', this.getArgs())
       this.props.ipcRenderer.on('TEMP_DOWNLOAD_SUCCESS', this.downloadSuccess)
     }
 
@@ -99,19 +76,7 @@ class Preview extends React.Component {
 
     /* download text file and read file */
     this.getTextData = () => {
-      this.session = UUID.v4()
-      const driveUUID = this.props.path[0].uuid
-      const dirUUID = this.props.path[this.props.path.length - 1].uuid
-      const entryUUID = this.props.item.uuid
-      const fileName = this.props.item.name
-      this.props.ipcRenderer.send('GET_TEXT_DATA', {
-        session: this.session,
-        driveUUID,
-        dirUUID,
-        entryUUID,
-        fileName,
-        hash: this.props.item.hash
-      })
+      this.props.ipcRenderer.send('GET_TEXT_DATA', this.getArgs())
       this.props.ipcRenderer.on('GET_TEXT_DATA_SUCCESS', this.getTextDataSuccess)
     }
 
