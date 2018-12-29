@@ -27,7 +27,7 @@ class Thumb extends React.PureComponent {
 
   componentDidMount () {
     this.session = UUID.v4()
-    this.props.ipcRenderer.send('mediaShowThumb', this.session, this.props.digest, 400, 400, this.props.station)
+    this.props.ipcRenderer.send('mediaShowThumb', this.session, this.props.digest, 200, 200, this.props.station)
     this.props.ipcRenderer.on('getThumbSuccess', this.updatePath)
     this.props.ipcRenderer.on('getThumbFailed', this.onFailed)
   }
@@ -35,7 +35,7 @@ class Thumb extends React.PureComponent {
   componentWillReceiveProps (nextProps) {
     if (nextProps.digest !== this.props.digest) {
       this.session = UUID.v4()
-      this.props.ipcRenderer.send('mediaShowThumb', this.session, nextProps.digest, 400, 400, this.props.station)
+      this.props.ipcRenderer.send('mediaShowThumb', this.session, nextProps.digest, 200, 200, this.props.station)
     }
   }
 
