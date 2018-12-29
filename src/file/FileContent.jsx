@@ -1,7 +1,6 @@
 import i18n from 'i18n'
 import React from 'react'
 import EventListener from 'react-event-listener'
-import ErrorIcon from 'material-ui/svg-icons/alert/error'
 import ContainerOverlay from './ContainerOverlay'
 import RenderListByRow from './RenderListByRow'
 import GridView from './GridView'
@@ -341,17 +340,21 @@ class FileContent extends React.Component {
   }
 
   renderNoFile () {
+    const isSearch = this.props.isSearch
     return (
       <div
         style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
         onContextMenu={e => this.onRowContextMenu(e, -1)}
         onDrop={this.drop}
       >
-        <img
-          width={320}
-          height={180}
-          src="./assets/images/pic_nofile.png"
-        />
+        <div>
+          <img
+            width={260}
+            height={160}
+            src={`./assets/images/${isSearch ? 'pic_no_search_result.png' : 'pic_nofile.png'}`}
+          />
+          <div style={{ textAlign: 'center' }}> { isSearch ? i18n.__('No Search Result Text') : i18n.__('Empty Folder Text') } </div>
+        </div>
       </div>
     )
   }
@@ -359,20 +362,13 @@ class FileContent extends React.Component {
   renderOffLine () {
     return (
       <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }} >
-        <div
-          style={{
-            width: 360,
-            height: 360,
-            borderRadius: '180px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexDirection: 'column',
-            backgroundColor: '#FAFAFA'
-          }}
-        >
-          <ErrorIcon style={{ height: 64, width: 64, color: 'rgba(0,0,0,0.27)' }} />
-          <div style={{ fontSize: 20, color: 'rgba(0,0,0,0.27)' }}> { i18n.__('Offline Text') } </div>
+        <div>
+          <img
+            width={260}
+            height={160}
+            src="./assets/images/pic_network_failed.png"
+          />
+          <div style={{ textAlign: 'center' }}> { i18n.__('Offline Text') } </div>
         </div>
       </div>
     )
@@ -380,7 +376,7 @@ class FileContent extends React.Component {
 
   renderLoading () {
     return (
-      <div style={{ width: '100%', height: 'calc(100% - 70px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} >
+      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }} >
         <CircularLoading />
       </div>
     )

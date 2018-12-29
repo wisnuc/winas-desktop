@@ -375,7 +375,7 @@ class TrsContainer extends React.Component {
     return (
       <div style={{ height: '100%', width: '100%', backgroundColor: '#FFF', position: 'relative', overflow: 'hidden' }}>
         <div style={{ height: 73 }}>
-          <div style={{ paddingLeft: 48, fontSize: 18, fontWeight: 500, height: 64, display: 'flex', alignItems: 'center' }}>
+          <div style={{ paddingLeft: 48, fontSize: 18, height: 64, display: 'flex', alignItems: 'center' }}>
             { i18n.__('Transfer') }
           </div>
         </div>

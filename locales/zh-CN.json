@@ -1273,6 +1273,8 @@
   "Confirm Logout To LANLogin Title": "切换设备",
   "Change Avatar" : "修改",
   "Bind Email" : "绑定邮箱",
+  "Withdraw Menu": "折叠菜单",
+  "Draw Menu": "展开菜单",
 
   "==== commom/HelpMsg.jsx ====": "",
   "Home Help Header": "私有盘",

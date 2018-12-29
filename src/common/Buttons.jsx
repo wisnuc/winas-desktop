@@ -480,13 +480,10 @@ export class LIButton extends React.PureComponent {
     const style = Object.assign({}, styles.largeButton, this.props.style)
     const iconStyle = Object.assign({ color: 'rgba(0,0,0,.54)', opacity: disabled ? 0.5 : 1 }, styles.largeIcon, this.props.iconStyle)
     const props = Object.assign({}, this.props)
-    delete props.tooltip
     delete props.iconStyle
     delete props.style
     return (
-      <Tooltip tooltip={this.props.tooltip} disabled={disabled} >
-        <IconButton style={style} iconStyle={iconStyle} {...props} />
-      </Tooltip>
+      <IconButton style={style} iconStyle={iconStyle} {...props} />
     )
   }
 }

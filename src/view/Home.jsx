@@ -1372,6 +1372,7 @@ class Home extends Base {
         <FileContent
           {...this.state}
           isMedia={this.isSearch}
+          isSearch={this.isSearch}
           pin={pin}
           apis={this.ctx.props.apis}
           showUsers={this.ctx.props.showUsers}

@@ -2,9 +2,7 @@ import i18n from 'i18n'
 import React from 'react'
 import Promise from 'bluebird'
 import { ipcRenderer } from 'electron'
-import { FlatButton, Menu, Popover } from 'material-ui'
-import LockIcon from 'material-ui/svg-icons/action/lock'
-import LockOpenIcon from 'material-ui/svg-icons/action/lock-open'
+import { FlatButton, Menu, Popover, IconButton } from 'material-ui'
 
 import Tasks from './Tasks'
 import Policy from './Policy'
@@ -22,11 +20,10 @@ import UpdateFirmDialog from '../settings/UpdateFirmDialog'
 import SearchButton from '../common/Search'
 
 import Fruitmix from '../common/fruitmix'
-import { SIButton } from '../common/Buttons'
 import prettySize from '../common/prettySize'
 import WindowAction from '../common/WindowAction'
 import DialogOverlay from '../common/PureDialog'
-import { BackIcon, WisnucLogo, DeviceIcon, ArrowDownIcon, CloseIcon, PDFIcon, WORDIcon, EXCELIcon, PPTIcon, PhotoIcon, VideoIcon, AudioIcon, ExitSearchIcon } from '../common/Svg'
+import { BackIcon, WisnucLogo, DeviceIcon, ArrowDownIcon, CloseIcon, PDFIcon, WORDIcon, EXCELIcon, PPTIcon, PhotoIcon, VideoIcon, AudioIcon, ExitSearchIcon, MenuIcon } from '../common/Svg'
 
 class NavViews extends React.Component {
   constructor (props) {
@@ -470,12 +467,14 @@ class NavViews extends React.Component {
       >
         <div style={{ height: 34, width: '100%', display: 'flex', alignItems: 'center' }}>
           <div style={{ height: 34, width: 34, margin: 4, display: this.state.searchMode ? 'none' : undefined }} className="flexCenter">
-            <SIButton
+            <IconButton
               onClick={() => this.setState({ pin: !this.state.pin })}
-              iconStyle={{ color: 'rgba(0,0,0,.26)' }}
+              iconStyle={{ color: 'rgba(0,0,0,.26)', width: 18, height: 18 }}
+              tooltip={!this.state.pin ? i18n.__('Draw Menu') : i18n.__('Withdraw Menu')}
+              tooltipPosition="bottom-right"
             >
-              { !this.state.pin ? <LockOpenIcon /> : <LockIcon /> }
-            </SIButton>
+              { !this.state.pin ? <MenuIcon /> : <MenuIcon /> }
+            </IconButton>
           </div>
           <div style={{ height: 34, width: this.state.pin ? 180 : 0, WebkitAppRegion: 'drag', transition }} />
         </div>

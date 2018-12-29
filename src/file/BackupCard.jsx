@@ -225,13 +225,12 @@ class BackupCard extends React.PureComponent {
           <ChevronRightIcon style={{ color: 'rgba(0,0,0,.38)', height: 16, width: 16 }} />
         </div>
 
-        <MenuItem disabled={!enabled} primaryText="." style={{ color: '#FFF' }} onClick={this.openPolicy} />
+        {/* <MenuItem disabled={!enabled} primaryText="." style={{ color: '#FFF' }} onClick={this.openPolicy} /> */}
         <div
           style={{
-            position: 'absolute',
             width: 'calc(100% - 40px)',
-            left: 24,
-            top: 168,
+            marginLeft: 24,
+            height: 48,
             color,
             display: 'flex',
             alignItems: 'center',
@@ -240,14 +239,17 @@ class BackupCard extends React.PureComponent {
         >
           { i18n.__('Backup Policy') }
           <div style={{ flexGrow: 1 }} />
-          <div style={{ color: 'rgba(0,0,0,.38)', marginRight: 16 }}>
+          <div style={{ color: 'rgba(0,0,0,.38)' }}>
             { i18n.__('Starting Once Dir Changed') }
           </div>
+          {/*
           <div>
             <ChevronRightIcon style={{ color: 'rgba(0,0,0,.38)', height: 16, width: 16 }} />
           </div>
+          */}
         </div>
 
+        {/*
         <div style={{ height: 48, display: 'flex', alignItems: 'center', marginBottom: 8, borderBottom: '1px solid #e8eaed' }}>
           <div style={{ marginLeft: 24, color }}> { i18n.__('Running Backup On Startup') } </div>
           <div style={{ flexGrow: 1 }} />
@@ -258,6 +260,7 @@ class BackupCard extends React.PureComponent {
             style={{ marginRight: 16, maxWidth: 'fit-content' }}
           />
         </div>
+        */}
         <div style={{ height: 8 }} />
         <div
           style={{
@@ -376,7 +379,7 @@ class BackupCard extends React.PureComponent {
             onRequestClose={() => this.setState({ openBS: false, showDirs: false })}
           >
             <Menu style={{ maxWidth: 306, fontSize: 14, marginTop: -8 }} >
-              <div style={{ position: 'relative', height: 354, width: 306, backgroundColor: '#FFF', overflow: 'hidden' }}>
+              <div style={{ position: 'relative', height: 306, width: 306, backgroundColor: '#FFF', overflow: 'hidden' }}>
                 { this.state.loading ? this.renderLoading() : this.renderSettings(showDirs, transition) }
                 { this.renderBackupDirs(showDirs, transition) }
                 { !!this.state.toggleEnableLoading && this.renderActionLoading(0) }

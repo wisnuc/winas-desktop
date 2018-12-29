@@ -4,7 +4,6 @@ import { teal500, pinkA200 } from 'material-ui/styles/colors'
 import NavigationMenu from 'material-ui/svg-icons/navigation/menu'
 import { IconButton } from 'material-ui'
 import EventEmitter from 'eventemitter3'
-import HelpMsg from '../common/HelpMsg'
 
 class Base extends EventEmitter {
   constructor (ctx) {
@@ -168,15 +167,14 @@ class Base extends EventEmitter {
       <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }} >
         <div>
           <img
-            alt=""
-            width={320}
-            height={180}
+            width={260}
+            height={160}
             src={`./assets/images/${isDirNotFound ? 'pic_nofile.png' : 'pic_network_failed.png'}`}
           />
-          <div style={{ marginTop: 30, height: 30, fontSize: 14, color: '#31a0f5' }} className="flexCenter" >
-            { isDirNotFound ? i18n.__('Folder Not Found') : i18n.__('Error in Base Text') }
+          <div style={{ textAlign: 'center' }} >
+            { !window.navigator.onLine ? i18n.__('Offline Text')
+              : isDirNotFound ? i18n.__('Folder Not Found') : i18n.__('Error in Base Text') }
           </div>
-          <div style={{ height: 70 }} />
         </div>
       </div>
     )
