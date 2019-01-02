@@ -29,7 +29,10 @@ import ConfirmDialog from '../common/ConfirmDialog'
 ipcRenderer.setMaxListeners(1000)
 
 /* Drag Item's Coordinate */
-const DRAGTOP = 270
+const transition = 'all 225ms cubic-bezier(.4,0,1,1)'
+const DRAGTOP = 163
+const DRAGLEFT = 116
+const DRAGWIDTH = 'calc(100% - 140px)'
 
 class Home extends Base {
   constructor (ctx) {
@@ -550,10 +553,11 @@ class Home extends Base {
     this.setGridData = data => (this.gridData = data)
 
     this.getPosition = (gridData, index) => {
-      const { mapData, indexHeightSum, scrollTop } = gridData
+      const { mapData, indexHeightSum, scrollTop, cellWidth } = gridData
+      console.log('gridData', gridData)
       const lineNum = mapData[index]
-      const top = indexHeightSum[lineNum] + 104 - scrollTop
-      const left = (index - mapData.findIndex(i => i === lineNum)) * 200 + 123
+      const top = indexHeightSum[lineNum] + 48 - scrollTop
+      const left = (index - mapData.findIndex(i => i === lineNum)) * (cellWidth + 16) + DRAGLEFT + 16
       return ({ top, left })
     }
 
@@ -569,32 +573,12 @@ class Home extends Base {
         s.width = '180px'
         s.opacity = 1
 
-        const RDTop = `${this.RDSI * 48 + 176 - (this.scrollTop || 0)}px`
-        if (!s.top || s.top === RDTop) s.top = `${e.clientY + 2}px`
-        else s.marginTop = `${e.clientY + 2 - parseInt(s.top, 10)}px`
-
-        if (!s.left || s.left === '75px') s.left = `${e.clientX + 2}px`
-        else s.marginLeft = `${e.clientX + 2 - parseInt(s.left, 10)}px`
-      }
-      if (!this.entry.type) this.forceUpdate()
-    }
-
-    this.dragRow2 = (e) => {
-      if (this.isBackup) return
-      const s = this.refDragedItems.style
-      if (!this.state.select.selected.includes(this.RDSI)) {
-        if (this.RDSI > -1) this.state.select.addByArray([this.RDSI], (new Date()).getTime())
-      } else if (s.display !== 'flex') {
-        s.display = 'flex'
-      } else {
-        s.width = '180px'
-        s.opacity = 1
-
         const RDTop = `${this.RDSI * 48 + DRAGTOP - (this.scrollTop || 0)}px`
         if (!s.top || s.top === RDTop) s.top = `${e.clientY + 2}px`
         else s.marginTop = `${e.clientY + 2 - parseInt(s.top, 10)}px`
 
-        if (!s.left) s.left = `${e.clientX + 2}px`
+        const RDLeft = `${DRAGLEFT + (this.pin ? 136 : 0)}px`
+        if (!s.left || s.left === RDLeft) s.left = `${e.clientX + 2}px`
         else s.marginLeft = `${e.clientX + 2 - parseInt(s.left, 10)}px`
       }
       if (!this.entry.type) this.forceUpdate()
@@ -616,7 +600,7 @@ class Home extends Base {
         const drive = this.isUSB ? this.phyDrive.id : path[0].uuid
 
         const dstEntry = this.state.entries[hover]
-        const dstDir = this.isUSB ? (dir ? [dir, dstEntry.name].join('/') : dstEntry.name) : dstEntry.uuid
+        const dstDir = this.isUSB ? (dir ? [dir, dstEntry.name].join('/') : dstEntry.name) : shouldFire ? dstEntry.uuid : dropHeader.uuid
 
         const args = {
           type,
@@ -636,7 +620,7 @@ class Home extends Base {
         this.ctx.props.apis.pureRequest('copy', args, this.finish)
       }
       const s = this.refDragedItems.style
-      s.transition = 'all 225ms cubic-bezier(.4,0,1,1)'
+      s.transition = transition
 
       if (this.state.gridView) {
         const { top, left } = this.getPosition(this.gridData, this.RDSI)
@@ -644,9 +628,9 @@ class Home extends Base {
         s.left = `${left}px`
         s.width = '180px'
       } else {
-        s.top = `${this.RDSI * 48 + 176 - (this.scrollTop || 0)}px`
-        s.left = '75px'
-        s.width = '100%'
+        s.top = `${this.RDSI * 48 + DRAGTOP - (this.scrollTop || 0)}px`
+        s.left = `${DRAGLEFT + (this.pin ? 136 : 0)}px`
+        s.width = DRAGWIDTH
       }
       s.marginTop = '0px'
       s.marginLeft = '0px'
@@ -657,74 +641,13 @@ class Home extends Base {
 
       setTimeout(() => {
         s.display = 'none'
-        s.transition = 'all 225ms cubic-bezier(.4,0,1,1)'
-        s.transitionProperty = 'top, left, width, opacity'
-      }, shouldFire || dropHeader ? 0 : 225)
-    }
-
-    this.dragEnd2 = () => {
-      document.removeEventListener('mousemove', this.dragGrid)
-      document.removeEventListener('mousemove', this.dragRow)
-      document.removeEventListener('mouseup', this.dragEnd)
-      if (!this.refDragedItems || this.RDSI < 0) return
-      const hover = this.state.select.hover
-      const shouldFire = this.shouldFire()
-      const dropHeader = this.dropHeader()
-      if (shouldFire || dropHeader) {
-        const type = this.isUSB ? 'nmove' : 'move'
-
-        const path = this.state.path
-        const dir = this.isUSB ? path.filter(p => p.type === 'directory').map(p => p.name).join('/') : path[path.length - 1].uuid
-        const drive = this.isUSB ? this.phyDrive.id : path[0].uuid
-
-        const dstEntry = this.state.entries[hover]
-        const dstDir = this.isUSB ? (dir ? [dir, dstEntry.name].join('/') : dstEntry.name) : dstEntry.uuid
-
-        const args = {
-          type,
-          policies: { dir: ['keep', null] },
-          entries: this.state.select.selected.map(i => this.state.entries[i].name),
-          src: { drive, dir },
-          dst: { drive, dir: dstDir }
-        }
-
-        this.xcopyData = {
-          type: 'move',
-          srcDir: path[path.length - 1],
-          dstDir: shouldFire ? this.state.entries[hover] : dropHeader,
-          entries: this.state.select.selected.map(i => this.state.entries[i])
-        }
-
-        this.ctx.props.apis.pureRequest('copy', args, this.finish)
-      }
-      const s = this.refDragedItems.style
-      s.transition = 'all 225ms cubic-bezier(.4,0,1,1)'
-
-      if (this.state.gridView) {
-        const { top, left } = this.getPosition(this.gridData, this.RDSI)
-        s.top = `${top}px`
-        s.left = `${left}px`
-        s.width = '108px'
-      } else {
-        s.top = `${this.RDSI * 40 + DRAGTOP - (this.scrollTop || 0)}px`
-        s.width = '108px'
-      }
-      s.marginTop = '0px'
-      s.marginLeft = '0px'
-      s.opacity = 0
-
-      this.RDSI = -1
-      this.state.select.toggleDrag([])
-
-      setTimeout(() => {
-        s.display = 'none'
-        s.transition = 'all 225ms cubic-bezier(.4,0,1,1)'
+        s.transition = transition
         s.transitionProperty = 'top, left, width, opacity'
       }, shouldFire || dropHeader ? 0 : 225)
     }
 
     this.rowDragStart = (event, index) => {
-      if (this.isBackup) return
+      if (this.isBackup || this.isSearch) return
       /* only left click */
       if (event.nativeEvent.button !== 0) return
       /* not public */
@@ -734,8 +657,8 @@ class Home extends Base {
       this.state.select.toggleDrag(selected.includes(this.RDSI) ? selected : [this.RDSI])
 
       /* show drag item */
-      this.refDragedItems.style.top = `${this.RDSI * 40 + DRAGTOP - (this.scrollTop || 0)}px`
-      this.refDragedItems.style.left = `${event.clientX}px`
+      this.refDragedItems.style.top = `${this.RDSI * 48 + DRAGTOP - (this.scrollTop || 0)}px`
+      this.refDragedItems.style.left = `${DRAGLEFT + (this.pin ? 136 : 0)}px`
 
       document.addEventListener('mousemove', this.dragRow)
       document.addEventListener('mouseup', this.dragEnd, true)
@@ -780,7 +703,7 @@ class Home extends Base {
       const { top, left } = this.getPosition(this.gridData, this.RDSI)
       this.refDragedItems.style.top = `${top}px`
       this.refDragedItems.style.left = `${left}px`
-      this.refDragedItems.style.width = '108px'
+      this.refDragedItems.style.width = '180px'
 
       document.addEventListener('mousemove', this.dragGrid)
       document.addEventListener('mouseup', this.dragEnd, true)
@@ -884,15 +807,15 @@ class Home extends Base {
       <div
         ref={ref => (this.refDragedItems = ref)}
         style={{
-          position: 'absolute',
+          position: 'fixed',
           zIndex: 1000,
           top: 0,
-          left: 0,
+          left: DRAGLEFT + (this.pin ? 136 : 0),
           marginLeft: 0,
           opacity: 0,
-          width: '100%',
+          width: DRAGWIDTH,
           height: 48,
-          transition: 'all 225ms cubic-bezier(.4,0,1,1)',
+          transition,
           transitionProperty: 'top, left, width, opacity',
           display: 'none',
           alignItems: 'center',
@@ -901,7 +824,7 @@ class Home extends Base {
           backgroundColor: this.groupPrimaryColor()
         }}
       >
-        <div style={{ flexGrow: 1, maxWidth: 48 }} />
+        <div style={{ width: 4 }} />
         {/* file type may be: folder, public, directory, file, unsupported */}
         <div style={{ width: 36, height: 36, display: 'flex', alignItems: 'center', margin: 12 }}>
           <div
@@ -916,7 +839,7 @@ class Home extends Base {
           >
             {
               this.entry.type === 'directory'
-                ? <FolderIcon style={{ color: 'rgba(0,0,0,0.54)', width: 24, height: 24 }} />
+                ? <FolderIcon style={{ color: '#f9a825', width: 24, height: 24 }} />
                 : this.entry.type === 'file'
                   ? renderFileIcon(this.entry.name, this.entry.metadata, 24)
                   : <div />
@@ -1367,6 +1290,7 @@ class Home extends Base {
   }
 
   renderContent ({ openSnackBar, navTo, pin }) {
+    this.pin = pin
     return (
       <div style={{ position: 'relative', width: '100%', height: '100%' }} key={this.type}>
         <FileContent
