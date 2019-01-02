@@ -457,7 +457,7 @@ class BackupCard extends React.PureComponent {
               {
                 !!this.state.confirmDelDir && (
                   <div>
-                    <div style={{ height: 48, display: 'flex', alignItems: 'center' }} className="title">
+                    <div style={{ height: 48, display: 'flex', alignItems: 'center', color: '#f44336' }} className="title">
                       {i18n.__('Confirm Delete Backup Dir Title %s', this.state.confirmDelDir && this.state.confirmDelDir.name)}
                     </div>
                     <div style={{ height: 24 }} />

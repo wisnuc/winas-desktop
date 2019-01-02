@@ -151,13 +151,20 @@ class WisnucLogin extends React.Component {
 
   renderConfirmDelUser () {
     return (
-      <div style={{ width: 280, height: 240, zIndex: 100 }} className="paper" >
+      <div
+        style={{
+          width: 328,
+          zIndex: 100,
+          boxShadow: '0px 9px 13.2px 0.8px rgba(0, 0, 0, 0.24), 0px 4px 18.6px 0.4px rgba(0, 0, 0, 0.16)'
+        }}
+      >
         <div
           style={{
-            height: 72,
+            height: 48,
             display: 'flex',
             alignItems: 'center',
             paddingLeft: 24,
+            paddingTop: 16,
             color: '#f44336',
             fontSize: 18,
             fontWeight: 500
@@ -165,7 +172,7 @@ class WisnucLogin extends React.Component {
         >
           { i18n.__('Remove Cached Account Title') }
         </div>
-        <div style={{ padding: 24, width: 232, height: 68 }}>
+        <div style={{ padding: '16px 24px 24px 24px', width: 280, color: 'rgba(0,0,0,.76)' }}>
           { i18n.__('Remove Cached Account Text %s', this.state.confirmDelUser.pn) }
         </div>
         <div style={{ display: 'flex', alignItems: 'center', padding: 8, marginRight: -8 }}>
