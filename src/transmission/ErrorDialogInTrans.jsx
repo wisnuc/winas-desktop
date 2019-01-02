@@ -7,44 +7,8 @@ import CloseIcon from 'material-ui/svg-icons/navigation/close'
 import EditorInsertDriveFile from 'material-ui/svg-icons/editor/insert-drive-file'
 import FileFolder from 'material-ui/svg-icons/file/folder'
 import JSONTree from 'react-json-tree'
+import convert from './convertCode'
 import FlatButton from '../common/FlatButton'
-
-const convert = (code) => {
-  switch (code) {
-    case 'EEXIST':
-      return i18n.__('EEXIST')
-    case 'ECONNRESET':
-      return i18n.__('ECONNRESET')
-    case 'ECONNREFUSED':
-      return i18n.__('ECONNREFUSED')
-    case 'ECONNEND':
-      return i18n.__('ECONNEND')
-    case 'ENOENT':
-      return i18n.__('ENOENT')
-    case 'EPERM':
-      return i18n.__('EPERM')
-    case 'EACCES':
-      return i18n.__('EACCES')
-    case 'ENOSPC':
-      return i18n.__('ENOSPC')
-    case 'ENXIO':
-      return i18n.__('ENXIO')
-    case 'ESHA256MISMATCH':
-      return i18n.__('ESHA256MISMATCH')
-    case 'EOVERSIZE':
-      return i18n.__('EOVERSIZE')
-    case 'EUNDERSIZE':
-      return i18n.__('EUNDERSIZE')
-    case 'ENAME':
-      return i18n.__('ENAME')
-    case 'ETYPE':
-      return i18n.__('ETYPE')
-    case 'EIGNORE':
-      return i18n.__('EIGNORE')
-    default:
-      return code || i18n.__('Unknown Error')
-  }
-}
 
 const translateStatus = (statusCode) => {
   if (statusCode >= 500) return i18n.__('Internal Server Error')

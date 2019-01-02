@@ -109,12 +109,14 @@ class Row extends React.Component {
                           primaryText={i18n.__('Date Modified')}
                           onClick={() => this.handleChange(i18n.__('Date Modified'))}
                         />
+                        {/*
                         <MenuItem
                           style={{ fontSize: 13 }}
                           leftIcon={this.state.type === i18n.__('Date Taken') ? <CheckedIcon /> : <div />}
                           primaryText={i18n.__('Date Taken')}
                           onClick={() => this.handleChange(i18n.__('Date Taken'))}
                         />
+                        */}
                         <MenuItem
                           style={{ fontSize: 13 }}
                           leftIcon={this.state.type === i18n.__('Size') ? <CheckedIcon /> : <div />}

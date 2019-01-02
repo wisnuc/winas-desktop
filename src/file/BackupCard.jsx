@@ -503,8 +503,17 @@ class BackupCard extends React.PureComponent {
                 { disabled && i18n.__('Backup Disabled Text') }
               </div>
             </div>
+          ) : this.state.status === 'Failed' ? (
+            <div style={{ fontSize: 12, fontWeight: 500, color: '#FFF' }} key="Failed">
+              <div style={{ height: 16, display: 'flex', alignItems: 'center' }}>
+                { !disabled && i18n.__('Current Backup Not Finished') }
+              </div>
+              <div style={{ width: '100%', marginTop: 56 }} className="flexCenter">
+                { disabled && i18n.__('Backup Disabled Text') }
+              </div>
+            </div>
           ) : (
-            <div style={{ fontSize: 12, fontWeight: 500, color: '#FFF' }} key="Running">
+            <div style={{ fontSize: 12, fontWeight: 500, color: '#FFF' }} key="Working">
               <div style={{ marginTop: 16, height: 16, display: 'flex', alignItems: 'center' }} >
                 { this.state.restTime }
               </div>

@@ -5,6 +5,7 @@ import Home from './Home'
 import sortByType from '../common/sort'
 import { ipcReq } from '../common/ipcReq'
 import { LIButton } from '../common/Buttons'
+import BackupNotification from '../file/BackupNotification'
 import { RefreshAltIcon, BackupIcon, ListIcon, GridIcon, EyeOffIcon, EyeOpenIcon } from '../common/Svg'
 
 class Backup extends Home {
@@ -237,7 +238,7 @@ class Backup extends Home {
   }
 
   renderToolBar ({ style }) {
-    const { inRoot, path } = this.state
+    const { path } = this.state
     const color = 'rgba(0,0,0,.54)'
     const breadCrumbStyle = { height: 40, fontSize: 18, color, display: 'flex', alignItems: 'center', flexWrap: 'wrap' }
     const iconStyle = { color, width: 24, height: 24 }
@@ -246,12 +247,14 @@ class Backup extends Home {
         { this.renderBreadCrumbItem({ style: breadCrumbStyle }) }
         <div style={{ flexGrow: 1 }} />
 
+        { path && path.length === 2 && <BackupNotification {...this.ctx.props} /> }
+
         <LIButton onClick={() => this.refresh()} tooltip={i18n.__('Refresh')} >
           <RefreshAltIcon color={color} />
         </LIButton>
 
         {
-          !inRoot &&
+          path && path.length > 2 &&
             <LIButton
               onClick={this.toggleShowArchive}
               tooltip={this.state.showArchive ? i18n.__('Hide Archived') : i18n.__('Show Archived')}
