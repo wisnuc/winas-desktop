@@ -34,8 +34,10 @@ const convert = (code) => {
       return i18n.__('EIGNORE')
     case 'ESKIP':
       return i18n.__('EIGNORE')
-    case 'EREMOTEDEL':
-      return i18n.__('EREMOTEDEL')
+    case 'EDELFILE':
+      return i18n.__('EDELFILE')
+    case 'EDELDIR':
+      return i18n.__('EDELDIR')
     case 'ENOBDIR':
       return i18n.__('ENOBDIR')
     default:

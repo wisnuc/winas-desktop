@@ -247,7 +247,7 @@ class Backup extends Home {
         { this.renderBreadCrumbItem({ style: breadCrumbStyle }) }
         <div style={{ flexGrow: 1 }} />
 
-        { path && path.length === 2 && <BackupNotification {...this.ctx.props} /> }
+        { path && path.length <= 2 && <BackupNotification {...this.ctx.props} /> }
 
         <LIButton onClick={() => this.refresh()} tooltip={i18n.__('Refresh')} >
           <RefreshAltIcon color={color} />
