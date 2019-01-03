@@ -9,5 +9,5 @@ export default (props) => {
   let labelStyle = { verticalAlign: undefined, fontWeight: 500, fontSize: 15, paddingLeft: 8, paddingRight: 8 }
   if (props.labelStyle) labelStyle = Object.assign({}, labelStyle, props.labelStyle)
 
-  return <FlatButton {...props} style={style} labelStyle={labelStyle} hoverColor="rgba(0,0,0,.05)" rippleColor="rgba(0,0,0,.2)" />
+  return <FlatButton {...props} style={style} labelStyle={labelStyle} hoverColor="rgba(0,0,0,.05)" rippleColor="rgba(0,0,0,.2)" tabIndex={-1} />
 }

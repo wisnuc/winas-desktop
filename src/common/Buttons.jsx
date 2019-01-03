@@ -483,7 +483,7 @@ export class LIButton extends React.PureComponent {
     delete props.iconStyle
     delete props.style
     return (
-      <IconButton style={style} iconStyle={iconStyle} {...props} />
+      <IconButton style={style} iconStyle={iconStyle} {...props} tabIndex={-1} />
     )
   }
 }
@@ -500,7 +500,7 @@ export class SIButton extends React.PureComponent {
     delete props.style
     return (
       <Tooltip tooltip={this.props.tooltip} disabled={disabled} >
-        <IconButton style={style} iconStyle={iconStyle} {...props} />
+        <IconButton style={style} iconStyle={iconStyle} {...props} tabIndex={-1} />
       </Tooltip>
     )
   }

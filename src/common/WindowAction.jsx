@@ -33,6 +33,12 @@ class WindowAction extends React.PureComponent {
 
   render () {
     const isMaximized = remote.getCurrentWindow().isMaximized()
+    const buttonProps = {
+      tabIndex: -1,
+      style: styles.small,
+      iconStyle: styles.smallIcon,
+      hoveredStyle: { opacity: 1 }
+    }
     return (
       <div
         style={{
@@ -46,18 +52,18 @@ class WindowAction extends React.PureComponent {
         }}
       >
         <EventListener target="window" onResize={this.handleResize} />
-        <IconButton style={styles.small} iconStyle={styles.smallIcon} onClick={this.minimize} hoveredStyle={{ opacity: 1 }}>
+        <IconButton {...buttonProps} onClick={this.minimize} >
           <WinMiniIcon />
         </IconButton>
         <div style={{ width: 12 }} />
         {
           !this.props.noResize &&
-            <IconButton style={styles.small} iconStyle={styles.smallIcon} onClick={this.toggleMax} hoveredStyle={{ opacity: 1 }}>
+            <IconButton {...buttonProps} onClick={this.toggleMax} >
               { !isMaximized ? <WinFullIcon /> : <WinNormalIcon /> }
             </IconButton>
         }
         { !this.props.noResize && <div style={{ width: 12 }} /> }
-        <IconButton style={styles.small} iconStyle={styles.smallIcon} onClick={this.hide} hoveredStyle={{ opacity: 1 }}>
+        <IconButton {...buttonProps} onClick={this.hide} >
           <CloseIcon />
         </IconButton>
       </div>
