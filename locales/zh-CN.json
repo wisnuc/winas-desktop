@@ -629,6 +629,7 @@
   "Delete Items Text %s": "是否删除选中的%s个项目？",
   "Delete File Text": "是否删除选中的文件？",
   "Delete Folder Text": "是否删除选中的文件夹？",
+  "Delete Backup Text" : "电脑或手机上的源文件不会被删除，相同的文件或文件夹下次不会再备份，",
   "File Size %s": "文件大小：%s",
   "File Count %s, Size: %s": "共%s个文件，%s",
   "Content %s %s, Size: %s": "共%s个文件夹，%s个文件，%s",

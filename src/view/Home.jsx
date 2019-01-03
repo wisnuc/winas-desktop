@@ -13,7 +13,6 @@ import FileContent from '../file/FileContent'
 import NewFolderDialog from '../file/NewFolderDialog'
 import MoveDialog from '../file/MoveDialog'
 import RenameDialog from '../file/RenameDialog'
-import BackupNotification from '../file/BackupNotification'
 import ContextMenu from '../common/ContextMenu'
 import DialogOverlay from '../common/PureDialog'
 import MenuItem from '../common/MenuItem'
@@ -1032,30 +1031,15 @@ class Home extends Base {
   }
 
   deleteText () {
-    let text = ''
     const entries = this.state.entries
     const selected = this.state.select.selected
     if (!entries || !Array.isArray(selected) || !selected.length) return ''
     const isMultiple = selected.length > 1
     const isFile = entries[selected[0]].type === 'file'
-    switch (this.type) {
-      case 'photos':
-        text = i18n.__('Delete Photos Text')
-        break
-      case 'music':
-        text = i18n.__('Delete Music Text')
-        break
-      case 'docs':
-        text = i18n.__('Delete Docs Text')
-        break
-      case 'videos':
-        text = i18n.__('Delete Videos Text')
-        break
-      default:
-        text = isMultiple ? i18n.__('Delete Items Text %s', selected.length)
-          : isFile ? i18n.__('Delete File Text') : i18n.__('Delete Folder Text')
-        break
-    }
+    let text = isMultiple ? i18n.__('Delete Items Text %s', selected.length)
+      : isFile ? i18n.__('Delete File Text') : i18n.__('Delete Folder Text')
+
+    if (this.isBackup) text = `${i18n.__('Delete Backup Text')}${text}`
     return text
   }
 

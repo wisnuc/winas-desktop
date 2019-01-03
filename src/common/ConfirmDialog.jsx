@@ -36,7 +36,6 @@ class ConfirmDialog extends React.PureComponent {
                   padding: '0 20px',
                   display: 'flex',
                   alignItems: 'center',
-                  lineHeight: '30px',
                   color: 'rgba(0,0,0,.54)'
                 }}
               >
