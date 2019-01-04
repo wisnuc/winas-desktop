@@ -177,7 +177,7 @@ class RunningTask extends React.Component {
               backgroundColor: pBgColor
             }}
           >
-            <div style={{ backgroundColor: pColor, width: `${pWidth}%` }} />
+            <div style={{ backgroundColor: pColor, width: `${pWidth}%`, borderRadius: 3 }} />
           </div>
           <div style={{ width: '100%', display: 'flex', alignItems: 'center', height: 24 }}>
             { this.formatSeconds(task.restTime) }

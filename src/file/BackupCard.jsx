@@ -1,7 +1,7 @@
 import i18n from 'i18n'
 import React from 'react'
 import { ipcRenderer } from 'electron'
-import { Menu, MenuItem, Toggle, Popover, Checkbox, Dialog, CircularProgress, RaisedButton, LinearProgress } from 'material-ui'
+import { Menu, MenuItem, Toggle, Popover, Dialog, CircularProgress, RaisedButton, LinearProgress } from 'material-ui'
 
 import { ipcReq } from '../common/ipcReq'
 import FlatButton from '../common/FlatButton'
@@ -260,7 +260,6 @@ class BackupCard extends React.PureComponent {
             style={{ marginRight: 16, maxWidth: 'fit-content' }}
           />
         </div>
-        */}
         <div style={{ height: 8 }} />
         <div
           style={{
@@ -275,7 +274,7 @@ class BackupCard extends React.PureComponent {
           { i18n.__('Notification') }
         </div>
         <div style={{ height: 48, display: 'flex', alignItems: 'center' }}>
-          <div style={{ marginLeft: 24, color }}> { i18n.__('Enable Remove Backup Warnings') } </div>
+          <div style={{ marginLeft: 24, color }}> { i18n.__('Show Backup Warnings') } </div>
           <div style={{ flexGrow: 1 }} />
           <Checkbox
             defaultChecked
@@ -283,6 +282,7 @@ class BackupCard extends React.PureComponent {
             style={{ maxWidth: 'fit-content' }}
           />
         </div>
+        */}
       </div>
     )
   }
@@ -379,7 +379,7 @@ class BackupCard extends React.PureComponent {
             onRequestClose={() => this.setState({ openBS: false, showDirs: false })}
           >
             <Menu style={{ maxWidth: 306, fontSize: 14, marginTop: -8 }} >
-              <div style={{ position: 'relative', height: 306, width: 306, backgroundColor: '#FFF', overflow: 'hidden' }}>
+              <div style={{ position: 'relative', height: 210, width: 306, backgroundColor: '#FFF', overflow: 'hidden' }}>
                 { this.state.loading ? this.renderLoading() : this.renderSettings(showDirs, transition) }
                 { this.renderBackupDirs(showDirs, transition) }
                 { !!this.state.toggleEnableLoading && this.renderActionLoading(0) }

@@ -668,7 +668,7 @@
   "Running Backup On Startup": "系统启动时自动开启备份",
   "Enable": "开启",
   "Notification": "通知",
-  "Enable Remove Backup Warnings" : "当您从备份中移除内容时显示警告",
+  "Show Backup Warnings" : "显示未能自动备份的项目",
   "Local Path": "路径",
   "Remove Dir And Backup Data" : "移除此文件夹与备份内容",
   "Confirm Delete Backup Dir Title %s": "移除“%s”？",
