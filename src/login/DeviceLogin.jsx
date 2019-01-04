@@ -21,7 +21,7 @@ class DeviceLogin extends React.Component {
       const { cdev, list } = this.props
       if (!list || !list.length) {
         this.setState({ status: 'noDevice' })
-      } else if (!cdev) {
+      } else if (!cdev || !cdev.online) {
         this.setState({ status: 'error' })
       } else {
         const dev = Object.assign(
@@ -214,6 +214,7 @@ class DeviceLogin extends React.Component {
   }
 
   deviceStatus () {
+    if (this.props.cdev && !this.props.cdev.online) return i18n.__('Device Offline')
     if (this.state.status === 'error') return i18n.__('Login Error')
 
     switch (this.systemStatus()) {

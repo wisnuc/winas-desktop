@@ -1143,6 +1143,7 @@
 
   "==== login/DeviceLogin.jsx====": "",
   "Offline": "远程",
+  "Device Offline": "设备离线",
   "Ready": "正常",
   "Login Error": "登录失败",
   "Logging Error": "登录失败",

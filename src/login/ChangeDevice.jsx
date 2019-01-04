@@ -7,7 +7,7 @@ import ScrollBar from '../common/ScrollBar'
 import { LIButton } from '../common/Buttons'
 import { BackwardIcon } from '../common/Svg'
 
-class DeviceLogin extends React.Component {
+class ChangeDevice extends React.Component {
   constructor (props) {
     super(props)
 
@@ -67,4 +67,4 @@ class DeviceLogin extends React.Component {
   }
 }
 
-export default DeviceLogin
+export default ChangeDevice

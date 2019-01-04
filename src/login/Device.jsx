@@ -44,14 +44,6 @@ class Device extends React.Component {
     return (this.device && this.device.systemStatus()) || 'probing'
   }
 
-  onlineStatus () {
-    if (!this.props.cdev) return null
-    if (this.props.cdev.onlineStatus !== 'online') return i18n.__('Offline Mode')
-    if (this.systemStatus() === 'offline') return i18n.__('Remote Mode')
-    if (this.systemStatus() === 'probing') return null
-    return i18n.__('Online and LAN Mode')
-  }
-
   renderIsOwner () {
     if (!this.props.cdev) return null
     const { inviteStatus, accountStatus, type } = this.props.cdev
@@ -101,6 +93,7 @@ class Device extends React.Component {
   }
 
   renderStatus () {
+    if (this.props.cdev && !this.props.cdev.online) return i18n.__('Device Offline')
     const st = this.systemStatus()
     let text = st
     switch (st) {
@@ -117,6 +110,10 @@ class Device extends React.Component {
         else text = i18n.__('Need Bind Volume')
         break
 
+      case 'offline':
+        text = i18n.__('Remote Mode') // local offline, remote
+        break
+
       case 'ready':
         if (this.props.type === 'LANTOBIND') text = i18n.__('Already Bound')
         else if (['CHANGEDEVICE', 'LANTOLOGIN'].includes(this.props.type)) {
@@ -125,16 +122,8 @@ class Device extends React.Component {
         } else text = ''
         break
 
-      case 'offline':
-        if (this.onlineStatus()) {
-          if (this.isCurrent()) text = i18n.__('Current Logged Device')
-          else text = ''
-        } else text = i18n.__('System Error')
-        break
-
       case 'probing':
         text = i18n.__('Probing')
-        if (this.props.cdev && this.props.cdev.onlineStatus === 'offline') text = ''
         break
 
       case 'booting':
