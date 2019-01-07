@@ -43,6 +43,11 @@ class WisnucLogin extends React.Component {
       this.setState({ autoLogin: !this.state.autoLogin })
     }
 
+    this.handleAutoLaunch = () => {
+      this.props.ipcRenderer.send('SETCONFIG', { autoLaunch: !this.state.autoLaunch })
+      this.setState({ autoLaunch: !this.state.autoLaunch })
+    }
+
     this.clearPn = () => this.setState({ pn: '', pnError: '' })
 
     this.togglePwd = () => this.setState({ showPwd: !this.state.showPwd })
@@ -137,6 +142,8 @@ class WisnucLogin extends React.Component {
 
   componentDidMount () {
     this.phi = window.config && window.config.global && window.config.global.phi
+    const autoLaunch = window.config && window.config.global && !!window.config.global.autoLaunch
+    this.setState({ autoLaunch })
     if (this.phi) {
       const { autoLogin, pn, token, accounts, avatarUrl } = this.phi
       /* no accounts, last login account, another account */
@@ -326,6 +333,31 @@ class WisnucLogin extends React.Component {
               </div>
             )
           }
+          {/* autoLaunch App At Login */}
+          {
+            <div
+              style={{
+                position: 'absolute',
+                right: 80,
+                top: 70,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'flex-end'
+              }}
+            >
+              <Checkbox
+                style={{ display: this.state.status === 'password' ? '' : 'none' }}
+                label={i18n.__('Auto Launch')}
+                checkedIcon={<CheckBoxOutlineIcon style={{ color: '#009688' }} />}
+                disableTouchRipple
+                iconStyle={{ height: 18, width: 18, marginTop: 1, fill: this.state.autoLogin ? '#009688' : 'rgba(0,0,0,.25)' }}
+                labelStyle={{ fontSize: 12, color: 'rgba(0,0,0,.76)', marginLeft: -9, width: '' }}
+                checked={this.state.autoLaunch}
+                onCheck={() => this.handleAutoLaunch()}
+              />
+            </div>
+          }
+          {/* autoLogin */}
           {
             <div
               style={{
