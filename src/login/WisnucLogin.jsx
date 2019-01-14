@@ -111,7 +111,7 @@ class WisnucLogin extends React.Component {
                   token: this.state.autoLogin ? res.token : null
                 })
                 this.setState({ loading: false })
-                const list = r.ownStations
+                const list = [...r.ownStations, ...r.sharedStations]
                 const lastSN = r.lastUseDeviceSn
                 this.props.onSuccess({ lastSN, list, phonenumber: this.state.pn, winasUserId: res.id, phi })
               }
@@ -132,7 +132,7 @@ class WisnucLogin extends React.Component {
         } else {
           Object.assign(this.props.phi, { cookie })
           this.setState({ loading: false })
-          const list = r.ownStations
+          const list = [...r.ownStations, ...r.sharedStations]
           const lastSN = r.lastUseDeviceSn
           this.props.onSuccess({ lastSN, list, phonenumber: this.state.pn, winasUserId: this.phi.winasUserId, phi: this.phi })
         }

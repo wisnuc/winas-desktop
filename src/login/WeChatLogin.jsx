@@ -95,7 +95,7 @@ class WeChatLogin extends React.Component {
                 autoLogin: false,
                 token: null
               }
-              const list = r.ownStations
+              const list = [...r.ownStations, ...r.sharedStations]
               this.props.onSuccess({ list, phonenumber: username, winasUserId: id, phi: user })
             }
           })
