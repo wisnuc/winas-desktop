@@ -252,6 +252,7 @@
   "Change Avatar Failed": "修改头像失败",
   "Set Avatar": "设置为头像",
   "Re-upload" : "重新上传",
+  "Image File Error": "不支持的文件类型（文件损坏）请更换其他图片再次尝试。",
 
   "==== control/ResetPassword.jsx ====": "",
   "Authentication Success Text": "微信认证成功",

@@ -144,7 +144,7 @@ class ChangeAvatar extends React.Component {
           {
             avatarUrl ? (
               <div style={{ width: 72, height: 72, borderRadius: 36, overflow: 'hidden', border: '1px solid rgba(0,0,0,.26)' }}>
-                <img src={avatarUrl} width={72} height={72} />
+                <img src={avatarUrl} width={72} height={72} alt={i18n.__('Image File Error')} />
               </div>
             )
               : <AccountIcon style={{ width: 72, height: 72, color: 'rgba(96,125,139,.26)' }} />
@@ -220,6 +220,7 @@ class ChangeAvatar extends React.Component {
               cursor: 'pointer'
             }}
             draggable={false}
+            alt={i18n.__('Image File Error')}
           />
         </div>
         <div style={Object.assign({ left: 0, top: 0, width: 130, height: 320 }, style)} />
@@ -245,7 +246,7 @@ class ChangeAvatar extends React.Component {
               !success ? <FailedIcon style={{ color: '#f44336', height: 72, width: 72 }} />
                 : (
                   <div style={{ height: 120, width: 120, borderRadius: 60, border: '1px solid rgba(0,0,0,.26)', overflow: 'hidden' }}>
-                    <img src={this.state.avatarUrl} style={{ height: 120, width: 120 }} />
+                    <img src={this.state.avatarUrl} style={{ height: 120, width: 120 }} alt={i18n.__('Image File Error')} />
                   </div>
                 )
             }

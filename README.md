@@ -19,6 +19,7 @@ npm start
 ### Development 
 
 ```
-npm run webpack         // webpack with HMR
-NODE_ENV=dev npm start  // start with devtools
+npm run webpack             // webpack with HMR
+NODE_ENV=dev npm start      // start with devtools
+CONN_MODE=remote npm start  // remote mode
 ```

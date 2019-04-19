@@ -127,8 +127,8 @@ class WisnucLogin extends React.Component {
       Object.assign(this.props.phi, { token: this.phi.token })
       this.props.phi.req('stationList', null, (e, r, cookie) => {
         if (e || !r) {
-          if (r && r.error === '5') this.setState({ pwdError: i18n.__('Token Expired'), loading: false })
-          else this.setState({ failed: true, loading: false })
+          if (r && r.code === 401) this.setState({ pwdError: i18n.__('Token Expired'), loading: false })
+          else this.setState({ failed: true, loading: false, pwdError: i18n.__('Login Error') })
         } else {
           Object.assign(this.props.phi, { cookie })
           this.setState({ loading: false })
