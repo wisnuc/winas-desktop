@@ -9,6 +9,7 @@ import Policy from './Policy'
 import FileMenu from './FileMenu'
 import SettingsMenu from './SettingMenu'
 import RenderDevice from './RenderDevice'
+import ChangeDevice from './ChangeDevice'
 
 import Home from '../view/Home'
 import Search from '../view/Search'
@@ -16,13 +17,12 @@ import Public from '../view/Public'
 import Backup from '../view/Backup'
 import Transfer from '../view/Transfer'
 
-import UpdateFirmDialog from '../settings/UpdateFirmDialog'
-import SearchButton from '../common/Search'
-
 import Fruitmix from '../common/fruitmix'
+import SearchButton from '../common/Search'
 import prettySize from '../common/prettySize'
 import WindowAction from '../common/WindowAction'
 import DialogOverlay from '../common/PureDialog'
+import UpdateFirmDialog from '../settings/UpdateFirmDialog'
 import { BackIcon, WisnucLogo, DeviceIcon, ArrowDownIcon, CloseIcon, PDFIcon, WORDIcon, EXCELIcon, PPTIcon, PhotoIcon, VideoIcon, AudioIcon, ExitSearchIcon, MenuIcon } from '../common/Svg'
 
 class NavViews extends React.Component {
@@ -33,7 +33,8 @@ class NavViews extends React.Component {
       nav: null,
       types: [],
       snackBar: '',
-      searchText: ''
+      searchText: '',
+      changeDevice: false
     }
 
     this.views = {}
@@ -200,6 +201,10 @@ class NavViews extends React.Component {
       if (this.textRef) this.textRef.focus()
       if (!this.state.types.length) this.views[this.state.nav].clearSearch()
       else this.views[this.state.nav].search('', this.state.types)
+    }
+
+    this.onChangeDevice = () => {
+      this.setState({ openDevice: false, changeDevice: true })
     }
   }
 
@@ -465,6 +470,7 @@ class NavViews extends React.Component {
           borderRight: '1px solid rgba(0,0,0,.06)'
         }}
       >
+        {/** WebkitAppRegion */}
         <div style={{ height: 34, width: '100%', display: 'flex', alignItems: 'center' }}>
           <div style={{ height: 34, width: 34, margin: 4, display: this.state.searchMode ? 'none' : undefined }} className="flexCenter">
             <IconButton
@@ -478,6 +484,8 @@ class NavViews extends React.Component {
           </div>
           <div style={{ height: 34, width: this.state.pin ? 180 : 0, WebkitAppRegion: 'drag', transition }} />
         </div>
+
+        {/** title */}
         <div style={{ height: 64, width: 224, display: 'flex', alignItems: 'center' }}>
           <div style={{ height: 64, width: 88 }} className="flexCenter">
             {
@@ -498,6 +506,7 @@ class NavViews extends React.Component {
           }
         </div>
         {
+          /** normal home view */
           !this.state.searchMode ? (
             <div
               style={{
@@ -582,11 +591,12 @@ class NavViews extends React.Component {
                 }}
               >
                 <Menu style={{ maxWidth: 260 }}>
-                  <RenderDevice {...this.props} />
+                  <RenderDevice {...this.props} onChangeDevice={this.onChangeDevice} />
                 </Menu>
               </Popover>
             </div>
           ) : (
+            /** search mode */
             <div
               style={{
                 position: 'relative',
@@ -706,6 +716,19 @@ class NavViews extends React.Component {
             { view }
           </div>
         </div>
+        {/** change device dialog */}
+        <DialogOverlay open={!!this.state.changeDevice} onRequestClose={() => this.setState({ changeDevice: false })} modal transparent >
+          {
+            this.state.changeDevice &&
+            <ChangeDevice
+              {...this.props}
+              list={this.state.list}
+              status={this.state.status}
+              slDevice={dev => this.setState({ dev, status: 'connectDev' })}
+              back={() => this.setState({ status: 'connectDev' })}
+            />
+          }
+        </DialogOverlay>
         <WindowAction />
       </div>
     )
