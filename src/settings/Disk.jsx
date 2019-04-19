@@ -3,7 +3,6 @@ import i18n from 'i18n'
 import prettysize from 'prettysize'
 import { AutoSizer } from 'react-virtualized'
 
-import Dialog from '../common/PureDialog'
 import interpretModel from '../common/diskModel'
 import ConfirmDialog from '../common/ConfirmDialog'
 import { RSButton, LIButton } from '../common/Buttons'

@@ -49,7 +49,7 @@ class Winas extends React.Component {
     }
   }
 
-  componentDidMount() {
+  componentDidMount () {
     ipcRenderer.on('DEVICE_LOGOUT', () => this.deviceLogout())
   }
 

@@ -223,7 +223,9 @@ class Home extends Base {
           if (res === 'Conflict') text = i18n.__('Task Conflict Text')
           this.refresh({ noloading: true })
           this.ctx.props.openSnackBar(text)
-          if (res !== 'Finished') this.ctx.setState({ showTasks: true })
+          // TODO
+          // if (res !== 'Finished') this.ctx.setState({ showTasks: true })
+          this.ctx.setState({ showTasks: true })
         }).catch((err) => {
           console.error('this.getTaskState error', err)
           this.ctx.props.openSnackBar(type.concat(i18n.__('+Failed')))

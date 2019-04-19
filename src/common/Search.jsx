@@ -65,7 +65,7 @@ class Search extends Button {
         }
       </div>
     )
-}
+  }
 }
 
 export default Search

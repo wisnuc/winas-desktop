@@ -1,7 +1,6 @@
 import React from 'react'
 import i18n from 'i18n'
 import EventListener from 'react-event-listener'
-import { TweenMax } from 'gsap'
 import { IconButton, CircularProgress } from 'material-ui'
 import CloseIcon from 'material-ui/svg-icons/navigation/close'
 import VisibilityOff from 'material-ui/svg-icons/action/visibility-off'
@@ -34,22 +33,6 @@ class PhotoApp extends React.Component {
     this.handleResize = () => this.forceUpdate()
 
     this.toggleDialog = op => this.setState({ [op]: !this.state[op] })
-
-    this.setAnimation2 = (component, status) => {
-      return
-      if (component === 'ClearSelected') {
-        /* add animation to ClearSelected */
-        const transformItem = this.refClearSelected
-        const time = 0.4
-        const ease = global.Power4.easeOut
-        if (status === 'In') {
-          TweenMax.to(transformItem, time, { rotation: 180, opacity: 1, ease })
-        }
-        if (status === 'Out') {
-          TweenMax.to(transformItem, time, { rotation: -180, opacity: 0, ease })
-        }
-      }
-    }
 
     this.keyChange = (event) => {
       this.props.getShiftStatus(event)
@@ -149,7 +132,6 @@ class PhotoApp extends React.Component {
           seqIndex={this.seqIndex}
           ipcRenderer={this.props.ipcRenderer}
           setAnimation={this.props.setAnimation}
-          setAnimation2={this.setAnimation2}
           memoize={this.props.memoize}
           selectedItems={this.props.selectedItems}
           addListToSelection={this.props.addListToSelection}
