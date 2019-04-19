@@ -29,9 +29,9 @@ class FileContent extends React.Component {
 
     /* cathc key action */
     this.keyDown = (e) => {
-      const { createNewFolder, loading, newDrive, select, showUsers } = this.props
+      const { createNewFolder, loading, newDrive, select, showUsers, rename } = this.props
       const isModifyName = select && select.modify !== -1
-      if (createNewFolder || this.props.delete || loading || newDrive || isModifyName || !select || showUsers) return
+      if (createNewFolder || this.props.delete || loading || newDrive || isModifyName || !select || showUsers || rename) return
       if (e.ctrlKey && e.key === 'a') {
         select.addByArray(Array.from({ length: this.props.entries.length }, (v, i) => i)) // [0, 1, ..., N]
       }

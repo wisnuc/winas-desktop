@@ -65,6 +65,7 @@ class Home extends Base {
       move: false,
       copy: false,
       share: false,
+      rename: false,
       loading: true
     }
 
@@ -184,6 +185,8 @@ class Home extends Base {
 
     this.xcopy = (action) => {
       if (this.state.inRoot && !this.state.showSearch) return
+      // not in backup
+      if (this.isBackup) return
       const selected = this.state.select.selected
       if (!selected && !selected.length) return
       const entries = selected.map(index => this.state.entries[index])
@@ -235,8 +238,10 @@ class Home extends Base {
     }
 
     this.onPaste = () => {
-      if (this.isMedia || this.state.inRoot) return
+      if (this.isMedia || this.state.inRoot || this.isBackup) return
       const pos = this.ctx.props.clipboard.get()
+      console.log('pos', pos)
+      if (!pos.action) return
       const driveUUID = this.state.path[0].uuid
       const dirUUID = this.state.path.slice(-1)[0].uuid
       const isBatch = !!pos.entries[0].pdrv || !!pos.entries[0].namepath // drive search or usb search result
