@@ -845,7 +845,7 @@
   "Dlna": "DLNA",
   "Dlna Description": "可以将共享盘内的媒体文件在同一局域网内的智能电视或其他媒体设备上播放",
 
-  "==== view/DLNA.jsx ====": "",
+  "==== view/PT.jsx ====": "",
   "PT": "白金奖励计划",
   "PT Menu Name": "白金奖励计划",
   "PT Summary": "参与计划获取收益",

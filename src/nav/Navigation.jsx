@@ -722,10 +722,7 @@ class NavViews extends React.Component {
             this.state.changeDevice &&
             <ChangeDevice
               {...this.props}
-              list={this.state.list}
-              status={this.state.status}
-              slDevice={dev => this.setState({ dev, status: 'connectDev' })}
-              back={() => this.setState({ status: 'connectDev' })}
+              back={() => this.setState({ changeDevice: false })}
             />
           }
         </DialogOverlay>

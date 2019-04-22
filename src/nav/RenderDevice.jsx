@@ -133,7 +133,7 @@ class Disk extends React.PureComponent {
             <FlatButton
               primary
               label={i18n.__('Change Device')}
-              onClick={this.props.deviceLogout}
+              onClick={this.props.onChangeDevice}
             />
           </div>
         </div>
