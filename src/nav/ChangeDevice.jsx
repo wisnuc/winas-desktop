@@ -29,7 +29,8 @@ class ChangeDevice extends React.Component {
     this.reqList = () => {
       this.setState({
         loading: true,
-        error: false
+        error: false,
+        loggingDevice: null
       })
 
       this.props.phi.req('stationList', null, (err, res) => {
@@ -79,7 +80,9 @@ class ChangeDevice extends React.Component {
           token: { isFulfilled: () => true, ctx: user, data: { token } },
           boot: { isFulfilled: () => true, ctx: user, data: boot },
           mdev: { deviceSN: dev.sn, address: dev.LANIP },
-          on: () => {}
+          // add fake listeners, TODO: remove this
+          on: () => {},
+          removeAllListeners: () => {}
         })
         this.props.deviceLogin({
           dev,
@@ -144,14 +147,21 @@ class ChangeDevice extends React.Component {
   render () {
     return (
       <div style={{ width: 450, height: 376, zIndex: 100, position: 'relative', backgroundColor: 'white' }} >
+
         <div style={{ height: 64, display: 'flex', alignItems: 'center' }}>
-          <LIButton style={{ marginLeft: 12 }} onClick={() => this.props.back(this.state.dev)}>
-            <CloseIcon />
-          </LIButton>
+          {
+            !this.state.loggingDevice &&
+            <LIButton style={{ marginLeft: 12 }} onClick={() => this.props.back(this.state.dev)}>
+              <CloseIcon />
+            </LIButton>
+          }
           <div style={{ flex: 1 }} />
-          <LIButton style={{ marginRight: 12 }} onClick={() => this.reqList()}>
-            <RefreshIcon />
-          </LIButton>
+          {
+            !this.state.loggingDevice &&
+            <LIButton style={{ marginRight: 12 }} onClick={() => this.reqList()} >
+              <RefreshIcon />
+            </LIButton>
+          }
         </div>
 
         <div style={{ fontSize: 28, display: 'flex', alignItems: 'center', paddingLeft: 80, marginBottom: 36 }} >

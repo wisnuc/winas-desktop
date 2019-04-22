@@ -110,7 +110,7 @@ class WisnucLogin extends React.Component {
                   autoLogin: !!this.state.autoLogin,
                   token: this.state.autoLogin ? res.token : null
                 })
-                this.setState({ loading: false })
+                this.setState({ loading: false, pwd: '' })
                 const list = [...r.ownStations, ...r.sharedStations]
                 const lastSN = r.lastUseDeviceSn
                 this.props.onSuccess({ lastSN, list, phonenumber: this.state.pn, winasUserId: res.id, phi })

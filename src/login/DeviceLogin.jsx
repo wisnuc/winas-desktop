@@ -5,8 +5,8 @@ import { CircularProgress } from 'material-ui'
 import DeviceAPI from '../common/device'
 import FlatButton from '../common/FlatButton'
 import prettySize from '../common/prettySize'
-import { RRButton, FLButton, LIButton } from '../common/Buttons'
-import { CheckOutlineIcon, CheckedIcon, BackwardIcon, DeviceIcon, FailedIcon } from '../common/Svg'
+import { RRButton, FLButton } from '../common/Buttons'
+import { CheckOutlineIcon, CheckedIcon, DeviceIcon, FailedIcon } from '../common/Svg'
 
 class DeviceLogin extends React.Component {
   constructor (props) {
@@ -320,9 +320,13 @@ class DeviceLogin extends React.Component {
         <div style={{ marginTop: 46, height: 24, display: 'flex', alignItems: 'center' }}>
           {
             !isLogging &&
-            <LIButton style={{ marginLeft: 20 }} onClick={this.props.backToLogin}>
-              <BackwardIcon />
-            </LIButton>
+            <div style={{ marginLeft: 32 }}>
+              <FlatButton
+                primary
+                label={i18n.__('Log Out')}
+                onClick={this.props.backToLogin}
+              />
+            </div>
           }
           <div style={{ flexGrow: 1 }} />
           {
