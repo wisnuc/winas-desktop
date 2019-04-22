@@ -210,6 +210,21 @@ class PhiAPI extends RequestManager {
   async reqAsync (name, args) {
     return Promise.promisify(this.req).bind(this)(name, args)
   }
+
+  testLAN (ip, cb) {
+    request
+      .get(`http://${ip}:3001/winasd/info`)
+      .set('Content-Type', 'application/json')
+      .timeout({
+        response: 2000, // Wait 1 seconds for the server to start sending,
+        deadline: 2000 // but allow 1 minute for the file to finish loading.
+      })
+      .end(cb)
+  }
+
+  async testLANAsync (ip) {
+    return Promise.promisify(this.testLAN).bind(this)(ip)
+  }
 }
 
 export default PhiAPI

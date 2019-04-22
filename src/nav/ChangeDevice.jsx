@@ -28,14 +28,18 @@ class ChangeDevice extends React.Component {
 
     this.reqList = () => {
       this.setState({
-        loading: true
+        loading: true,
+        error: false
       })
 
       this.props.phi.req('stationList', null, (err, res) => {
         console.log(err, res)
-
-        const list = [...res.ownStations, ...res.sharedStations]
-        this.setState({ list, loading: false })
+        if (err) {
+          this.setState({ list: [], loading: false, error: true })
+        } else {
+          const list = [...res.ownStations, ...res.sharedStations]
+          this.setState({ list, loading: false })
+        }
       })
     }
   }
@@ -44,18 +48,21 @@ class ChangeDevice extends React.Component {
     const { account } = this.props
     const args = { deviceSN: device.sn }
     const { token, cookie } = this.props.phi
-    const [boot, users, isLAN] = await Promise.all([
+    const [tokenRes, boot, users, isLAN] = await Promise.all([
+      this.props.phi.reqAsync('LANToken', args),
       this.props.phi.reqAsync('boot', args),
       this.props.phi.reqAsync('localUsers', args),
-      this.props.phi.testLANAsync(),
+      this.props.phi.testLANAsync(device.LANIP),
       Promise.delay(2000)
     ])
+
+    const LANToken = tokenRes.token
     const user = Array.isArray(users) && users.find(u => u.winasUserId === account.winasUserId)
 
-    if (!token || !user || !boot) throw Error('get LANToken or user error')
+    if (!LANToken || !user || !boot) throw Error('get LANToken or user error')
     if (boot.state !== 'STARTED') throw Error('station not started')
     Object.assign(user, { cookie })
-    return ({ dev: device, user, token, boot, isCloud: !isLAN })
+    return ({ dev: device, user, token: isLAN ? LANToken : token, boot, isCloud: !isLAN })
   }
 
   /**
@@ -64,7 +71,7 @@ class ChangeDevice extends React.Component {
    */
   selectDevice (cdev) {
     console.log(cdev, this.props.phi)
-    this.setState({ loggingDevice: cdev, list: [cdev] })
+    this.setState({ loggingDevice: cdev, list: [cdev], error: false })
     this.remoteLoginAsync(cdev)
       .then(({ dev, user, token, boot, isCloud }) => {
         /* onSuccess: auto login */
@@ -93,7 +100,7 @@ class ChangeDevice extends React.Component {
     return (
       <div style={style} key={key}>
         <div style={{ position: 'relative', opacity: isCurrent ? 0.7 : 1 }}>
-          <MenuItem onClick={() => this.selectDevice(device)} disabled={isCurrent || this.state.loggingDevice} >
+          <MenuItem onClick={() => this.selectDevice(device)} disabled={isCurrent || !!this.state.loggingDevice} >
             <Device {...this.props} cdev={device} slDevice={this.slDevice} />
           </MenuItem>
           <div style={{ position: 'absolute', right: 32, top: 32 }}>
