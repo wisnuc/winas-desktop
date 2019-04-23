@@ -303,7 +303,7 @@ class BackupCard extends React.PureComponent {
           <div style={{ marginRight: 24 }}> { i18n.__('%s Items', this.state.topDirs.length) } </div>
         </div>
         <div style={{ height: 8 }} />
-        <SimpleScrollBar height={300} width={306} >
+        <SimpleScrollBar height={144} width={306} >
           {
             this.state.topDirs.map(v => (
               <MenuItem
@@ -379,7 +379,7 @@ class BackupCard extends React.PureComponent {
             onRequestClose={() => this.setState({ openBS: false, showDirs: false })}
           >
             <Menu style={{ maxWidth: 306, fontSize: 14, marginTop: -8 }} >
-              <div style={{ position: 'relative', height: 210, width: 306, backgroundColor: '#FFF', overflow: 'hidden' }}>
+              <div style={{ position: 'relative', minHeight: 210, width: 306, backgroundColor: '#FFF', overflow: 'hidden' }}>
                 { this.state.loading ? this.renderLoading() : this.renderSettings(showDirs, transition) }
                 { this.renderBackupDirs(showDirs, transition) }
                 { !!this.state.toggleEnableLoading && this.renderActionLoading(0) }
