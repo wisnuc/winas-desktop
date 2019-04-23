@@ -7,6 +7,7 @@ import SimpleScrollBar from '../common/SimpleScrollBar'
 import { FolderIcon, CloseIcon } from '../common/Svg'
 import DialogOverlay from '../common/PureDialog'
 import convert from '../transmission/convertCode'
+import FlatButton from '../common/FlatButton'
 
 class BackupNotification extends React.PureComponent {
   constructor (props) {
@@ -20,6 +21,15 @@ class BackupNotification extends React.PureComponent {
       const { currentErrors, currentWarnings } = data
       console.log('currentErrors, currentWarnings', currentErrors, currentWarnings)
       this.setState({ list: [...currentErrors, ...currentWarnings] })
+    }
+
+    this.forceBackup = (entry) => {
+      const index = this.state.list.indexOf(entry)
+      if (index > -1) {
+        const list = [...this.state.list]
+        list.splice(index, 1)
+        this.setState({ list })
+      }
     }
   }
 
@@ -48,6 +58,8 @@ class BackupNotification extends React.PureComponent {
     if (!list.length) return (<div />)
 
     const height = Math.min(list.length * 56, 336)
+
+    console.log('render', this.state, this.props)
     return (
       <div>
         { this.renderButton() }
@@ -92,9 +104,21 @@ class BackupNotification extends React.PureComponent {
                             { l.entry }
                           </div>
                         </div>
-                        <div style={{ width: 136, height: 56, color: 'rgba(0,0,0,.54)', fontSize: 12, display: 'flex', alignItems: 'center' }}>
+                        <div
+                          style={{
+                            width: 136,
+                            height: 56,
+                            color: 'rgba(0,0,0,.54)',
+                            fontSize: 12,
+                            display: 'flex',
+                            alignItems: 'center'
+                          }}
+                        >
                           { l.error && convert(l.error.code) }
                         </div>
+
+                        <FlatButton label={i18n.__('Force Backup')} primary onClick={() => this.forceBackup(l)} />
+
                       </div>
                     ))
                   }

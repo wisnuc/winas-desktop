@@ -698,6 +698,7 @@
   "Current Backup Not Finished": "当前备份未完成",
   "BackupNotification Dialog Title %s": "未能自动备份的项目%s个",
   "Reason": "原因",
+  "Force Backup": "加入备份",
 
   "==== view/Photo.jsx ====": "",
   "New Album": "新建相簿",

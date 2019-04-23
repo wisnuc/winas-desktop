@@ -293,6 +293,11 @@ class Fruitmix extends EventEmitter {
         }
         break
 
+      case 'clearDeletedTag':
+        r = this.apost(`drives/${args.driveUUID}/dirs/${args.dirUUID}/entries`, null, true)
+          .field(args.entryName, JSON.stringify({ op: 'remove', uuid: args.entryUUID, hash: args.hash }))
+        break
+
       case 'deletePhyDirOrFile':
         r = this.isCloud ? this.adel(`phy-drives/${args.id}`, args.qs, true)
           : this.adel(`phy-drives/${args.id}?${querystring.stringify(args.qs)}`)
