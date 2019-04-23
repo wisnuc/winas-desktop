@@ -8,6 +8,8 @@ const convert = (code) => {
       return i18n.__('ECONNRESET')
     case 'ECONNREFUSED':
       return i18n.__('ECONNREFUSED')
+    case 'ENETUNREACH':
+      return i18n.__('ENETUNREACH')
     case 'ECONNEND':
       return i18n.__('ECONNEND')
     case 'ENOENT':

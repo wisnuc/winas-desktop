@@ -45,15 +45,31 @@ class ErrorTree extends React.PureComponent {
   }
 
   renderRow (node, key) {
-    const code = node.error.code ||
-      (node.error.response && node.error.response[0] && node.error.response[0].error && node.error.response[0].error.code) ||
-      (node.error.response && node.error.response.error && node.error.response.error.code)
+    // get code
+    let code = node.error.code
+
+    // node has single response
+    if (!code) {
+      const res = (node.error && node.error.response) || {}
+      code = res.code || (res.error && res.error.code)
+    }
+
+    // node has multiple response
+    if (!code && node.error && Array.isArray(node.error.response)) {
+      const res = node.error.response[0] || {}
+      code = res.code || (res.error && res.error.code)
+    }
+
     const error = code ? convert(code) : translateStatus(node.error.status)
+
+    // get file name
     let name = ''
     if (node.entry && typeof node.entry === 'object') name = node.entry.name
     if (node.entry && typeof node.entry === 'string') name = node.entry.replace(/^.*\//, '').replace(/^.*\\/, '')
     if (node.entries && typeof node.entries[0] === 'object') name = node.entries[0].newName
-    if (node.entries && typeof node.entries[0] === 'string') name = node.entries[0].replace(/^.*\//, '').replace(/^.*\\/, '')
+    if (node.entries && typeof node.entries[0] === 'string') {
+      name = node.entries[0].replace(/^.*\//, '').replace(/^.*\\/, '')
+    }
 
     const svgStyle = { color: 'rgba(0,0,0,0.54)', width: 16, height: 16 }
     return (
@@ -65,7 +81,9 @@ class ErrorTree extends React.PureComponent {
                 : <ErrorIcon style={svgStyle} />
           }
         </div>
-        <div style={{ width: 540, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginRight: 5, fontSize: 13 }} >
+        <div style={{
+          width: 540, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginRight: 5, fontSize: 13
+        }}>
           { name }
         </div>
         <div style={{ fontSize: 13 }} >
