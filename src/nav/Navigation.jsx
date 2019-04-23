@@ -186,11 +186,13 @@ class NavViews extends React.Component {
     this.handleSearch = (searchText) => {
       clearTimeout(this.searchTimer)
       this.setState({ searchText })
-      if (!searchText) {
+      if (!searchText && (!this.state.types || !this.state.types.length)) {
         this.views[this.state.nav].clearSearch()
       } else {
+        const nav = this.state.nav
         this.searchTimer = setTimeout(() => {
           this.searchTimer = null
+          if (nav !== this.state.nav) return
           this.views[this.state.nav].search(searchText, this.state.types)
         }, 500)
       }
@@ -206,6 +208,11 @@ class NavViews extends React.Component {
     this.onChangeDevice = () => {
       this.setState({ openDevice: false, changeDevice: true })
     }
+    this.escListener = (e) => {
+      if (this.state.searchMode && e.key === 'Escape') {
+        this.exitSearchMode()
+      }
+    }
   }
 
   componentDidMount () {
@@ -214,6 +221,7 @@ class NavViews extends React.Component {
     ipcRenderer.on('snackbarMessage', (e, message) => this.props.openSnackBar(message.message))
     ipcRenderer.on('conflicts', (e, args) => this.setState({ conflicts: args }))
     ipcRenderer.on('JUMP_TO', (e, nav) => this.jumpTo(nav))
+    document.addEventListener('keydown', this.escListener)
   }
 
   componentDidUpdate () {
@@ -239,6 +247,7 @@ class NavViews extends React.Component {
     ipcRenderer.removeAllListeners('snackbarMessage')
     ipcRenderer.removeAllListeners('conflicts')
     ipcRenderer.removeAllListeners('JUMP_TO')
+    document.removeEventListener('keydown', this.escListener)
   }
 
   install (navs) {

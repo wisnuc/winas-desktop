@@ -238,7 +238,7 @@ class Home extends Base {
     }
 
     this.onPaste = () => {
-      if (this.isMedia || this.state.inRoot || this.isBackup) return
+      if (this.isMedia || this.state.inRoot || this.isBackup || this.isSearch) return
       const pos = this.ctx.props.clipboard.get()
       console.log('pos', pos)
       if (!pos.action) return

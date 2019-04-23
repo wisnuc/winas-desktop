@@ -30,18 +30,21 @@ class Search extends Home {
   }
 
   clearSearch () {
-    this.setState({ entries: [], showSearch: true })
+    this.setState({ entries: [], showSearch: true, searchContent: undefined })
   }
 
   search (name, types) {
+    console.log('search', name, types)
     this.name = name
     this.types = types
+
+    // turn off search mode when user clear all input
     if (!name && (!types || !types.length)) {
       this.clearSearch()
       return
     }
     const select = this.select.reset(this.state.entries.length)
-    this.setState({ showSearch: name, loading: true, select })
+    this.setState({ showSearch: name, loading: true, select, searchContent: { name, types } })
     const apis = this.ctx.props.apis
     const drives = apis && apis.drives && apis.drives.data
     if (!Array.isArray(drives)) {

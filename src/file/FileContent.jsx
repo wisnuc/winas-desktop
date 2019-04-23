@@ -32,6 +32,7 @@ class FileContent extends React.Component {
       const { createNewFolder, loading, newDrive, select, showUsers, rename } = this.props
       const isModifyName = select && select.modify !== -1
       if (createNewFolder || this.props.delete || loading || newDrive || isModifyName || !select || showUsers || rename) return
+
       if (e.ctrlKey && e.key === 'a') {
         select.addByArray(Array.from({ length: this.props.entries.length }, (v, i) => i)) // [0, 1, ..., N]
       }
@@ -353,7 +354,9 @@ class FileContent extends React.Component {
             height={160}
             src={`./assets/images/${isSearch ? 'pic_no_search_result.png' : 'pic_nofile.png'}`}
           />
-          <div style={{ textAlign: 'center' }}> { isSearch ? i18n.__('No Search Result Text') : i18n.__('Empty Folder Text') } </div>
+          <div style={{ textAlign: 'center' }}>
+            { isSearch ? i18n.__('No Search Result Text') : i18n.__('Empty Folder Text') }
+          </div>
         </div>
       </div>
     )
@@ -384,6 +387,10 @@ class FileContent extends React.Component {
 
   render () {
     /* loading */
+    console.log('FileContent', this.props)
+    if (this.props.isSearch && this.props.searchContent === undefined) {
+      return this.renderNoFile()
+    }
     if (this.state.loading) return this.renderLoading()
 
     /* not get list yet */
