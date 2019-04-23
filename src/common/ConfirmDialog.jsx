@@ -5,6 +5,16 @@ import Dialog from '../common/PureDialog'
 import FlatButton from '../common/FlatButton'
 
 class ConfirmDialog extends React.PureComponent {
+  /**
+   * @param {object} props
+   * @param {bool} props.open
+   * @param {function} props.onCancel
+   * @param {function} props.onConfirm
+   * @param {string} props.title
+   * @param {*} props.text content text, function or string
+   * @param {string} props.checkText  text of Checkbox
+   * @param {string} props.workingText text when working
+   */
   constructor (props) {
     super(props)
     this.state = { check: false, fired: false }
@@ -19,7 +29,7 @@ class ConfirmDialog extends React.PureComponent {
   }
 
   render () {
-    const { open, onCancel, title, text, checkText } = this.props
+    const { open, onCancel, title, text, checkText, workingText } = this.props
     const content = !open ? '' : (typeof text === 'function' && open) ? text() : text
     return (
       <Dialog open={open} onRequestClose={onCancel} modal >
@@ -59,7 +69,12 @@ class ConfirmDialog extends React.PureComponent {
               <div style={{ height: 20 }} />
               <div style={{ height: 52, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
                 <FlatButton label={i18n.__('Cancel')} primary onClick={onCancel} />
-                <FlatButton label={i18n.__('Confirm')} primary disabled={this.state.fired} onClick={this.onFire} />
+                <FlatButton
+                  primary
+                  onClick={this.onFire}
+                  disabled={this.state.fired}
+                  label={(this.state.fired && workingText) ? workingText : i18n.__('Confirm')}
+                />
               </div>
             </div>
           )

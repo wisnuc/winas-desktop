@@ -1080,6 +1080,7 @@ class Home extends Base {
           onCancel={() => this.setState({ delete: false })}
           onConfirm={() => this.delete()}
           title={i18n.__('Confirm Delete Items Title')}
+          workingText={i18n.__('Deleting')}
           text={() => this.deleteText()}
         />
 

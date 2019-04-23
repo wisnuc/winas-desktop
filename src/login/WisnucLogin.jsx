@@ -8,7 +8,8 @@ import Dialog from '../common/PureDialog'
 import FlatButton from '../common/FlatButton'
 import { isPhoneNumber } from '../common/validate'
 import { RRButton, TFButton, LoginTF } from '../common/Buttons'
-import { EyeOpenIcon, EyeOffIcon, WinCloseIcon, CheckBoxOutlineIcon, ArrowDownIcon, WeChatIcon, CloseIcon } from '../common/Svg'
+import { EyeOpenIcon, EyeOffIcon, WinCloseIcon, CheckBoxOutlineIcon,
+  ArrowDownIcon, WeChatIcon, CloseIcon } from '../common/Svg'
 
 let firstLogin = true
 
@@ -134,7 +135,13 @@ class WisnucLogin extends React.Component {
           this.setState({ loading: false })
           const list = [...r.ownStations, ...r.sharedStations]
           const lastSN = r.lastUseDeviceSn
-          this.props.onSuccess({ lastSN, list, phonenumber: this.state.pn, winasUserId: this.phi.winasUserId, phi: this.phi })
+          this.props.onSuccess({
+            lastSN,
+            list,
+            phonenumber: this.state.pn,
+            winasUserId: this.phi.winasUserId,
+            phi: this.phi
+          })
         }
       })
     }
@@ -148,8 +155,9 @@ class WisnucLogin extends React.Component {
       const { autoLogin, pn, token, accounts, avatarUrl } = this.phi
       /* no accounts, last login account, another account */
       if (!accounts || !accounts.length || !pn) this.setState({ status: 'phone', pn: '', accounts: [], autoLogin: false })
-      else if (accounts.find(u => u.pn !== pn)) this.setState({ status: 'password', pn: accounts[0].pn, autoLogin: false, accounts })
-      else this.setState({ avatarUrl, pn, autoLogin: !!token, accounts, status: 'password' })
+      else if (accounts.find(u => u.pn !== pn)) {
+        this.setState({ status: 'password', pn: accounts[0].pn, autoLogin: false, accounts })
+      } else this.setState({ avatarUrl, pn, autoLogin: !!token, accounts, status: 'password' })
 
       if (firstLogin && autoLogin) this.fakeLogin()
     }
@@ -350,7 +358,9 @@ class WisnucLogin extends React.Component {
                 label={i18n.__('Auto Launch')}
                 checkedIcon={<CheckBoxOutlineIcon style={{ color: '#009688' }} />}
                 disableTouchRipple
-                iconStyle={{ height: 18, width: 18, marginTop: 1, fill: this.state.autoLogin ? '#009688' : 'rgba(0,0,0,.25)' }}
+                iconStyle={{
+                  height: 18, width: 18, marginTop: 1, fill: this.state.autoLogin ? '#009688' : 'rgba(0,0,0,.25)'
+                }}
                 labelStyle={{ fontSize: 12, color: 'rgba(0,0,0,.76)', marginLeft: -9, width: '' }}
                 checked={this.state.autoLaunch}
                 onCheck={() => this.handleAutoLaunch()}
@@ -374,7 +384,9 @@ class WisnucLogin extends React.Component {
                 label={i18n.__('Auto Login')}
                 checkedIcon={<CheckBoxOutlineIcon style={{ color: '#009688' }} />}
                 disableTouchRipple
-                iconStyle={{ height: 18, width: 18, marginTop: 1, fill: this.state.autoLogin ? '#009688' : 'rgba(0,0,0,.25)' }}
+                iconStyle={{
+                  height: 18, width: 18, marginTop: 1, fill: this.state.autoLogin ? '#009688' : 'rgba(0,0,0,.25)'
+                }}
                 labelStyle={{ fontSize: 12, color: 'rgba(0,0,0,.76)', marginLeft: -9, width: '' }}
                 checked={this.state.autoLogin}
                 onCheck={() => this.handleAutologin()}
@@ -427,7 +439,9 @@ class WisnucLogin extends React.Component {
         {
           this.state.switchAccount &&
             (
-              <div style={{ width: 450, height: 380, position: 'absolute', top: 0, left: 0, backgroundColor: '#FFF', zIndex: 10 }}>
+              <div style={{
+                width: 450, height: 380, position: 'absolute', top: 0, left: 0, backgroundColor: '#FFF', zIndex: 10
+              }}>
                 <div style={{ display: 'flex', alignItems: 'center', height: 32, paddingLeft: 80, marginBottom: 32 }}>
                   <div style={{ fontSize: 28, display: 'flex', alignItems: 'center' }} >
                     { i18n.__('Switch Account') }
