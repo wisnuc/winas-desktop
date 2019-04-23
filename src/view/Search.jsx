@@ -21,6 +21,12 @@ class Search extends Home {
   }
 
   willReceiveProps () {
+    /* set force === true  to update sortType forcely */
+    if (!this.force) return
+    this.force = false
+    this.setState({
+      entries: [...this.state.entries].sort((a, b) => sortByType(a, b, this.state.sortType))
+    })
   }
 
   navEnter () {

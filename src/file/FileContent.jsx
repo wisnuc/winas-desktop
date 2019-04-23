@@ -386,11 +386,12 @@ class FileContent extends React.Component {
   }
 
   render () {
-    /* loading */
-    console.log('FileContent', this.props)
+    /* show no file text when no search */
     if (this.props.isSearch && this.props.searchContent === undefined) {
       return this.renderNoFile()
     }
+
+    /* loading */
     if (this.state.loading) return this.renderLoading()
 
     /* not get list yet */
