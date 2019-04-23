@@ -76,7 +76,16 @@ class Search extends Home {
       if (err || !res || !Array.isArray(res)) this.setState({ error: true, loading: false })
       else {
         const pdrives = places.split('.')
-        let entries = res.map(l => Object.assign({ pdrv: pdrives[l.place] }, l))
+
+        let entries = res.map((l) => {
+          const pdrv = pdrives[l.place]
+          const drive = drives.find(d => d.uuid === pdrv)
+          // tag: home/built-in
+          const loc = drive.tag || 'backup'
+          const driveLabel = drive.label
+          const entry = Object.assign({ pdrv, loc, driveLabel }, l)
+          return entry
+        })
         if (types) entries = entries.filter(e => e.hash).map(e => Object.assign({ type: 'file' }, e))
         this.setState({
           loading: false,

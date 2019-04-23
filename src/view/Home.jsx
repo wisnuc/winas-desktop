@@ -1142,7 +1142,7 @@ class Home extends Base {
               isUSB={this.isUSB}
               path={this.state.path}
               entries={this.state.entries}
-              isSearch={!!this.state.showSearch}
+              isSearch={!!this.isSearch}
               onRequestClose={() => this.toggleDialog('detail')}
               selected={this.select.state.selected}
             />

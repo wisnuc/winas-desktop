@@ -39,29 +39,70 @@ const getPath = (path) => {
   return newPath.join('/')
 }
 
-const getSearchPath = (path, entry) => {
-  if (!Array.isArray(path) || !path[0] || !entry || !Array.isArray(entry.namepath)) return '--'
-  const r = path[0]
-  const rootName = r.type === 'publicRoot' ? i18n.__('Public Drive') : r.type === 'home' ? i18n.__('Home Title') : r.name
-  const newPath = [rootName, ...entry.namepath]
-  newPath.length = entry.namepath.length
-  return newPath.join('/')
-}
+// const getSearchPath = (path, entry) => {
+//   console.log('getSearchPath', path, entry)
+//   if (!Array.isArray(path) || !path[0] || !entry || !Array.isArray(entry.namepath)) return '--'
+//   const r = path[0]
+//   const rootName = r.type === 'publicRoot' ? i18n.__('Public Drive') : r.type === 'home' ? i18n.__('Home Title') : r.name
+//   const newPath = [rootName, ...entry.namepath]
+//   newPath.length = entry.namepath.length
+//   return newPath.join('/')
+// }
 
 class FileDetail extends React.PureComponent {
   constructor (props) {
     super(props)
     this.state = {
       loading: true,
+      searchPath: '',
       dirCount: 0,
       fileCount: 0,
       fileTotalSize: 0
     }
+    // String transformLocation(loc) {
+    //   switch (loc) {
+    //     case 'home':
+    //       return '我的空间';
+    //     case 'built-in':
+    //       return '共享空间';
+    //     case 'backup':
+    //       return '备份空间';
+    //   }
+    //   return '';
+    // }
+
+    // Future getNamePath(AppState state) async {
+    //   print("entry $entry");
+    //   try {
+    //     // request entries/path
+    //     final res = await state.apis
+    //         .req('listNavDir', {'driveUUID': entry.pdrv, 'dirUUID': entry.pdir});
+
+    //     // root
+    //     List<String> paths = [transformLocation(entry.location)];
+
+    //     Drive drive = state.drives.firstWhere((d) => d.uuid == entry.pdrv);
+    //     if (drive.type == 'backup') {
+    //       paths.add(drive.label);
+    //     }
+
+    //     // skip first item
+    //     final rest = (res.data['path'] as List).map((p) => p['name']).skip(1);
+
+    //     paths.addAll(List.from(rest));
+    //     rows.update(namepath: paths.join('/'));
+    //   } catch (error) {
+    //     print('getNamePath error: $error');
+    //   }
+    //   setState(() {});
+    // }
 
     this.reqAsync = async () => {
       this.setState({ loading: true })
       const { selected, entries, path } = this.props
       let [dirCount, fileCount, fileTotalSize] = [0, 0, 0]
+      let searchPath = ''
+
       for (let i = 0; i < selected.length; i++) {
         const entry = entries[selected[i]]
         if (['directory', 'public'].includes(entry.type) || entry.isUSB) {
@@ -78,17 +119,49 @@ class FileDetail extends React.PureComponent {
         }
       }
 
-      return ({ dirCount, fileCount, fileTotalSize })
+      if (this.props.isSearch && this.props.selected.length === 1) {
+        const entry = entries[selected[0]]
+        const driveUUID = entry.pdrv
+        const dirUUID = entry.pdir
+        const res = await this.props.apis.pureRequestAsync('listNavDir', { driveUUID, dirUUID })
+        const paths = [this.transformLocation(entry.loc)]
+        if (entry.loc === 'backup') {
+          paths.push(entry.driveLabel)
+        }
+        // skip first item
+        const rest = res.path.map(p => p.name).splice(1)
+        paths.push(...rest)
+        searchPath = paths.join('/')
+      }
+      console.log(dirCount, fileCount, fileTotalSize, searchPath)
+      return ({ dirCount, fileCount, fileTotalSize, searchPath })
     }
   }
 
   componentDidMount () {
     this.reqAsync()
       .then((content) => {
-        const { dirCount, fileCount, fileTotalSize } = content
-        this.setState({ dirCount, fileCount, fileTotalSize, loading: false })
+        const { dirCount, fileCount, fileTotalSize, searchPath } = content
+        this.setState({ dirCount, fileCount, fileTotalSize, searchPath, loading: false })
       })
       .catch(e => console.error('req dir content error', e))
+  }
+
+  transformLocation (loc) {
+    switch (loc) {
+      case 'home':
+        return '我的空间'
+      case 'built-in':
+        return '共享空间'
+      case 'backup':
+        return '备份空间'
+      default:
+        return ''
+    }
+  }
+
+  getSearchPath () {
+    return this.state.loading ? i18n.__('Loading') : this.state.searchPath
   }
 
   getSize () {
@@ -164,7 +237,7 @@ class FileDetail extends React.PureComponent {
 
     const Values = [
       isMultiple ? i18n.__('Multiple Items') : getType(entry),
-      !isSearch ? getPath(path) : !isMultiple ? getSearchPath(path, entry) : '',
+      !isSearch ? getPath(path) : !isMultiple ? this.getSearchPath() : '',
       isUSB ? '' : isFile ? prettySize(entry.size) : this.getSize(),
       isUSB ? '' : !isFile ? this.getContent() : '',
       !isMultiple ? phaseDate(entry.mtime) : ''

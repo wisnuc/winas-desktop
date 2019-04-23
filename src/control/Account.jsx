@@ -35,7 +35,7 @@ class Account extends React.Component {
   }
 
   renderAccountPop () {
-    const { avatarUrl, nickName, mail, pn } = this.props.account.phi
+    const { avatarUrl, nickName, pn } = this.props.account.phi
     return (
       <div style={{ height: 188, width: 312, WebkitAppRegion: 'no-drag' }}>
         <div style={{ height: 144, display: 'flex', alignItems: 'center' }}>
@@ -52,13 +52,14 @@ class Account extends React.Component {
             </div>
           </div>
           <div style={{ height: 100, marginLeft: 24, marginTop: 40 }}>
-            <div style={{ height: 20, fontWeight: 500, color: 'rgba(0,0,0,.76)' }}>
-              { nickName || '某某' }
+            <div style={{ height: 24, fontWeight: 500, color: 'rgba(0,0,0,.76)' }}>
+              { nickName || pn }
             </div>
-            <div style={{ height: 20, fontWeight: 500, color: 'rgba(0,0,0,.76)' }}>
+            <div style={{ height: 24, color: 'rgba(0,0,0,.54)' }}>
               { pn }
             </div>
-            <div style={{ height: 37, color: 'rgba(0,0,0,.29)' }}>
+            {/* hidden mail */}
+            {/* <div style={{ height: 37, color: 'rgba(0,0,0,.29)' }}>
               {
                 mail || (
                   <FlatButton
@@ -69,7 +70,7 @@ class Account extends React.Component {
                   />
                 )
               }
-            </div>
+            </div> */}
           </div>
         </div>
         <div style={{ height: 36, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
