@@ -81,7 +81,9 @@ class BackupNotification extends React.PureComponent {
                 </div>
                 <div style={{ height: 1, width: '100%', backgroundColor: '#e8eaed' }} />
 
-                <div style={{ height: 40, color: 'rgba(0,0,0,.54)', fontSize: 12, display: 'flex', alignItems: 'center' }}>
+                <div style={{
+                  height: 40, color: 'rgba(0,0,0,.54)', fontSize: 12, display: 'flex', alignItems: 'center'
+                }}>
                   <div style={{ marginLeft: 24 }}> { i18n.__('Name') } </div>
                   <div style={{ width: 360 }} />
                   <div> { i18n.__('Reason') } </div>

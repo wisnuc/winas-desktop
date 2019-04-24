@@ -47,11 +47,15 @@ class BackupCard extends React.PureComponent {
     this.delDir = (dir) => {
       const { uuid } = this.state.drive || this.props.drive
       this.setState({ deleteLoading: true })
-      this.props.apis.pureRequest('delBackupFileOrDir', { name: dir.uuid, driveUUID: uuid, dirUUID: uuid }, (err, res) => {
-        console.log('delBackupFileOrDir', err, res)
-        this.setState({ confirmDelDir: false, dirDetail: null, deleteLoading: false })
-        this.refresh({ updateDirs: true })
-      })
+      this.props.apis.pureRequest(
+        'delBackupFileOrDir',
+        { name: dir.uuid, driveUUID: uuid, dirUUID: uuid },
+        (err, res) => {
+          console.log('delBackupFileOrDir', err, res)
+          this.setState({ confirmDelDir: false, dirDetail: null, deleteLoading: false })
+          this.refresh({ updateDirs: true })
+        }
+      )
     }
 
     this.refresh = (op) => {
@@ -61,6 +65,7 @@ class BackupCard extends React.PureComponent {
         if (err || !Array.isArray(res && res.entries)) console.error('refresh error', err, res)
         else {
           const topDirs = res.entries.filter(e => !e.deleted)
+          topDirs.sort((a, b) => a.bname.localeCompare(b.bname))
           if (op && op.updateDirs) ipcRenderer.send('BACKUP_DIR', { dirs: topDirs, drive: this.props.drive })
           this.setState({ topDirs, loading: false })
         }
@@ -103,9 +108,7 @@ class BackupCard extends React.PureComponent {
         }
       }
       const [driveUUID, dirUUID] = [drive.uuid, drive.uuid]
-
       this.props.apis.pureRequest('updateTopDir', { attr, name: dirDetail.uuid, driveUUID, dirUUID }, (err, res) => {
-        console.log('delBackupFileOrDir', err, res)
         const { openSnackBar } = this.props
         if (err || !res) {
           console.error('updateTopDir Failed', err || res)
@@ -204,7 +207,11 @@ class BackupCard extends React.PureComponent {
           { i18n.__('Settings') }
         </div>
 
-        <MenuItem primaryText="." disabled={!enabled} style={{ color: '#FFF' }} onClick={() => this.setState({ showDirs: true })} />
+        <MenuItem
+          primaryText="."
+          disabled={!enabled} style={{ color: '#FFF' }}
+          onClick={() => this.setState({ showDirs: true })}
+        />
         <div
           style={{
             position: 'absolute',
@@ -248,41 +255,6 @@ class BackupCard extends React.PureComponent {
           </div>
           */}
         </div>
-
-        {/*
-        <div style={{ height: 48, display: 'flex', alignItems: 'center', marginBottom: 8, borderBottom: '1px solid #e8eaed' }}>
-          <div style={{ marginLeft: 24, color }}> { i18n.__('Running Backup On Startup') } </div>
-          <div style={{ flexGrow: 1 }} />
-          <Toggle
-            defaultToggled
-            disabled={!enabled}
-            labelStyle={{ maxWidth: 'fit-content' }}
-            style={{ marginRight: 16, maxWidth: 'fit-content' }}
-          />
-        </div>
-        <div style={{ height: 8 }} />
-        <div
-          style={{
-            height: 40,
-            display: 'flex',
-            alignItems: 'center',
-            marginLeft: 24,
-            color: 'rgba(0,0,0,.54)',
-            fontSize: 12
-          }}
-        >
-          { i18n.__('Notification') }
-        </div>
-        <div style={{ height: 48, display: 'flex', alignItems: 'center' }}>
-          <div style={{ marginLeft: 24, color }}> { i18n.__('Show Backup Warnings') } </div>
-          <div style={{ flexGrow: 1 }} />
-          <Checkbox
-            defaultChecked
-            disabled={!enabled}
-            style={{ maxWidth: 'fit-content' }}
-          />
-        </div>
-        */}
       </div>
     )
   }
@@ -290,7 +262,9 @@ class BackupCard extends React.PureComponent {
   renderBackupDirs (showDirs, transition) {
     if (!this.state.topDirs) return <div />
     return (
-      <div style={{ position: 'absolute', height: '100%', width: '100%', left: showDirs ? 0 : '100%', top: 0, transition }}>
+      <div
+        style={{ position: 'absolute', height: '100%', width: '100%', left: showDirs ? 0 : '100%', top: 0, transition }}
+      >
         <div style={{ height: 56, display: 'flex', alignItems: 'center', borderBottom: '1px solid #e8eaed' }}>
           <LIButton
             style={{ marginLeft: 10, zIndex: 10000 }}
@@ -379,7 +353,9 @@ class BackupCard extends React.PureComponent {
             onRequestClose={() => this.setState({ openBS: false, showDirs: false })}
           >
             <Menu style={{ maxWidth: 306, fontSize: 14, marginTop: -8 }} >
-              <div style={{ position: 'relative', minHeight: 210, width: 306, backgroundColor: '#FFF', overflow: 'hidden' }}>
+              <div
+                style={{ position: 'relative', minHeight: 210, width: 306, backgroundColor: '#FFF', overflow: 'hidden' }}
+              >
                 { this.state.loading ? this.renderLoading() : this.renderSettings(showDirs, transition) }
                 { this.renderBackupDirs(showDirs, transition) }
                 { !!this.state.toggleEnableLoading && this.renderActionLoading(0) }
@@ -457,8 +433,16 @@ class BackupCard extends React.PureComponent {
               {
                 !!this.state.confirmDelDir && (
                   <div>
-                    <div style={{ height: 48, display: 'flex', alignItems: 'center', color: '#f44336' }} className="title">
-                      {i18n.__('Confirm Delete Backup Dir Title %s', this.state.confirmDelDir && this.state.confirmDelDir.name)}
+                    <div
+                      className="title"
+                      style={{ height: 48, display: 'flex', alignItems: 'center', color: '#f44336' }}
+                    >
+                      {
+                        i18n.__(
+                          'Confirm Delete Backup Dir Title %s',
+                          this.state.confirmDelDir && this.state.confirmDelDir.name
+                        )
+                      }
                     </div>
                     <div style={{ height: 24 }} />
                     <div
