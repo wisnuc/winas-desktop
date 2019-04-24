@@ -3,7 +3,6 @@ import React from 'react'
 import WisnucLogin from './WisnucLogin'
 import DeviceLogin from './DeviceLogin'
 import WeChatLogin from './WeChatLogin'
-import ChangeDevice from './ChangeDevice'
 
 import WindowAction from '../common/WindowAction'
 
@@ -15,13 +14,15 @@ class Login extends React.Component {
       dev: null,
       hello: true,
       loading: true,
-      status: 'wisnucLogin'
+      status: 'wisnucLogin',
+      account: null
     }
 
     this.wisnucLoginSuccess = ({ lastSN, list, phonenumber, winasUserId, phi }) => {
       const dev = list.find(l => l.sn === lastSN) || (list && list[0])
-      this.setState({ dev, list, status: 'connectDev' })
-      this.props.wisnucLogin({ phonenumber, winasUserId, phi, name: phonenumber }, list)
+      const account = { phonenumber, winasUserId, phi, name: phonenumber }
+      this.setState({ dev, list, account, status: 'connectDev' })
+      this.props.wisnucLogin(account)
     }
   }
 
@@ -39,19 +40,19 @@ class Login extends React.Component {
 
   render () {
     const baseStyle = { width: '100%', zIndex: 100, height: '100%', position: 'absolute', transition: 'all 450ms' }
-    let [wisnucL, deviceL, wechatL, changeDevL] = [0, 0, 0, 0]
+    let [wisnucL, deviceL, wechatL] = [0, 0, 0, 0]
     switch (this.state.status) {
       case 'wisnucLogin':
-        [wisnucL, deviceL, wechatL, changeDevL] = [0, 450, 450, 450]
+        [wisnucL, deviceL, wechatL] = [0, 450, 450]
         break
       case 'connectDev':
-        [wisnucL, deviceL, wechatL, changeDevL] = [-450, 0, -450, 450]
+        [wisnucL, deviceL, wechatL] = [-450, 0, -450]
         break
       case 'changeDevice':
-        [wisnucL, deviceL, wechatL, changeDevL] = [-450, -450, -450, 0]
+        [wisnucL, deviceL, wechatL] = [-450, -450, -450]
         break
       case 'wechatLogin':
-        [wisnucL, deviceL, wechatL, changeDevL] = [-450, 450, 0, 450]
+        [wisnucL, deviceL, wechatL] = [-450, 450, 0]
         break
       default:
         break
@@ -97,22 +98,11 @@ class Login extends React.Component {
               cdev={this.state.dev}
               list={this.state.list}
               status={this.state.status}
-              changeDevice={() => this.setState({ status: 'changeDevice' })}
+              account={this.state.account}
               backToLogin={() => this.setState({ status: 'wisnucLogin' })}
             />
           </div>
-          <div style={Object.assign({ left: changeDevL }, baseStyle)} >
-            {
-              this.state.status === 'changeDevice' &&
-              <ChangeDevice
-                {...this.props}
-                list={this.state.list}
-                status={this.state.status}
-                slDevice={dev => this.setState({ dev, status: 'connectDev' })}
-                back={() => this.setState({ status: 'connectDev' })}
-              />
-            }
-          </div>
+
           <div style={Object.assign({ left: wechatL }, baseStyle)} >
             {
               this.state.status === 'wechatLogin' &&

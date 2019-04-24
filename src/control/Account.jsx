@@ -76,7 +76,7 @@ class Account extends React.Component {
         <div style={{ height: 36, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
           <FlatButton
             primary
-            label={i18n.__('Logout')}
+            label={i18n.__('Log Out')}
             onClick={this.props.logout}
           />
         </div>

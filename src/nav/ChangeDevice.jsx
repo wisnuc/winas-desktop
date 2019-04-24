@@ -99,7 +99,7 @@ class ChangeDevice extends React.Component {
   }
 
   renderRow ({ style, key, device }) {
-    const isCurrent = this.props.selectedDevice.mdev.deviceSN === device.sn
+    const isCurrent = this.props.selectedDevice && this.props.selectedDevice.mdev.deviceSN === device.sn
     return (
       <div style={style} key={key}>
         <div style={{ position: 'relative', opacity: isCurrent ? 0.7 : 1 }}>
