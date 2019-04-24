@@ -92,16 +92,35 @@ class BackupNotification extends React.PureComponent {
                 <SimpleScrollBar width={640} height={height} >
                   {
                     list.map(l => (
-                      <div key={l.entry} style={{ height: 56, width: '100%', display: 'flex', alignItems: 'center' }} >
+                      <div key={l.entry || l.files[0].entry} style={{ height: 56, width: '100%', display: 'flex', alignItems: 'center' }} >
                         <div style={{ width: 24, marginLeft: 24 }} className="flexCenter" >
                           <FolderIcon style={{ color: '#f9a825', width: 24, height: 24 }} />
                         </div>
                         <div style={{ width: 16 }} />
 
                         <div style={{ width: 344, height: 56 }}>
-                          <div style={{ margin: '12px 0 4px 0', color: 'rgba(0,0,0,.76)' }} className="text">
-                            { l.name }
+                          <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            margin: l.entry ? '12px 0 4px 0' : '18px 0 0 0'
+                          }}>
+                            {/* entry name */}
+                            <div
+                              style={{
+                                marginRight: 4,
+                                color: 'rgba(0,0,0,.76)',
+                                maxWidth: l.files && l.files.length > 1 ? 200 : 320
+                              }}
+                              className="text"
+                            >
+                              { l.name || (Array.isArray(l.files) && l.files[0] && l.files[0].name) }
+                            </div>
+
+                            <div>
+                              { l.files && l.files.length > 1 && i18n.__('And Other %s Items', l.files.length)}
+                            </div>
                           </div>
+                          {/* local path */}
                           <div style={{ color: 'rgba(0,0,0,.54)', fontSize: 12 }} className="text">
                             { l.entry }
                           </div>
@@ -116,10 +135,14 @@ class BackupNotification extends React.PureComponent {
                             alignItems: 'center'
                           }}
                         >
-                          { l.error && convert(l.error.code) }
+                          { !!l.error && convert(l.error.code) }
                         </div>
 
-                        <FlatButton label={i18n.__('Force Backup')} primary onClick={() => this.forceBackup(l)} />
+                        <FlatButton
+                          label={l.isWarning ? i18n.__('Force Backup') : i18n.__('Retry')}
+                          primary
+                          onClick={() => this.forceBackup(l)}
+                        />
 
                       </div>
                     ))

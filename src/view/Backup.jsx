@@ -6,6 +6,7 @@ import sortByType from '../common/sort'
 import { ipcReq } from '../common/ipcReq'
 import { LIButton } from '../common/Buttons'
 import BackupNotification from '../file/BackupNotification'
+import convertCode from '../transmission/convertCode'
 import { RefreshAltIcon, BackupIcon, ListIcon, GridIcon, EyeOffIcon, EyeOpenIcon } from '../common/Svg'
 
 class Backup extends Home {
@@ -33,7 +34,7 @@ class Backup extends Home {
         this.ctx.props.apis.pureRequest('listNavDir', args, (err, listNav) => {
           if (err || !listNav) {
             this.setState({ addingBackupDir: false })
-            this.ctx.props.openSnackBar(i18n.__('Get Backup Dirs Failed'))
+            this.ctx.props.openSnackBar(err.code ? convertCode(err.code) : i18n.__('Get Backup Dirs Failed'))
           } else {
             const { entries } = listNav
             if (entries && entries.find(e => !e.deleted && e.metadata && e.metadata.localPath === localPath)) {

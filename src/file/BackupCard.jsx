@@ -326,12 +326,14 @@ class BackupCard extends React.PureComponent {
         }}
       >
         <div style={{ height: 32, width: '100%', display: 'flex', alignItems: 'center' }}>
+          {/* host name */}
           <div style={{ color: '#FFF' }}>
-            <div style={{ fontSize: 16, fontWeight: 500 }}>
+            <div style={{ fontSize: 16, fontWeight: 500, maxWidth: 116 }} className="text">
               { hostname }
             </div>
             <div style={{ fontSize: 12, display: 'flex', alignItems: 'center', height: 16 }}>
-              { this.state.status === 'Idle' ? i18n.__('Current Device') : i18n.__('Backuping') }
+              { this.state.status === 'Idle' ? i18n.__('Current Device')
+                : this.state.status === 'Working' ? i18n.__('Backuping') : '' }
             </div>
           </div>
           <div style={{ flexGrow: 1 }} />
@@ -489,7 +491,7 @@ class BackupCard extends React.PureComponent {
             </div>
           ) : this.state.status === 'Failed' ? (
             <div style={{ fontSize: 12, fontWeight: 500, color: '#FFF' }} key="Failed">
-              <div style={{ height: 16, display: 'flex', alignItems: 'center' }}>
+              <div style={{ marginTop: 16, height: 16, display: 'flex', alignItems: 'center' }}>
                 { !disabled && i18n.__('Current Backup Not Finished') }
               </div>
               <div style={{ width: '100%', marginTop: 56 }} className="flexCenter">
@@ -507,6 +509,7 @@ class BackupCard extends React.PureComponent {
             </div>
           )
         }
+        {/* Add Backup Directroy  */}
         {
           !disabled &&
             <div
@@ -535,8 +538,9 @@ class BackupCard extends React.PureComponent {
               />
             </div>
         }
+        {/* progress bar  */}
         {
-          this.state.status !== 'Idle' && (
+          this.state.status === 'Working' && (
             <div
               style={{
                 position: 'absolute',
