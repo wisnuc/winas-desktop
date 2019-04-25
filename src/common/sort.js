@@ -25,7 +25,7 @@ const sort = (a, b, sortType) => {
     case 'otimeUp':
       return (a.otime && b.otime) ? (a.otime - b.otime) : a.bname.localeCompare(b.bname)
     case 'otimeDown':
-      return (a.otime && b.otime) ? (b.otime - a.otime) : a.bname.localeCompare(b.bname)
+      return (a.otime && b.otime) ? (b.otime - a.otime) : (a.bname || a.name || '').localeCompare(b.bname || b.name)
     case 'versionUp':
       return (a.versionNum && b.versionNum) ? (a.versionNum - b.versionNum) : a.bname.localeCompare(b.bname)
     case 'versionDown':

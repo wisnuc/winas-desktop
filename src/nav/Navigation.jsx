@@ -60,6 +60,7 @@ class NavViews extends React.Component {
     }
 
     this.navToDrive = (driveUUID, dirUUID) => {
+      console.log('navToDrive', driveUUID, dirUUID)
       const drives = this.props.apis.drives && this.props.apis.drives.data
       const drive = drives && drives.find(d => d.uuid === driveUUID)
       if (!drive) return

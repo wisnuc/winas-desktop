@@ -5,7 +5,7 @@ import { Menu, MenuItem, IconButton, Popover } from 'material-ui'
 import Thumb from './Thumb'
 import BackupCard from './BackupCard'
 import renderFileIcon from '../common/renderFileIcon'
-import { AllFileIcon, ArrowDownIcon, CheckedIcon, PCIcon, MobileIcon } from '../common/Svg'
+import { AllFileIcon, ArrowDownIcon, CheckedIcon, DesktopNoAccessIcon, MobileNoAccessIcon } from '../common/Svg'
 import FlatButton from '../common/FlatButton'
 
 const hasThumb = (metadata) => {
@@ -159,7 +159,7 @@ class Row extends React.Component {
               const borderColor = hover ? 'rgba(0,150,136, 0.26)' : selected ? 'rgba(0,150,136, 0.38)' : '#E8EAED'
               const backgroundColor = selected ? 'rgba(0,150,136,.04)' : '#FFF'
               const isMobile = false // TODO
-              const Icon = isMobile ? MobileIcon : PCIcon
+              const Icon = isMobile ? MobileNoAccessIcon : DesktopNoAccessIcon
               const actions = isScrolling ? {} : {
                 onClick: e => this.props.onRowClick(e, index),
                 onMouseUp: (e) => { e.preventDefault(); e.stopPropagation() },

@@ -3,7 +3,7 @@ import { PhotoIcon, TXTIcon, WORDIcon, EXCELIcon, PPTIcon, PDFIcon, VideoIcon, A
 
 const renderFileIcon = (name, metadata, setSize, inDark) => {
   /* PDF, TXT, Word, Excel, PPT */
-  let extension = name.replace(/^.*\./, '')
+  let extension = (name || '').replace(/^.*\./, '')
   if (!extension || extension === name) extension = 'OTHER'
 
   const iconArray = {

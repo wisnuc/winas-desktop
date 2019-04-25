@@ -102,8 +102,16 @@ class FileContent extends React.Component {
       if (index === -1) return
       const entry = this.props.entries[index]
       const { hash, size, metadata, uuid, type } = entry
-      // no backup drive
+
+      // backup drive not created yet
       if (uuid === 'fake-uuid') return
+
+      // enterFolder in search result
+      if (this.props.isSearch && type === 'directory') {
+        this.props.enterFolder(entry)
+        return
+      }
+
       this.props.listNavBySelect(entry)
       const officeMagic = ['DOCX', 'DOC', 'XLSX', 'XLS', 'PPT', 'PPTX']
       const isOffice = metadata && officeMagic.includes(metadata.type) && hash && size < 1024 * 1024 * 50

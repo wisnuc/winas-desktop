@@ -8,7 +8,10 @@ import prettySize from '../common/prettySize'
 import { localMtime } from '../common/datetime'
 import renderFileIcon from '../common/renderFileIcon'
 import SimpleScrollBar from '../common/SimpleScrollBar'
-import { BackwardIcon, FolderIcon, PublicIcon, DesktopNoAccessIcon, MobileNoAccessIcon, PublishIcon, VersionsIcon, CloseIcon, DeleteIcon, AddCircleIcon } from '../common/Svg'
+import {
+  BackwardIcon, FolderIcon, PublicIcon, DesktopNoAccessIcon,
+  MobileNoAccessIcon, PublishIcon, VersionsIcon, CloseIcon, DeleteIcon, AddCircleIcon
+} from '../common/Svg'
 
 const mtimeWidth = 144
 const sizeWidth = 144
@@ -112,7 +115,7 @@ class Row extends React.PureComponent {
 
     const isMobile = false // TODO
     const Icon = isMobile ? MobileNoAccessIcon : DesktopNoAccessIcon
-    const otherWidth = sizeWidth + mtimeWidth + deltaWidth + ((this.props.isBackup && versionWidth) || 26)
+    const otherWidth = sizeWidth + mtimeWidth + deltaWidth + (((this.props.isBackup || this.props.isSearch) && versionWidth) || 26)
     const nameWidth = `calc(100% - ${otherWidth}px)`
 
     return (
@@ -167,7 +170,7 @@ class Row extends React.PureComponent {
           </div>
 
           {
-            this.props.isBackup
+            this.props.isBackup || this.props.isSearch
               ? <div
                 style={Object.assign({ width: versionWidth }, textStyle)}
                 className="flexCenter"
@@ -501,17 +504,17 @@ class RenderListByRow extends React.Component {
         <SimpleScrollBar height={344} width={560}>
           {
             versions.map((entry, index) => {
-              const { bname, bmtime, metadata, size } = entry
+              const { bname, bmtime, metadata, size, name } = entry
               return (
                 <div
                   key={index.toString()}
                   style={{ height: 56, width: '100%', display: 'flex', alignItems: 'center', fontWeight: 500 }}
                 >
                   <div style={{ width: 22 }} />
-                  { renderFileIcon(bname, metadata, 24) }
+                  { renderFileIcon(bname || name, metadata, 24) }
                   <div style={{ width: 27 }} />
                   <div style={{ width: 186 }} className="text">
-                    { bname }
+                    { bname || name }
                   </div>
                   <div style={{ fontSize: 12, color: 'rgba(0,0,0,.54)', textAlign: 'right', width: 108 }}>
                     { localMtime(bmtime) }
@@ -565,9 +568,9 @@ class RenderListByRow extends React.Component {
           { this.renderHeader({ title: i18n.__('Name'), flexGrow: 1, up: 'nameUp', down: 'nameDown', textAlign: 'left', zIndex: 40 }) }
           { this.renderHeader({ title: i18n.__('Date Modified'), width: mtimeWidth, up: 'timeUp', down: 'timeDown', textAlign: 'right', zIndex: 30 }) }
           { this.renderHeader({ title: i18n.__('Size'), width: sizeWidth, up: 'sizeUp', down: 'sizeDown', textAlign: 'right', zIndex: 20 }) }
-          { this.props.isBackup &&
+          { (this.props.isBackup || this.props.isSearch) &&
               this.renderHeader({ title: i18n.__('Versions'), width: versionWidth, down: 'versionDown', up: 'versionUp', textAlign: 'center', zIndex: 10 }) }
-          <div style={{ width: this.props.isBackup ? 22 : 48 }} />
+          <div style={{ width: (this.props.isBackup || this.props.isSearch) ? 22 : 48 }} />
         </div>
 
         {/* list content */}

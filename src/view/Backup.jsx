@@ -83,7 +83,9 @@ class Backup extends Home {
       }
       this.resetScrollTo()
 
-      if (op) this.setState({ scrollTo: op.fileName || op.uuid, loading: !op.noloading }) // fileName for files, uuid for drives
+      // fileName for files, uuid for drives
+      if (op) this.setState({ scrollTo: op.fileName || op.uuid, loading: !op.noloading })
+
       else this.setState({ loading: true, showSearch: false })
     }
 
@@ -125,6 +127,7 @@ class Backup extends Home {
     }
   }
 
+  // combine versions, filter archived files
   rearrange (entries) {
     const map = new Map()
     // map: name => files, acc: dirs
@@ -195,6 +198,7 @@ class Backup extends Home {
       const drives = this.state.drives || this.ctx.props.apis.drives.value()
       path[1].name = this.rootDrive.name || drives.find(d => d.uuid === this.rootDrive.uuid).label
 
+      // combine versions
       const entries = this.rearrange(this.state.listNavDir.entries)
 
       entries.sort((a, b) => sortByType(a, b, this.state.sortType))

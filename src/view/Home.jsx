@@ -184,9 +184,8 @@ class Home extends Base {
     }
 
     this.xcopy = (action) => {
-      if (this.state.inRoot && !this.state.showSearch) return
-      // not in backup
-      if (this.isBackup) return
+      // not in backup or search
+      if (this.isBackup || this.isSearch) return
       const selected = this.state.select.selected
       if (!selected && !selected.length) return
       const entries = selected.map(index => this.state.entries[index])
@@ -401,21 +400,28 @@ class Home extends Base {
     }
 
     this.deleteVersion = (entry) => {
+      const { bname, uuid, hash, name, pdir, pdrv } = entry
       const path = this.state.path
-      const dirUUID = path[path.length - 1].uuid
-      const driveUUID = this.state.path[0].uuid
-      const { bname, uuid, hash } = entry
+
+      // use his.state.path in backup, use pdir, pdrv in search
+      const dirUUID = pdir || path[path.length - 1].uuid
+      const driveUUID = pdrv || this.state.path[0].uuid
+
       this.setState({ deleteLoading: true })
-      this.ctx.props.apis.request('deleteDirOrFile', [{ driveUUID, dirUUID, entryName: bname, entryUUID: uuid, hash }], (err) => {
-        if (err) {
-          this.setState({ deleteLoading: false, openDeleteVersion: false })
-          this.ctx.props.openSnackBar(i18n.__('Delete Failed'))
-        } else {
-          this.setState({ deleteLoading: false, openDeleteVersion: false })
-          this.ctx.props.openSnackBar(i18n.__('Delete Success'))
+      this.ctx.props.apis.request(
+        'deleteDirOrFile',
+        [{ driveUUID, dirUUID, entryName: bname || name, entryUUID: uuid, hash }],
+        (err) => {
+          if (err) {
+            this.setState({ deleteLoading: false, openDeleteVersion: false })
+            this.ctx.props.openSnackBar(i18n.__('Delete Failed'))
+          } else {
+            this.setState({ deleteLoading: false, openDeleteVersion: false })
+            this.ctx.props.openSnackBar(i18n.__('Delete Success'))
+          }
+          this.refresh()
         }
-        this.refresh()
-      })
+      )
     }
 
     this.onDeleteVersion = (entry) => {
@@ -435,6 +441,13 @@ class Home extends Base {
       const entry = selected.map(index => this.state.entries[index])[0]
       const driveUUID = entry.pdrv
       const dirUUID = entry.pdir
+      if (!driveUUID || !dirUUID) return
+      this.ctx.navToDrive(driveUUID, dirUUID)
+    }
+
+    this.enterFolder = (entry) => {
+      const driveUUID = entry.pdrv
+      const dirUUID = entry.uuid
       if (!driveUUID || !dirUUID) return
       this.ctx.navToDrive(driveUUID, dirUUID)
     }
@@ -479,7 +492,7 @@ class Home extends Base {
 
       const entry = this.state.entries[selected[0]]
       if (entry.type === 'directory' || (entry.type === 'backup')) {
-        const pos = { driveUUID: this.state.path[0].uuid, dirUUID: entry.uuid }
+        const pos = { driveUUID: entry.pdrv || this.state.path[0].uuid, dirUUID: entry.uuid }
         this.enter(pos, err => err && console.error('listNavBySelect error', err))
         this.history.add(pos)
       }
@@ -1318,6 +1331,7 @@ class Home extends Base {
           addBackupDir={this.addBackupDir}
           isBackup={this.isBackup}
           currentDrive={this.currentDrive}
+          enterFolder={this.enterFolder}
         />
 
         { this.renderMenu({ open: this.state.contextMenuOpen }) }

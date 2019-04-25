@@ -9,6 +9,7 @@ class Search extends Home {
     this.title = () => i18n.__('Search Results')
     this.name = ''
     this.isSearch = true
+
     this.types = []
     this.refresh = () => {
       this.search(this.name, this.types)
@@ -31,7 +32,7 @@ class Search extends Home {
 
   navEnter () {
     console.log('navEnter Search', this.state, this.props)
-    const path = [{ name: i18n.__('Search'), uuid: 'fake-UUID', type: 'search' }]
+    const path = [{ name: i18n.__('Search'), uuid: 'fake-UUID-in-Search', type: 'search' }]
     this.setState({ showSearch: true, path })
   }
 
@@ -96,12 +97,46 @@ class Search extends Home {
           return entry
         })
         if (types && types.length) entries = entries.filter(e => e.hash).map(e => Object.assign({ type: 'file' }, e))
-        this.setState({
-          loading: false,
-          entries: entries.sort((a, b) => sortByType(a, b, this.state.sortType))
-        })
+
+        // combine versions, filter archived files
+        entries = this.rearrange(entries)
+
+        // sort entries
+        entries.sort((a, b) => sortByType(a, b, this.state.sortType))
+
+        console.log('entries', entries)
+
+        this.setState({ entries, loading: false })
       }
     })
+  }
+
+  // combine versions
+  rearrange (entries) {
+    // sort by pdir and otimeDown
+    const sorted = entries.filter(e => !e.deleted).sort((a, b) => a.pdir.localeCompare(b) || sortByType(a, b, 'otimeDown'))
+
+    // map: pdir + name => files, acc: dirs
+    const map = new Map()
+    const dirs = sorted.reduce((acc, cur, idx) => {
+      if (cur.type !== 'file') {
+        acc.push(cur)
+        return acc
+      }
+      const versions = map.get(cur.pdir + cur.name)
+      if (versions) versions.push(cur)
+      else map.set(cur.pdir + cur.name, [cur])
+      return acc
+    }, [])
+    if (!map.size) return dirs
+
+    const newArray = [...map.values()].map((arr) => {
+      const latestVersion = arr[0]
+      return Object.assign(latestVersion, { versions: arr, versionNum: arr.length })
+    })
+
+    const result = ([...dirs, ...newArray])
+    return result
   }
 }
 
