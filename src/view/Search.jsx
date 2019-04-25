@@ -50,7 +50,7 @@ class Search extends Home {
       return
     }
     const select = this.select.reset(this.state.entries.length)
-    this.setState({ showSearch: name, loading: true, select, searchContent: { name, types } })
+    this.setState({ showSearch: name, loading: true, select, searchContent: { name, types }, error: null })
     const apis = this.ctx.props.apis
     const drives = apis && apis.drives && apis.drives.data
     if (!Array.isArray(drives)) {
@@ -82,7 +82,7 @@ class Search extends Home {
     }).join('.')
 
     this.ctx.props.apis.pureRequest('search', { name, places, order, types: typesString }, (err, res) => {
-      if (err || !res || !Array.isArray(res)) this.setState({ error: true, loading: false })
+      if (err || !res || !Array.isArray(res)) this.setState({ error: err, loading: false })
       else {
         const pdrives = places.split('.')
 
