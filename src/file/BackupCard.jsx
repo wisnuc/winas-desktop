@@ -3,6 +3,7 @@ import React from 'react'
 import { ipcRenderer } from 'electron'
 import { Menu, MenuItem, Toggle, Popover, Dialog, CircularProgress, RaisedButton, LinearProgress } from 'material-ui'
 
+import prettySize from '../common/prettySize'
 import { ipcReq } from '../common/ipcReq'
 import FlatButton from '../common/FlatButton'
 import { LIButton } from '../common/Buttons'
@@ -17,7 +18,8 @@ class BackupCard extends React.PureComponent {
     this.state = {
       topDirs: [],
       status: 'Idle',
-      loading: this.hasDrive
+      loading: this.hasDrive,
+      speed: -1
     }
 
     this.handleClickAdd = (e, drive) => {
@@ -129,8 +131,9 @@ class BackupCard extends React.PureComponent {
     }
 
     this.onMsg = (event, data) => {
-      const { status, size, completeSize, count, finishCount, restTime, drive, bProgress } = data
-      this.setState({ status, size, completeSize, count, finishCount, restTime, bProgress })
+      console.log('onMsg', data)
+      const { speed, status, size, completeSize, count, finishCount, restTime, drive, bProgress } = data
+      this.setState({ speed, status, size, completeSize, count, finishCount, restTime, bProgress })
       if (drive && drive.client) {
         this.setState({ drive })
       }
@@ -161,7 +164,7 @@ class BackupCard extends React.PureComponent {
 
   renderLoading () {
     return (
-      <div style={{ height: '100%', width: '100%' }} className="flexCenter">
+      <div style={{ height: 320, width: '100%' }} className="flexCenter">
         <CircularProgress size={24} thickness={2} />
       </div>
     )
@@ -426,7 +429,7 @@ class BackupCard extends React.PureComponent {
                 />,
                 <FlatButton
                   primary
-                  label={i18n.__('Confirm')}
+                  label={this.state.deleteLoading ? i18n.__('Deleting') : i18n.__('Confirm')}
                   onClick={() => this.delDir(this.state.confirmDelDir)}
                   disabled={this.state.deleteLoading}
                 />
@@ -500,11 +503,19 @@ class BackupCard extends React.PureComponent {
             </div>
           ) : (
             <div style={{ fontSize: 12, fontWeight: 500, color: '#FFF' }} key="Working">
-              <div style={{ marginTop: 16, height: 16, display: 'flex', alignItems: 'center' }} >
-                { this.state.restTime }
+              {/* backup speed */}
+              <div style={{ fontSize: 18, height: 21, marginTop: 16, display: 'flex', alignItems: 'center' }}>
+                { this.state.speed >= 0 ? `${prettySize(this.state.speed)} / s` : ''}
               </div>
-              <div style={{ height: 16, display: 'flex', alignItems: 'center' }}>
+
+              {/* backup progress */}
+              <div style={{ height: 24, display: 'flex', alignItems: 'center' }}>
                 { this.state.bProgress }
+              </div>
+
+              {/* rest time */}
+              <div style={{ height: 24, display: 'flex', alignItems: 'center' }} >
+                { this.state.restTime }
               </div>
             </div>
           )
