@@ -13,11 +13,15 @@ import CircularLoading from '../common/CircularLoading'
 class ChangeDevice extends React.Component {
   /**
    * @param {object} props
-   * @param  {function} props.back - close dialog.
+   * @param  {function} props.backToLogin - log out and back to login.
+   * @param  {function} props.deviceLogin - login to device.
+   * @param  {object} props.account - user info.
+   * @param  {string} props.account.winasUserId - user id.
    * @param  {object} props.phi - cloud api.
    * @param  {function} props.phi.req - cloud requests.
-   * @param  {object} props.selectedDevice - current logged device.
-   *
+   * @param  {array} props.list - station list.
+   * @param  {object} props.cdev - default device, last logged device.
+   * @param  {string} props.status - connectDev.
    */
   constructor (props) {
     super(props)

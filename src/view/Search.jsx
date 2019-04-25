@@ -59,7 +59,7 @@ class Search extends Home {
     }
     console.log('search', apis)
     const places = drives.map(d => d.uuid).join('.')
-    const order = types ? 'newest' : 'find'
+    const order = types && types.length ? 'newest' : 'find'
     const typesString = Array.isArray(types) && types.map((t) => {
       switch (t) {
         case 'pdf':
@@ -95,7 +95,7 @@ class Search extends Home {
           const entry = Object.assign({ pdrv, loc, driveLabel }, l)
           return entry
         })
-        if (types) entries = entries.filter(e => e.hash).map(e => Object.assign({ type: 'file' }, e))
+        if (types && types.length) entries = entries.filter(e => e.hash).map(e => Object.assign({ type: 'file' }, e))
         this.setState({
           loading: false,
           entries: entries.sort((a, b) => sortByType(a, b, this.state.sortType))
