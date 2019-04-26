@@ -241,7 +241,10 @@ class Device extends RequestManager {
     const info = this.info.value()
 
     /* make sure the same deviceSN */
-    if (this.mdev.deviceSN && info && info.device && info.device.sn && (this.mdev.deviceSN !== info.device.sn)) return 'offline'
+    if (this.mdev.deviceSN && info && info.device && info.device.sn && (this.mdev.deviceSN !== info.device.sn)) {
+      return 'offline'
+    }
+
     if (this.boot.isRejected()) return 'systemError'
 
     const boot = this.boot.value()

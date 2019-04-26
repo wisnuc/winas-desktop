@@ -504,7 +504,7 @@ class BackupCard extends React.PureComponent {
             <div style={{ fontSize: 12, fontWeight: 500, color: '#FFF' }} key="Working">
               {/* backup speed */}
               <div style={{ fontSize: 18, height: 21, marginTop: 16, display: 'flex', alignItems: 'center' }}>
-                { this.state.speed >= 0 ? `${prettySize(this.state.speed)} / s` : '0 Bytes / s'}
+                { i18n.__('%s Speed', prettySize(this.state.speed)) }
               </div>
 
               {/* backup progress */}

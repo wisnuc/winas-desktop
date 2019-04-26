@@ -698,6 +698,7 @@
   "BackupNotification Dialog Title %s": "未能自动备份的项目%s个",
   "Reason": "原因",
   "Force Backup": "加入备份",
+  "%s Speed": "%s / 秒",
 
   "==== view/Photo.jsx ====": "",
   "New Album": "新建相簿",
@@ -1211,7 +1212,7 @@
   "Offline Mode": "离线",
   "Online and LAN Mode": "本地",
   "Remote Mode": "远程",
-  "System Error": "系统错误",
+  "System Error": "获取系统信息失败",
   "Already Bound": "已被绑定",
   "LAN Login Text": "当前设备连接斐讯云失败，登录可对设备进行本地管理",
 

@@ -55,9 +55,8 @@ class ChangeDevice extends React.Component {
     console.log('this.props', this.props)
     const args = { deviceSN: device.sn }
     const { token, cookie } = this.props.phi
-    const [tokenRes, boot, users, space, isLAN] = await Promise.all([
+    const [tokenRes, users, space, isLAN] = await Promise.all([
       this.props.phi.reqAsync('LANToken', args),
-      this.props.phi.reqAsync('boot', args),
       this.props.phi.reqAsync('localUsers', args),
       this.props.phi.reqAsync('space', args),
       this.props.phi.testLANAsync(device.LANIP),
@@ -67,19 +66,17 @@ class ChangeDevice extends React.Component {
     const LANToken = tokenRes.token
     const user = Array.isArray(users) && users.find(u => u.winasUserId === account.winasUserId)
 
-    if (!LANToken || !user || !boot) throw Error('get LANToken or user error')
-    if (boot.state !== 'STARTED') throw Error('station not started')
+    if (!LANToken || !user) throw Error('get LANToken or user error')
     Object.assign(user, { cookie })
-    return ({ dev: device, user, token: isLAN ? LANToken : token, boot, space, isCloud: !isLAN })
+    return ({ dev: device, user, token: isLAN ? LANToken : token, space, isCloud: !isLAN })
   }
 
   remoteLogin (device) {
     this.remoteLoginAsync(device)
-      .then(({ dev, user, token, boot, space, isCloud }) => {
+      .then(({ dev, user, token, space, isCloud }) => {
       /* onSuccess: auto login */
         Object.assign(dev, {
           token: { isFulfilled: () => true, ctx: user, data: { token } },
-          boot: { isFulfilled: () => true, ctx: user, data: boot },
           space,
           mdev: { deviceSN: dev.sn, address: dev.LANIP },
           // add fake listeners, TODO: remove this
