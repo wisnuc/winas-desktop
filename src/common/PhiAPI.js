@@ -187,6 +187,10 @@ class PhiAPI extends RequestManager {
         r = this.command(args.deviceSN, { verb: 'GET', urlPath: '/token', params: {}, body: {} })
         break
 
+      case 'space':
+        r = this.command(args.deviceSN, { verb: 'GET', urlPath: '/boot/space', params: {}, body: {} })
+        break
+
       case 'setLANPassword':
         r = this.command(args.deviceSN, {
           verb: 'PATCH', urlPath: `/users/${args.userUUID}`, params: {}, body: { password: args.password, encrypted: false }

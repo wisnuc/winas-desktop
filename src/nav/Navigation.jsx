@@ -451,7 +451,7 @@ class NavViews extends React.Component {
     const transition = 'width 225ms'
     let [total, used, percent] = ['--', '--', 0]
     try {
-      const space = this.props.selectedDevice.space.data
+      const space = this.props.selectedDevice.space
       total = prettySize(space.total * 1024)
       used = prettySize(space.used * 1024)
       percent = space.used / space.total
@@ -459,9 +459,8 @@ class NavViews extends React.Component {
       // console.error('parse error')
     }
     const usage = `${used}/${total}`
-    const info = this.props.selectedDevice && this.props.selectedDevice.info && this.props.selectedDevice.info.data
-    const sn = info && info.device && info.device.sn && info.device.sn.slice(-4)
-    const deviceName = sn ? `Winas-${sn}` : 'Winas'
+    const deviceName = this.props.selectedDevice.name || 'Winas'
+
     return (
       <div
         style={{

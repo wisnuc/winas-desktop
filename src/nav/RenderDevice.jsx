@@ -119,7 +119,7 @@ class Disk extends React.PureComponent {
   }
 
   render () {
-    const name = this.props.selectedDevice.mdev.name || 'Winas'
+    const name = this.props.selectedDevice.name || 'Winas'
     return (
       <div style={{ width: 260, height: 339, marginTop: -8, overflow: 'hidden' }}>
         <div style={{ height: 56, position: 'relative', paddingLeft: 24, paddingTop: 16 }}>
