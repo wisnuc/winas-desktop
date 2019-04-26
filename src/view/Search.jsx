@@ -114,7 +114,8 @@ class Search extends Home {
   // combine versions
   rearrange (entries) {
     // sort by pdir and otimeDown
-    const sorted = entries.filter(e => !e.deleted).sort((a, b) => a.pdir.localeCompare(b) || sortByType(a, b, 'otimeDown'))
+    const sorted = entries.filter(e => !e.deleted && !e.fingerprint)
+      .sort((a, b) => a.pdir.localeCompare(b) || sortByType(a, b, 'otimeDown'))
 
     // map: pdir + name => files, acc: dirs
     const map = new Map()

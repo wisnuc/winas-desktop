@@ -129,9 +129,12 @@ class Backup extends Home {
 
   // combine versions, filter archived files
   rearrange (entries) {
-    const map = new Map()
+    // filter deleted and partfile of large file
+    const sorted = entries.filter(e => !e.deleted && !e.fingerprint)
+      .sort((a, b) => sortByType(a, b, 'otimeDown'))
+
     // map: name => files, acc: dirs
-    const sorted = entries.filter(e => !e.deleted).sort((a, b) => sortByType(a, b, 'otimeDown'))
+    const map = new Map()
     const dirs = sorted.reduce((acc, cur, idx) => {
       if (cur.type !== 'file') {
         acc.push(cur)

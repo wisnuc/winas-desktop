@@ -6,9 +6,6 @@ const path = require('path')
 const crypto = require('crypto')
 const querystring = require('querystring')
 
-const file = path.resolve(process.argv[2])
-const size = fs.lstatSync(file).size
-
 /* splice file by given size */
 const spliceFile = (size, perSize) => {
   const parts = []
@@ -96,6 +93,9 @@ const reqCloud = (ep) => {
   const url = `${cloudAddress}/ResourceManager/app/pipe/resource?${qs}`
   return url
 }
+
+const file = path.resolve(process.argv[2])
+const size = fs.lstatSync(file).size
 
 const fire = async () => {
   const parts = await hashFileAsync(file, size, 1024 * 1024 * 1024)
