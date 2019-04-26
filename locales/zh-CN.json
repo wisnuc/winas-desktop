@@ -877,8 +877,8 @@
 
   "==== file/ErrorDialogInTrans.jsx ====": "",
   "EEXIST": "文件或文件夹已存在",
-  "ECONNRESET": "设备无法连接",
-  "ECONNREFUSED": "设备无法连接",
+  "ECONNRESET": "无法连接到设备",
+  "ECONNREFUSED": "无法连接到设备",
   "ENETUNREACH": "网络连接断开",
   "ECONNEND": "网络连接错误",
   "ENOENT": "文件或文件夹不可读",
@@ -1111,6 +1111,7 @@
   "Login or Sign Up": "登录注册",
   "Invalid Phone Number": "请输入正确的手机号",
   "Token Expired": "登录已过期",
+  "Token Expired Text": "请重新登录",
   "Phone Number": "手机号",
   "Quit": "退出",
   "Sign Up": "注册账号",

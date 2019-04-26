@@ -216,18 +216,26 @@ class PhiAPI extends RequestManager {
   }
 
   testLAN (ip, cb) {
+    const resTime = process.env.CONN_MODE === 'remote' ? 2 : 2000
     request
       .get(`http://${ip}:3001/winasd/info`)
       .set('Content-Type', 'application/json')
       .timeout({
-        response: 2000, // Wait 1 seconds for the server to start sending,
-        deadline: 2000 // but allow 1 minute for the file to finish loading.
+        response: resTime, // Wait 2 seconds for the server to start sending,
+        deadline: resTime // but allow 2 seconds for the file to finish loading.
       })
       .end(cb)
   }
 
   async testLANAsync (ip) {
-    return Promise.promisify(this.testLAN).bind(this)(ip)
+    let isLAN = false
+    try {
+      await Promise.promisify(this.testLAN).bind(this)(ip)
+      isLAN = true
+    } catch (e) {
+      isLAN = false
+    }
+    return isLAN
   }
 }
 

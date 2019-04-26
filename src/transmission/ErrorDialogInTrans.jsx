@@ -15,6 +15,8 @@ const translateStatus = (statusCode) => {
   switch (statusCode) {
     case 404:
       return i18n.__('ENOTFOUND')
+    case 401:
+      return i18n.__('Token Expired')
     default:
       return statusCode ? i18n.__('Request Failed %s', statusCode) : i18n.__('Unknown Error')
   }

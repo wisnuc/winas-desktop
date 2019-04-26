@@ -5,6 +5,9 @@ import NavigationMenu from 'material-ui/svg-icons/navigation/menu'
 import { IconButton } from 'material-ui'
 import EventEmitter from 'eventemitter3'
 
+import ConfirmDialog from '../common/ConfirmDialog'
+import convertCode from '../transmission/convertCode'
+
 class Base extends EventEmitter {
   constructor (ctx) {
     super()
@@ -163,18 +166,30 @@ class Base extends EventEmitter {
   renderDefaultError () {
     const res = this.state.error.response
     const isDirNotFound = res && res.body && res.body.message === 'dir not found'
+    const isUnauthorized = this.state.error.status === 401
+    const code = this.state.error.code || (this.state.error.response && this.state.error.response.code)
+    const textViaCode = code ? convertCode(code) : i18n.__('Error in Base Text')
+    console.log(this.state, code)
     return (
       <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }} >
         <div>
           <img
             width={260}
             height={160}
-            src={`./assets/images/${isDirNotFound ? 'pic_nofile.png' : 'pic_network_failed.png'}`}
+            src={`./assets/images/${isDirNotFound ? 'pic_nofile.png'
+              : isUnauthorized ? 'pic_nodevice.png' : 'pic_network_failed.png'}`}
           />
           <div style={{ textAlign: 'center' }} >
-            { !window.navigator.onLine ? i18n.__('Offline Text')
-              : isDirNotFound ? i18n.__('Folder Not Found') : i18n.__('Error in Base Text') }
+            { !window.navigator.onLine ? i18n.__('Offline Text') : isUnauthorized ? i18n.__('Token Expired')
+              : isDirNotFound ? i18n.__('Folder Not Found') : textViaCode }
           </div>
+          {/* show dialog when token expired */}
+          <ConfirmDialog
+            open={isUnauthorized}
+            onConfirm={() => this.ctx.props.logout()}
+            title={i18n.__('Token Expired')}
+            text={i18n.__('Token Expired Text')}
+          />
         </div>
       </div>
     )

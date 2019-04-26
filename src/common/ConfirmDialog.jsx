@@ -68,7 +68,7 @@ class ConfirmDialog extends React.PureComponent {
               }
               <div style={{ height: 20 }} />
               <div style={{ height: 52, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-                <FlatButton label={i18n.__('Cancel')} primary onClick={onCancel} />
+                {!!onCancel && <FlatButton label={i18n.__('Cancel')} primary onClick={onCancel} />}
                 <FlatButton
                   primary
                   onClick={this.onFire}
