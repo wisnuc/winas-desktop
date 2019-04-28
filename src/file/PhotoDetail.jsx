@@ -32,6 +32,7 @@ class PhotoDetail extends React.Component {
       this.digest = this.props.item.hash
       this.state = Object.assign({}, this.state, { thumbPath: '', detailPath: '' })
       this.props.ipcRenderer.send('mediaShowThumb', this.session, this.digest, 200, 200, this.props.station)
+      this.props.ipcRenderer.send('mediaShowImage', this.session, this.digest, this.props.station)
     }
 
     /* update detail image */
@@ -43,8 +44,7 @@ class PhotoDetail extends React.Component {
           if (this.digest !== this.props.item.hash) {
             this.setState({ detailPath: '', thumbPath: '' })
           } else {
-            this.refTransition.style.transform = this.degRotate
-            this.setState({ detailPath: path })
+            this.setState({ detailPath: path }, () => (this.refTransition.style.transform = this.degRotate))
           }
         }, 200)
       }
@@ -59,10 +59,7 @@ class PhotoDetail extends React.Component {
       }
       if (this.session === session) {
         /* update thumbPath */
-        this.setState({ thumbPath: path, detailPath: '' }, () => {
-          /* get detail image */
-          this.props.ipcRenderer.send('mediaShowImage', this.session, this.digest, this.props.station)
-        })
+        this.setState({ thumbPath: path })
       }
     }
 
