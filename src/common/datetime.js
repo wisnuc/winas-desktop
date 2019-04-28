@@ -127,5 +127,5 @@ export function localMtime (time) {
   const date = new Date(time)
   const t = date.toLocaleTimeString('zh-CN', { hour12: false }).split(':')
   t.pop()
-  return `${date.toLocaleDateString('zh-CN')} ${t.join(':')}`
+  return `${date.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' })} ${t.join(':')}`
 }

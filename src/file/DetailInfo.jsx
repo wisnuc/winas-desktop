@@ -94,7 +94,8 @@ class DetailInfo extends React.PureComponent {
   }
 
   render () {
-    const { name, size, mtime, hash } = this.props.entry
+    const { name, size, hash } = this.props.entry
+    const mtime = this.props.entry.bmtime || this.props.entry.mtime
     const metadata = this.props.entry.metadata || {}
     const { date, gps, h, w, make, model } = metadata
 

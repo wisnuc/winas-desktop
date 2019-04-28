@@ -565,11 +565,51 @@ class RenderListByRow extends React.Component {
             backgroundColor: '#FFF'
           }}
         >
-          { this.renderHeader({ title: i18n.__('Name'), flexGrow: 1, up: 'nameUp', down: 'nameDown', textAlign: 'left', zIndex: 40 }) }
-          { this.renderHeader({ title: i18n.__('Date Modified'), width: mtimeWidth, up: 'timeUp', down: 'timeDown', textAlign: 'right', zIndex: 30 }) }
-          { this.renderHeader({ title: i18n.__('Size'), width: sizeWidth, up: 'sizeUp', down: 'sizeDown', textAlign: 'right', zIndex: 20 }) }
-          { (this.props.isBackup || this.props.isSearch) &&
-              this.renderHeader({ title: i18n.__('Versions'), width: versionWidth, down: 'versionDown', up: 'versionUp', textAlign: 'center', zIndex: 10 }) }
+          {/* name */}
+          {
+            this.renderHeader({
+              title: i18n.__('Name'),
+              flexGrow: 1,
+              up: 'nameUp',
+              down: 'nameDown',
+              textAlign: 'left',
+              zIndex: 40
+            })
+          }
+          {/* rawtime via backup or upload time */}
+          {
+            this.renderHeader({
+              title: i18n.__('Date Modified'),
+              width: mtimeWidth,
+              up: 'timeUp',
+              down: 'timeDown',
+              textAlign: 'right',
+              zIndex: 30
+            })
+          }
+          {/* file size */}
+          {
+            this.renderHeader({
+              title: i18n.__('Size'),
+              width: sizeWidth,
+              up: 'sizeUp',
+              down: 'sizeDown',
+              textAlign: 'right',
+              zIndex: 20
+            })
+          }
+          {/* file verisons */}
+          {
+            (this.props.isBackup || this.props.isSearch) &&
+              this.renderHeader({
+                title: i18n.__('Versions'),
+                width: versionWidth,
+                down: 'versionDown',
+                up: 'versionUp',
+                textAlign: 'center',
+                zIndex: 10
+              })
+          }
           <div style={{ width: (this.props.isBackup || this.props.isSearch) ? 22 : 48 }} />
         </div>
 

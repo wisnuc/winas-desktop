@@ -5,6 +5,8 @@ const getDateTime = m => m.metadata && (m.metadata.date || m.metadata.datetime)
 const sort = (a, b, sortType) => {
   if (a.type === 'directory' && b.type === 'file') return -1
   if (a.type === 'file' && b.type === 'directory') return 1
+  const amt = a.bmtime || a.mtime
+  const bmt = b.bmtime || b.mtime
   switch (sortType) {
     case 'nameUp':
       return a.name.localeCompare(b.name)
@@ -15,13 +17,9 @@ const sort = (a, b, sortType) => {
     case 'sizeDown':
       return (a.size !== undefined && b.size !== undefined) ? (b.size - a.size) : a.name.localeCompare(b.name)
     case 'timeUp':
-      return (a.mtime && b.mtime) ? (a.mtime - b.mtime) : a.name.localeCompare(b.name)
+      return (amt && bmt) ? (amt - bmt) : a.name.localeCompare(b.name)
     case 'timeDown':
-      return (a.mtime && b.mtime) ? (b.mtime - a.mtime) : a.name.localeCompare(b.name)
-    case 'btimeUp':
-      return (a.bmtime && b.bmtime) ? (a.bmtime - b.bmtime) : a.bname.localeCompare(b.bname)
-    case 'btimeDown':
-      return (a.bmtime && b.bmtime) ? (b.bmtime - a.bmtime) : a.bname.localeCompare(b.bname)
+      return (amt && bmt) ? (bmt - amt) : a.name.localeCompare(b.name)
     case 'otimeUp':
       return (a.otime && b.otime) ? (a.otime - b.otime) : a.bname.localeCompare(b.bname)
     case 'otimeDown':

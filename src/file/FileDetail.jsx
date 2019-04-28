@@ -3,19 +3,12 @@ import React from 'react'
 import { Divider } from 'material-ui'
 import { LIButton } from '../common/Buttons'
 import prettySize from '../common/prettySize'
+import { localMtime } from '../common/datetime'
 import renderFileIcon from '../common/renderFileIcon'
-import { TypeSmallIcon, LocationSmallIcon, SizeSmallIcon, ContentSmallIcon, MTimeSmallIcon, CloseIcon, AllFileIcon, PublicIcon } from '../common/Svg'
-
-const phaseDate = (time) => {
-  const a = new Date(time)
-  const year = a.getFullYear()
-  const month = a.getMonth() + 1
-  const date = a.getDate()
-  const hour = a.getHours()
-  const min = a.getMinutes()
-  if (!year) return ''
-  return i18n.__('Parse Date Time %s %s %s %s %s', year, month, date, hour, min)
-}
+import {
+  TypeSmallIcon, LocationSmallIcon, SizeSmallIcon,
+  ContentSmallIcon, MTimeSmallIcon, CloseIcon, AllFileIcon, PublicIcon
+} from '../common/Svg'
 
 const getType = (item) => {
   const type = item && item.type
@@ -234,13 +227,14 @@ class FileDetail extends React.PureComponent {
       i18n.__('Fold Content'),
       i18n.__('Date Modified')
     ]
-
+    // mtime from bakcup or upload time
+    const mtime = entry.bmtime || entry.mtime
     const Values = [
       isMultiple ? i18n.__('Multiple Items') : getType(entry),
       !isSearch ? getPath(path) : !isMultiple ? this.getSearchPath() : '',
       isUSB ? '' : isFile ? prettySize(entry.size) : this.getSize(),
       isUSB ? '' : !isFile ? this.getContent() : '',
-      !isMultiple ? phaseDate(entry.mtime) : ''
+      !isMultiple ? localMtime(mtime) : ''
     ]
 
     return (
