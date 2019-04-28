@@ -145,7 +145,6 @@ class Backup extends Home {
       else map.set(cur.name, [cur])
       return acc
     }, [])
-    if (!map.size) return dirs
 
     const newArray = [...map.values()].map((arr) => {
       const latestVersion = arr[0]
