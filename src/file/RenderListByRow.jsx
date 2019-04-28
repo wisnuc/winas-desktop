@@ -379,6 +379,7 @@ class RenderListByRow extends React.Component {
         <AutoSizer>
           {({ height, width }) => (
             <SimpleScrollBar width={width} height={height} >
+              {/* add new backup dir */}
               {
                 isCurrentTopDirs &&
                   <div
@@ -402,6 +403,7 @@ class RenderListByRow extends React.Component {
                     </div>
                   </div>
               }
+              {/* top backup directory list */}
               {
                 entries.map((entry, index) => {
                   /* backgroud color */
@@ -435,15 +437,25 @@ class RenderListByRow extends React.Component {
                       <FolderIcon style={{ color: '#f9a825', width: 24, height: 24 }} />
                     </div>
                     <div style={{ width: 16 }} />
+                    {
+                      entry.metadata.localPath
+                        ? <div style={{ width: 'calc(100% - 500px)', height: 56 }}>
+                          <div style={{ margin: '12px 0 4px 0', color: 'rgba(0,0,0,.76)' }} className="text">
+                            { entry.bname }
+                          </div>
 
-                    <div style={{ width: 'calc(100% - 500px)', height: 56 }}>
-                      <div style={{ margin: '12px 0 4px 0', color: 'rgba(0,0,0,.76)' }} className="text">
-                        { entry.bname }
-                      </div>
-                      <div style={{ color: 'rgba(0,0,0,.54)', fontSize: 12 }} className="text">
-                        { entry.metadata.localPath }
-                      </div>
-                    </div>
+                          <div style={{ color: 'rgba(0,0,0,.54)', fontSize: 12 }} className="text">
+                            { entry.metadata.localPath }
+                          </div>
+                        </div>
+                        : <div
+                          style={{
+                            width: 'calc(100% - 500px)', height: 56, display: 'flex', alignItems: 'center', color: 'rgba(0,0,0,.76)'
+                          }}
+                        >
+                          { entry.bname }
+                        </div>
+                    }
                     <div style={{ flexGrow: 1 }} />
 
                     <div style={{ width: 136, height: 56, color: 'rgba(0,0,0,.54)', fontSize: 12 }}>
