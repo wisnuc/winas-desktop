@@ -87,7 +87,7 @@ class BackupCard extends React.PureComponent {
 
     this.onToggleEnableBackup = () => {
       if (this.state.toggleEnableLoading) return
-      this.setState(Object.assign(this.state, { toggleEnableLoading: true }))
+      this.setState({ toggleEnableLoading: true })
       const drive = this.state.drive || this.props.drive
       if (drive.uuid !== 'fake-uuid') {
         ipcReq('updateBackupDrive', { drive, attr: { disabled: !drive.client.disabled } }, this.updateDrive)
@@ -181,9 +181,11 @@ class BackupCard extends React.PureComponent {
     const { topDirs } = this.state
     const drive = this.state.drive || this.props.drive
     const enabled = drive && drive.uuid !== 'fake-uuid' && !drive.client.disabled
-    const color = enabled ? 'rgba(0,0,0,.76)' : 'rgba(0,0,0,.38)'
     return (
-      <div style={{ position: 'absolute', height: '100%', width: '100%', left: showDirs ? '-100%' : 0, top: 0, transition }}>
+      <div
+        style={{ position: 'absolute', height: '100%', width: '100%', left: showDirs ? '-100%' : 0, top: 0, transition }}
+      >
+        {/* toggle to enable/disable backup */}
         <div style={{ height: 56, display: 'flex', alignItems: 'center', borderBottom: '1px solid #e8eaed' }}>
           <div style={{ marginLeft: 24 }}> { i18n.__('Current Device Backup') } </div>
           <div style={{ flexGrow: 1 }} />
@@ -195,7 +197,10 @@ class BackupCard extends React.PureComponent {
             style={{ marginRight: 16, maxWidth: 'fit-content' }}
           />
         </div>
+
         <div style={{ height: 8 }} />
+
+        {/* title */}
         <div
           style={{
             height: 40,
@@ -211,16 +216,18 @@ class BackupCard extends React.PureComponent {
 
         <MenuItem
           primaryText="."
-          disabled={!enabled} style={{ color: '#FFF' }}
+          style={{ color: '#FFF' }}
           onClick={() => this.setState({ showDirs: true })}
         />
+
+        {/* Manage Backup Dir */}
         <div
           style={{
             position: 'absolute',
             width: 'calc(100% - 40px)',
             left: 24,
             top: 120,
-            color,
+            color: 'rgba(0,0,0,.76)',
             display: 'flex',
             alignItems: 'center',
             pointerEvents: 'none'
@@ -234,13 +241,13 @@ class BackupCard extends React.PureComponent {
           <ChevronRightIcon style={{ color: 'rgba(0,0,0,.38)', height: 16, width: 16 }} />
         </div>
 
-        {/* <MenuItem disabled={!enabled} primaryText="." style={{ color: '#FFF' }} onClick={this.openPolicy} /> */}
+        {/* backup policy */}
         <div
           style={{
             width: 'calc(100% - 40px)',
             marginLeft: 24,
             height: 48,
-            color,
+            color: 'rgba(0,0,0,.76)',
             display: 'flex',
             alignItems: 'center',
             pointerEvents: 'none'
@@ -251,11 +258,6 @@ class BackupCard extends React.PureComponent {
           <div style={{ color: 'rgba(0,0,0,.38)' }}>
             { i18n.__('Starting Once Dir Changed') }
           </div>
-          {/*
-          <div>
-            <ChevronRightIcon style={{ color: 'rgba(0,0,0,.38)', height: 16, width: 16 }} />
-          </div>
-          */}
         </div>
       </div>
     )
@@ -478,15 +480,26 @@ class BackupCard extends React.PureComponent {
             </Menu>
           </Popover>
         </div>
+
+        {/* main content */}
         {
-          this.state.status === 'Idle' ? (
+          !disabled && this.state.topDirs.length === 0 ? (
+            <div style={{ fontSize: 12, fontWeight: 500, color: '#FFF' }} key="No Backup">
+              {/* no backup dir */}
+              <div style={{ marginTop: 32, height: 16, display: 'flex', alignItems: 'center' }}>
+                { i18n.__('No Backup') }
+              </div>
+            </div>
+          ) : (disabled || this.state.status === 'Idle') ? (
             <div style={{ fontSize: 12, fontWeight: 500, color: '#FFF' }} key="Idle">
+              {/* last backup finished time */}
               <div style={{ marginTop: 16, height: 16, display: 'flex', alignItems: 'center' }}>
                 { !disabled && !!lastBackupTime && this.calcTime(lastBackupTime) }
               </div>
               <div style={{ height: 16, display: 'flex', alignItems: 'center' }}>
                 { !disabled && (lastBackupTime ? i18n.__('Backup Success') : i18n.__('Backup Not Finished')) }
               </div>
+              {/* backup disabled */}
               <div style={{ width: '100%', marginTop: 56 }} className="flexCenter">
                 { disabled && i18n.__('Backup Disabled Text') }
               </div>
@@ -550,7 +563,7 @@ class BackupCard extends React.PureComponent {
         }
         {/* progress bar  */}
         {
-          this.state.status === 'Working' && (
+          !disabled && this.state.status === 'Working' && (
             <div
               style={{
                 position: 'absolute',
